@@ -1,8 +1,14 @@
 @font-face { 
-	font-family: FontAwesome; 
-	src: url('/../fonts/font-awesome/fontawesome-webfont.ttf');
+	font-family: 'Delicious'; 
+	src: url('../fonts/delicious/Delicious-Roman.otf');
 }
 
 h3 {
-	font-family: FontAwesome;
+	font-family: 'Delicious';
+}
+
+.centered {
+	margin: auto;
+	text-align: center;
+	/*margin-left: 50%;*/
 }

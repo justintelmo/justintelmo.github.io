@@ -1,0 +1,43 @@
+/*
+  Every color on the site lives here.
+  Light is the default. Dark applies when the system prefers it (unless the visitor chose light),
+  or when the visitor chose dark. Keep the two dark blocks identical; tests/unit/contrast.test.ts checks.
+*/
+
+:root {
+  color-scheme: light;
+  --bg: #f7f4fb;
+  --surface: #ffffff;
+  --text: #10163a;
+  --text-muted: #4a4566;
+  --accent-magenta: #a3069f;
+  --accent-blue: #1f63c4;
+  --accent-lavender: #6b4f8a;
+  --border: #ddd5ea;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0b0f24;
+    --surface: #141a3a;
+    --text: #ece6f5;
+    --text-muted: #b3a9c9;
+    --accent-magenta: #e50cee;
+    --accent-blue: #358cf7;
+    --accent-lavender: #c9aad9;
+    --border: #2a2f55;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0f24;
+  --surface: #141a3a;
+  --text: #ece6f5;
+  --text-muted: #b3a9c9;
+  --accent-magenta: #e50cee;
+  --accent-blue: #358cf7;
+  --accent-lavender: #c9aad9;
+  --border: #2a2f55;
+}

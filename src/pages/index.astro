@@ -1,9 +1,15 @@
 ---
+import Footer from '../components/Footer.astro';
+import IntroHeader from '../components/IntroHeader.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
+import { site } from '../data/site';
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Justin Telmo" description="Senior back-end and full-stack engineer with 13+ years in games.">
-  <ThemeToggle />
-  <h1>Justin Telmo</h1>
+<Base title={site.name} description={site.tagline}>
+  <IntroHeader site={site}>
+    <ThemeToggle />
+  </IntroHeader>
+  <main class="container"></main>
+  <Footer links={site.links} />
 </Base>

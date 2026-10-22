@@ -1,0 +1,64 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/Avi2.png';
+import type { site as siteData } from '../data/site';
+import ContactLinks from './ContactLinks.astro';
+
+interface Props {
+  site: typeof siteData;
+}
+
+const { site } = Astro.props;
+---
+
+<header class="intro container">
+  <div class="top-row">
+    <Image src={logo} alt="" width={48} height={48} class="logo" loading="eager" />
+    <h1>{site.name}</h1>
+    <div class="toggle"><slot /></div>
+  </div>
+  <p class="tagline">{site.tagline}</p>
+  <p class="facts">{site.facts.join(' · ')}</p>
+  <ContactLinks links={site.links} />
+</header>
+
+<style>
+  .intro {
+    padding-block: 1.5rem 1rem;
+  }
+
+  .top-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .logo {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+  }
+
+  h1 {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: clamp(1.6rem, 1.1rem + 2.5vw, 2.6rem);
+    line-height: 1.15;
+  }
+
+  .toggle {
+    flex-shrink: 0;
+  }
+
+  .tagline {
+    margin: 0.75rem 0 0.25rem;
+    font-size: 1.125rem;
+  }
+
+  .facts {
+    margin: 0 0 0.5rem;
+    color: var(--text-muted);
+  }
+</style>

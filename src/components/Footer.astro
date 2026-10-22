@@ -1,0 +1,20 @@
+---
+import type { SiteLink } from '../data/site';
+import ContactLinks from './ContactLinks.astro';
+
+interface Props {
+  links: SiteLink[];
+}
+---
+
+<footer class="container">
+  <ContactLinks links={Astro.props.links} />
+</footer>
+
+<style>
+  footer {
+    margin-top: 4rem;
+    padding-block: 2rem;
+    border-top: 1px solid var(--border);
+  }
+</style>

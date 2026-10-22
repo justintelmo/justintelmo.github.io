@@ -1,0 +1,42 @@
+---
+import type { SiteLink } from '../data/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  links: SiteLink[];
+}
+
+const { links } = Astro.props;
+---
+
+<ul class="contact">
+  {
+    links.map((link) => (
+      <li>
+        <a href={link.href}>
+          <Icon name={link.icon} />
+          {link.label}
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contact a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,12 @@
+# Original resume contains a phone number; publish a redacted copy as public/resume.pdf instead
+jtelmo-engineering-resume-2026.pdf
+
+node_modules/
+dist/
+.astro/
+test-results/
+playwright-report/
+
+# Planning docs and agent workspace stay local; only the site itself is committed
+docs/superpowers/
+.superpowers/

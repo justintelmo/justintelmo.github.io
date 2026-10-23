@@ -3,15 +3,18 @@ import { getCollection } from 'astro:content';
 import FeaturedProject from '../components/FeaturedProject.astro';
 import Footer from '../components/Footer.astro';
 import IntroHeader from '../components/IntroHeader.astro';
+import JourneyTimeline from '../components/JourneyTimeline.astro';
 import ProjectArchive from '../components/ProjectArchive.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import { site } from '../data/site';
 import Base from '../layouts/Base.astro';
-import { sortArchive, sortProjects } from '../lib/projects';
+import { resolveJobProjects, sortArchive, sortJobs, sortProjects } from '../lib/projects';
 
 const projects = await getCollection('projects');
 const featured = sortProjects(projects);
 const archive = sortArchive(projects);
+// Resolving here means a job that names a missing project fails the build.
+const journey = sortJobs(await getCollection('jobs')).map((job) => ({ job, projects: resolveJobProjects(job, projects) }));
 ---
 
 <Base title={site.name} description={site.tagline}>
@@ -29,13 +32,21 @@ const archive = sortArchive(projects);
         <ProjectArchive projects={archive} />
       </section>
     </section>
+    <section id="journey" aria-labelledby="journey-heading">
+      <h2 id="journey-heading">Journey</h2>
+      <JourneyTimeline stops={journey} />
+    </section>
   </main>
   <Footer links={site.links} />
 </Base>
 
 <style>
+  #projects h2 {
+    margin-top: 2rem;
+  }
+
   h2 {
-    margin: 2rem 0 1.5rem;
+    margin: 4rem 0 1.5rem;
     font-size: 1.75rem;
   }
 

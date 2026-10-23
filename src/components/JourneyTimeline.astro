@@ -1,0 +1,34 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import JourneyStop from './JourneyStop.astro';
+
+interface Props {
+  stops: { job: CollectionEntry<'jobs'>; projects: CollectionEntry<'projects'>[] }[];
+}
+
+const { stops } = Astro.props;
+---
+
+<ol class="timeline">
+  {stops.map(({ job, projects }) => <JourneyStop job={job} projects={projects} />)}
+</ol>
+
+<style>
+  .timeline {
+    position: relative;
+    display: grid;
+    gap: 2rem;
+    margin: 0;
+    padding: 0 0 0 0.5rem;
+    list-style: none;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    inset: 0.5rem auto 0.5rem 0.5rem;
+    width: 2px;
+    margin-left: -1px;
+    background: linear-gradient(var(--accent-magenta), var(--accent-blue));
+  }
+</style>

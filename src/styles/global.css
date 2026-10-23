@@ -54,3 +54,9 @@ a:hover {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Breathing room above cards and rows when an in-page link jumps to them. */
+[id^='project-'],
+[id^='archive-'] {
+  scroll-margin-top: 1.5rem;
+}

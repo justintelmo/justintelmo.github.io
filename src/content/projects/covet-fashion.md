@@ -20,9 +20,9 @@ stats:
     sourceUrl: https://www.fool.com/earnings/call-transcripts/2020/02/05/glu-mobile-inc-gluu-q4-2019-earnings-call-transcri.aspx
 tech: [PHP, Kotlin, MySQL, AWS ECS, GitLab CI, Jenkins]
 images:
-  - src: ../../assets/projects/covet-fashion/app-store-1.jpg
-    alt: "Two styled models in ball gowns under the heading Be the top stylist"
-    attribution: https://apps.apple.com/us/app/covet-fashion-dress-up-game/id620112416
+  - src: ../../assets/projects/covet-fashion/facebook.jpg
+    alt: "Three models in dark fantasy outfits, the center one in a purple winged gown, above the Covet Fashion logo"
+    attribution: https://www.facebook.com/covetfashion/
 links:
   - label: App Store
     url: https://apps.apple.com/us/app/covet-fashion-dress-up-game/id620112416

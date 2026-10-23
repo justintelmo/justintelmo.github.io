@@ -15,8 +15,8 @@ contributions:
 stats: []
 tech: [PHP, MySQL, Redis, Memcached, Cocos2d-JS]
 images:
-  - src: ../../assets/projects/big-fish-casino/app-store-1.jpg
-    alt: "Big Fish Casino slot machine screen showing a Buffalo Gold big win"
+  - src: ../../assets/projects/big-fish-casino/app-store.png
+    alt: "Big Fish Casino app icon: a buffalo above the game's logo"
     attribution: https://apps.apple.com/us/app/big-fish-casino-slots-games/id538212549
 links:
   - label: App Store

@@ -1,0 +1,86 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { archiveYear, projectAnchor } from '../lib/projects';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+
+const { projects } = Astro.props;
+---
+
+<div class="archive">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Year</th>
+        <th scope="col">Game</th>
+        <th scope="col" class="col-extra">Studio</th>
+        <th scope="col" class="col-extra">Platform</th>
+        <th scope="col" class="col-extra">Built with</th>
+        <th scope="col">Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        projects.map((project) => {
+          const { data } = project;
+          const link = data.nda ? undefined : data.links[0];
+          return (
+            <tr id={data.featured ? undefined : projectAnchor(project)}>
+              <td class="year">{archiveYear(project)}</td>
+              <th scope="row">{data.title}</th>
+              <td class="col-extra">{data.studio}</td>
+              <td class="col-extra">{data.platforms.join(', ')}</td>
+              <td class="col-extra">{data.tech.join(' · ')}</td>
+              <td>{link ? <a href={link.url}>{link.label}</a> : <span class="muted">Not public</span>}</td>
+            </tr>
+          );
+        })
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  th,
+  td {
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  tbody th {
+    font-weight: 600;
+  }
+
+  .year,
+  .muted {
+    color: var(--text-muted);
+  }
+
+  td a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-block: -0.5rem;
+  }
+
+  @media (max-width: 639.98px) {
+    .col-extra {
+      display: none;
+    }
+  }
+</style>

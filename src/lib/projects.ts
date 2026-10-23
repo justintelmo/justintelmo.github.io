@@ -12,7 +12,10 @@ export function sortProjects<P extends ProjectLike>(projects: P[]): P[] {
 
 export function sortArchive<P extends ProjectLike>(projects: P[]): P[] {
   return [...projects].sort(
-    (a, b) => b.data.workedFrom.localeCompare(a.data.workedFrom) || a.data.title.localeCompare(b.data.title),
+    (a, b) =>
+      archiveYear(b) - archiveYear(a) ||
+      b.data.workedFrom.localeCompare(a.data.workedFrom) ||
+      a.data.title.localeCompare(b.data.title),
   );
 }
 

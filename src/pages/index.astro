@@ -1,15 +1,51 @@
 ---
+import { getCollection } from 'astro:content';
+import FeaturedProject from '../components/FeaturedProject.astro';
 import Footer from '../components/Footer.astro';
 import IntroHeader from '../components/IntroHeader.astro';
+import ProjectArchive from '../components/ProjectArchive.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import { site } from '../data/site';
 import Base from '../layouts/Base.astro';
+import { sortArchive, sortProjects } from '../lib/projects';
+
+const projects = await getCollection('projects');
+const featured = sortProjects(projects);
+const archive = sortArchive(projects);
 ---
 
 <Base title={site.name} description={site.tagline}>
   <IntroHeader site={site}>
     <ThemeToggle />
   </IntroHeader>
-  <main class="container"></main>
+  <main class="container">
+    <section id="projects" aria-labelledby="projects-heading">
+      <h2 id="projects-heading">Projects</h2>
+      <div class="featured">
+        {featured.map((project, index) => <FeaturedProject project={project} reverse={index % 2 === 1} />)}
+      </div>
+      <section id="archive" aria-labelledby="archive-heading">
+        <h3 id="archive-heading">Everything else</h3>
+        <ProjectArchive projects={archive} />
+      </section>
+    </section>
+  </main>
   <Footer links={site.links} />
 </Base>
+
+<style>
+  h2 {
+    margin: 2rem 0 1.5rem;
+    font-size: 1.75rem;
+  }
+
+  .featured {
+    display: grid;
+    gap: 3.5rem;
+  }
+
+  #archive h3 {
+    margin: 3.5rem 0 0.75rem;
+    font-size: 1.4rem;
+  }
+</style>

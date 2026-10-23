@@ -24,7 +24,7 @@ test('every "See" link scrolls its project into view', async ({ page }) => {
   for (let i = 0; i < count; i++) {
     const link = links.nth(i);
     const href = (await link.getAttribute('href'))!;
-    expect(href).toMatch(/^#(project|archive)-/);
+    expect(href).toMatch(/^#project-/);
     await link.click();
     await expect(page.locator(href)).toBeInViewport();
   }

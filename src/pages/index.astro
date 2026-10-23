@@ -5,19 +5,16 @@ import FeaturedProject from '../components/FeaturedProject.astro';
 import Footer from '../components/Footer.astro';
 import IntroHeader from '../components/IntroHeader.astro';
 import JourneyTimeline from '../components/JourneyTimeline.astro';
-import ProjectArchive from '../components/ProjectArchive.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import Toolbox from '../components/Toolbox.astro';
 import { site } from '../data/site';
 import { skillGroups } from '../data/skills';
 import Base from '../layouts/Base.astro';
-import { resolveJobProjects, sortArchive, sortJobs, sortProjects } from '../lib/projects';
+import { resolveJobProjects, sortJobs, sortProjects } from '../lib/projects';
 
-const projects = await getCollection('projects');
-const featured = sortProjects(projects);
-const archive = sortArchive(projects);
-// Resolving here means a job that names a missing project fails the build.
-const journey = sortJobs(await getCollection('jobs')).map((job) => ({ job, projects: resolveJobProjects(job, projects) }));
+const featured = sortProjects(await getCollection('projects'));
+// Resolving against the cards means a job that names a missing or hidden project fails the build.
+const journey = sortJobs(await getCollection('jobs')).map((job) => ({ job, projects: resolveJobProjects(job, featured) }));
 ---
 
 <Base title={site.name} description={site.tagline}>
@@ -30,10 +27,6 @@ const journey = sortJobs(await getCollection('jobs')).map((job) => ({ job, proje
       <div class="featured">
         {featured.map((project, index) => <FeaturedProject project={project} reverse={index % 2 === 1} />)}
       </div>
-      <section id="archive" aria-labelledby="archive-heading">
-        <h3 id="archive-heading">Everything else</h3>
-        <ProjectArchive projects={archive} />
-      </section>
     </section>
     <section id="journey" aria-labelledby="journey-heading">
       <h2 id="journey-heading">Journey</h2>
@@ -64,10 +57,5 @@ const journey = sortJobs(await getCollection('jobs')).map((job) => ({ job, proje
   .featured {
     display: grid;
     gap: 3.5rem;
-  }
-
-  #archive h3 {
-    margin: 3.5rem 0 0.75rem;
-    font-size: 1.4rem;
   }
 </style>

@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const FEATURED_COUNT = 6;
-const PROJECT_COUNT = 7;
+const FEATURED_COUNT = 7;
 const NDA_ANCHOR = '#project-game-band-unreleased';
 
 test('there is one card per featured project', async ({ page }) => {
@@ -43,34 +42,22 @@ test('every stat names its year and links its source', async ({ page }) => {
   }
 });
 
-test('the archive has a row per project', async ({ page }) => {
+test('every card names its platforms', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('#archive tbody tr')).toHaveCount(PROJECT_COUNT);
+  const platforms = page.locator('#projects article .platforms');
+  await expect(platforms).toHaveCount(FEATURED_COUNT);
+  for (const line of await platforms.all()) {
+    await expect(line).not.toBeEmpty();
+  }
 });
 
-test('the NDA row says Not public and has no image', async ({ page }) => {
+test('a card shows the launch year when it is known', async ({ page }) => {
   await page.goto('/');
-  const row = page.locator('#archive tbody tr', { hasText: 'Unreleased Title' });
-  await expect(row).toHaveCount(1);
-  await expect(row.locator('td').last()).toHaveText('Not public');
-  await expect(row.locator('img, a')).toHaveCount(0);
+  await expect(page.locator('#project-big-fish-casino .platforms')).toHaveText('iOS, Android, Facebook · Launched 2012');
+  await expect(page.locator('#project-big-fish-bingo .platforms')).toHaveText('iOS, Android');
 });
 
-for (const { width, visible } of [
-  { width: 375, visible: false },
-  { width: 1280, visible: true },
-]) {
-  test.describe(`at ${width}px wide`, () => {
-    test.use({ viewport: { width, height: 800 } });
-
-    test(`the extra archive columns are ${visible ? 'shown' : 'hidden'}`, async ({ page }) => {
-      await page.goto('/');
-      const cells = page.locator('#archive .col-extra');
-      expect(await cells.count()).toBeGreaterThan(0);
-      for (const cell of await cells.all()) {
-        if (visible) await expect(cell).toBeVisible();
-        else await expect(cell).toBeHidden();
-      }
-    });
-  });
-}
+test('there is no archive table', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#archive, #projects table')).toHaveCount(0);
+});

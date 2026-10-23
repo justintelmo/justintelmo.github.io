@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  archiveYear,
   projectAnchor,
   resolveJobProjects,
-  sortArchive,
   sortJobs,
   sortProjects,
 } from '../../src/lib/projects';
@@ -23,35 +21,10 @@ describe('sortProjects', () => {
   });
 });
 
-describe('sortArchive', () => {
-  it('lists everything newest first, ties by title', () => {
-    expect(sortArchive(projects).map((p) => p.id)).toEqual(['battle-pirates', 'big-fish-bingo', 'big-fish-casino']);
-  });
-
-  it('sorts by the year the table shows, not when work started', () => {
-    const oldGame = project('old-game', { title: 'Old Game', featured: true, order: 1, workedFrom: '2016-05', launched: 2011 });
-    const newGame = project('new-game', { title: 'New Game', featured: true, order: 2, workedFrom: '2014-01', launched: 2013 });
-    expect(sortArchive([oldGame, newGame]).map((p) => p.id)).toEqual(['new-game', 'old-game']);
-  });
-});
-
-describe('archiveYear', () => {
-  it('prefers the launch year', () => {
-    expect(archiveYear(bingo)).toBe(2014);
-  });
-
-  it('falls back to the year work started', () => {
-    expect(archiveYear(pirates)).toBe(2016);
-  });
-});
-
 describe('projectAnchor', () => {
-  it('points featured projects at their card', () => {
+  it('points every project at its card', () => {
     expect(projectAnchor(pirates)).toBe('project-battle-pirates');
-  });
-
-  it('points other projects at their archive row', () => {
-    expect(projectAnchor(bingo)).toBe('archive-big-fish-bingo');
+    expect(projectAnchor(bingo)).toBe('project-big-fish-bingo');
   });
 });
 

@@ -49,6 +49,9 @@ const links = data.nda ? [] : data.links;
       {data.studio} · {formatDateRange(data.workedFrom, data.workedTo)}
     </p>
     <p class="role">{data.role}</p>
+    <p class="platforms">
+      {data.platforms.join(', ')}{data.launched && ` · Launched ${data.launched}`}
+    </p>
 
     <h4>What I did</h4>
     <ul class="contributions">
@@ -149,7 +152,8 @@ const links = data.nda ? [] : data.links;
   }
 
   .meta,
-  .role {
+  .role,
+  .platforms {
     margin: 0.25rem 0 0;
     color: var(--text-muted);
   }

@@ -5,12 +5,12 @@ platforms: [iOS, Android]
 role: Junior Game Engineer
 workedFrom: 2013-10
 workedTo: 2014-09
-featured: false
-order: 0
+featured: true
+order: 7
 contributions:
   - Built game features and back-end services on PHP, MySQL, Redis, and Memcached.
-  - Maintained an internal tool dedicated to helping designers create in-game powerups
-  - Helped move client-authoritative gameplay to server
+  - Maintained an internal tool dedicated to helping designers create in-game powerups.
+  - Helped move client-authoritative gameplay to server.
 stats: []
 tech: [PHP, MySQL, Redis, Memcached, Cocos2d-JS]
 images: 

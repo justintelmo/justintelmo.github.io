@@ -19,7 +19,7 @@ tech: [TypeScript, React, Vite, Node.js, AWS, Docker, Unity]
 images:
   - src: ../../assets/projects/storyloom/logo.png
     alt: "StoryLoom logo in white block letters on a red background"
-    attribution: https://www.businesswire.com/news/home/20231004480152/en/Pixelberry-Studios-Launches-StoryLoom-Out-of-Beta-to-Give-Interactive-Content-Creators-Publishing-Freedom
+    attribution: https://bio.site/GetStoryLoom
 links:
   - label: Launch announcement
     url: https://www.businesswire.com/news/home/20231004480152/en/Pixelberry-Studios-Launches-StoryLoom-Out-of-Beta-to-Give-Interactive-Content-Creators-Publishing-Freedom

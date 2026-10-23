@@ -10,7 +10,7 @@
     "check": "astro check",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "ci": "astro check && vitest run && astro build && playwright test"
+    "ci": "astro check && astro build && vitest run && playwright test"
   },
   "dependencies": {
     "astro": "7.3.8"

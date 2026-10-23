@@ -11,12 +11,15 @@ function htmlFiles(dir: string): string[] {
   });
 }
 
-// CI builds before testing. Locally, run `npm run build` first or this scan skips.
-describe.skipIf(!existsSync('dist'))('phone number scan of the built site (needs `npm run build`)', () => {
-  const files = htmlFiles('dist');
+const built = existsSync('dist');
+
+// `npm run ci` builds before testing. Locally, run `npm run build` first or this scan skips.
+// In CI a missing dist/ fails instead, so the guard can't quietly turn itself off.
+describe.skipIf(!built && !process.env.CI)('phone number scan of the built site (needs `npm run build`)', () => {
+  const files = built ? htmlFiles('dist') : [];
 
   it('finds built pages to scan', () => {
-    expect(files.length).toBeGreaterThan(0);
+    expect(files.length, 'dist/ is missing or empty; build before running this test').toBeGreaterThan(0);
   });
 
   it.each(files)('%s has no phone number', (file) => {

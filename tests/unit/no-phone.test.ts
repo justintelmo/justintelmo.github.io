@@ -1,9 +1,8 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { PHONE } from './phone';
 
-// The resume has a phone number on it. Drafting copy from it makes a leak easy, so scan for one.
-const PHONE = /\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/;
 const BINARY = new Set(['.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif', '.ico', '.pdf', '.woff', '.woff2']);
 
 function textFiles(dir: string): string[] {

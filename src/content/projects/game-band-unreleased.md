@@ -6,7 +6,7 @@ platforms: [Multi-platform]
 role: Senior Back-End & Full-Stack Engineer
 workedFrom: 2024-04
 workedTo: 2025-03
-featured: false
+featured: true
 order: 2
 nda: true
 contributions:

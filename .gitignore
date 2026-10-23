@@ -10,3 +10,8 @@ playwright-report/
 # Planning docs and agent workspace stay local; only the site itself is committed
 docs/superpowers/
 .superpowers/
+
+# Impeccable design context stays local too
+PRODUCT.md
+DESIGN.md
+.impeccable/

@@ -1,9 +1,7 @@
 ---
-# DRAFT
-# DRAFT: confirm the Bingo to Casino switch date (2014-10 is a placeholder).
 title: Big Fish Casino
 studio: Big Fish Games
-platforms: [iOS, Android]
+platforms: [iOS, Android, Facebook]
 role: Game Engineer
 workedFrom: 2014-10
 workedTo: 2015-09

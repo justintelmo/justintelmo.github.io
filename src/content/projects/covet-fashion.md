@@ -1,5 +1,4 @@
 ---
-# DRAFT
 title: Covet Fashion
 studio: EA / Glu Mobile
 platforms: [iOS, Android]

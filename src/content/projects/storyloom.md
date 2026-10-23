@@ -1,5 +1,4 @@
 ---
-# DRAFT
 title: StoryLoom
 studio: Pixelberry Studios
 platforms: [iOS, Android]
@@ -11,9 +10,9 @@ featured: true
 order: 3
 contributions:
   - Helped take the game to a global launch on iOS and Android.
-  - Built a Vite and React mobile client that cut app size by more than half.
+  - Built a Vite and React mobile client that cut app size by more than 50%.
   - Built Node.js microservices on AWS and Docker serving thousands of daily players.
-  - Built a JSBridge layer so the web client and the native Unity clients could talk.
+  - Maintained a JSBridge layer so the web client and the native Unity clients could talk.
 stats: []
 tech: [TypeScript, React, Vite, Node.js, AWS, Docker, Unity]
 images:

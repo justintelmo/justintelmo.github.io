@@ -5,5 +5,4 @@ from: 2013-10
 to: 2015-09
 projectSlugs: [big-fish-bingo, big-fish-casino]
 ---
-<!-- DRAFT -->
-My first job in games. I started on Big Fish Bingo at Self Aware Games, a Big Fish studio, and was promoted to Big Fish Casino within a year.
+My first job in games. I started as a Junior Game Engineer on the Big Fish Bingo team at Self-Aware Games, which had been recently acquired by Big Fish Games at the time. Within a year I had been promoted to a Game Engineer and moved to the Big Fish Casino team, which largely operated on a PHP back-end and JavaScript front-end. This was where I got my first taste of working as a full-stack games engineer, although my title did not explicitly mention that. On both Big Fish Bingo and Big Fish Casino I worked on customer-facing features as well as internal tools. 

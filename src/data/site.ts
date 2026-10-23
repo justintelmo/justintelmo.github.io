@@ -6,13 +6,10 @@ export type SiteLink = {
 
 export const site = {
   name: 'Justin Telmo',
-  // DRAFT
-  tagline: 'Senior back-end and full-stack engineer. I build the servers and tools behind games people play.',
-  // DRAFT
-  facts: ['13+ years in games', 'PHP, Kotlin, TypeScript', 'AWS and Docker'],
-  // DRAFT
+  tagline: 'Senior back-end and full-stack engineer. I build the features and tools for games people play.',
+  facts: ['13+ years in games', 'C#, TypeScript, PHP', 'AWS and Docker'],
   about:
-    "I've spent more than 13 years on the parts of games most players never see: the servers, pipelines, and tools that keep them running. I like work that makes a team faster, and I'm getting better every week at building with AI coding tools. This site is one of those projects.",
+    "I've spent more than 13 years on the parts of games most players never see: the servers, pipelines, and tools that keep them running. I like work that makes a team more efficient.",
   links: [
     { label: 'Email', href: 'mailto:justin.telmo@gmail.com', icon: 'email' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/justin-telmo', icon: 'linkedin' },

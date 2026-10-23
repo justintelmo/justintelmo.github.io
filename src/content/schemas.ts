@@ -1,7 +1,5 @@
 import { z } from 'astro/zod';
 
-// Kept apart from content.config.ts so unit tests can build the schemas without Astro's runtime.
-
 export const yearMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use YYYY-MM');
 
 export const statSchema = z.object({

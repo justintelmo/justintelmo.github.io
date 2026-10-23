@@ -1,5 +1,4 @@
 ---
-# DRAFT
 title: Unreleased Title
 studio: The Game Band
 platforms: [Multi-platform]
@@ -14,7 +13,7 @@ contributions:
   - Wrote Kotlin microservices for player voting, achievements, and purchases.
   - Built a service around a large language model API to drive dynamic story beats and dialogue.
 stats: []
-tech: [Kotlin, Docker, AWS, Jenkins]
+tech: [Unity, C#, Pragma, Kotlin, Docker, AWS, Jenkins]
 images: []
 links: []
 ---

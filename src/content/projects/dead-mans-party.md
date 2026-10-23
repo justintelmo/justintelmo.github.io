@@ -1,5 +1,4 @@
 ---
-# DRAFT
 title: "Dead Man's Party: A Knives Out Game"
 studio: The Game Band
 platforms: [Netflix TV, iOS, Android]
@@ -15,7 +14,7 @@ contributions:
   - Built the device communication backbone and a 12-language localization pipeline.
   - Wired the Netflix Haptics API so phone vibration stays in sync with TV gameplay.
 stats: []
-tech: [Netflix SDK, Netflix Haptics API]
+tech: [Unity, C#, Netflix SDK, Netflix Haptics API]
 images:
   - src: ../../assets/projects/dead-mans-party/teaser.png
     alt: "Animated title art from Dead Man's Party: a silhouetted guest in a doorway behind the body of the victim"

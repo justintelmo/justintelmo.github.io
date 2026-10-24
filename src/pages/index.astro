@@ -22,6 +22,10 @@ const journey = sortJobs(await getCollection('jobs')).map((job) => ({ job, proje
     <ThemeToggle />
   </IntroHeader>
   <main class="container">
+    <section id="about" aria-labelledby="about-heading">
+      <h2 id="about-heading">About</h2>
+      <About text={site.about} />
+    </section>
     <section id="projects" aria-labelledby="projects-heading">
       <h2 id="projects-heading">Projects</h2>
       <div class="featured">
@@ -36,22 +40,19 @@ const journey = sortJobs(await getCollection('jobs')).map((job) => ({ job, proje
       <h2 id="toolbox-heading">Toolbox</h2>
       <Toolbox groups={skillGroups} />
     </section>
-    <section id="about" aria-labelledby="about-heading">
-      <h2 id="about-heading">About</h2>
-      <About text={site.about} />
-    </section>
   </main>
   <Footer links={site.links} />
 </Base>
 
 <style>
-  #projects h2 {
-    margin-top: 2rem;
-  }
-
   h2 {
     margin: 4rem 0 1.5rem;
     font-size: 1.75rem;
+  }
+
+  /* The header already supplies space above the first section. */
+  main > section:first-child > h2 {
+    margin-top: 2rem;
   }
 
   .featured {

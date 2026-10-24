@@ -2,9 +2,9 @@ import { expect, test } from '@playwright/test';
 
 const GROUPS = ['Languages', 'Frameworks', 'Data', 'Infrastructure'];
 
-test('sections appear in the order the spec lists them', async ({ page }) => {
+test('sections appear in page order', async ({ page }) => {
   await page.goto('/');
-  const selectors = ['header.intro', '#projects', '#journey', '#toolbox', '#about', 'footer'];
+  const selectors = ['header.intro', '#about', '#projects', '#journey', '#toolbox', 'footer'];
   const tops: number[] = [];
   for (const selector of selectors) {
     const box = await page.locator(selector).boundingBox();

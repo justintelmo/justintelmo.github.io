@@ -32,12 +32,12 @@ const journey = sortJobs(await getCollection('jobs')).map((job) => ({ job, proje
         {featured.map((project, index) => <FeaturedProject project={project} reverse={index % 2 === 1} />)}
       </div>
     </section>
-    <section id="journey" aria-labelledby="journey-heading">
-      <h2 id="journey-heading">Journey</h2>
+    <section id="experience" aria-labelledby="experience-heading">
+      <h2 id="experience-heading">Experience</h2>
       <JourneyTimeline stops={journey} />
     </section>
-    <section id="toolbox" aria-labelledby="toolbox-heading">
-      <h2 id="toolbox-heading">Toolbox</h2>
+    <section id="skills" aria-labelledby="skills-heading">
+      <h2 id="skills-heading">Skills</h2>
       <Toolbox groups={skillGroups} />
     </section>
   </main>

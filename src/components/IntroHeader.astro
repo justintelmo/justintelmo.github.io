@@ -11,16 +11,19 @@ interface Props {
 const { site } = Astro.props;
 ---
 
-<header class="intro container">
+<div class="intro">
   <div class="top-row">
     <Image src={logo} alt="" width={48} height={48} class="logo" loading="eager" />
     <h1>{site.name}</h1>
-    <div class="toggle"><slot /></div>
   </div>
   <p class="tagline">{site.tagline}</p>
   <p class="facts">{site.facts.join(' · ')}</p>
+  <p class="actions">
+    <a class="button primary" href="/resume.pdf">Resume</a>
+    <a class="button" href="/#contact">Contact</a>
+  </p>
   <ContactLinks links={site.links} />
-</header>
+</div>
 
 <style>
   .intro {
@@ -48,10 +51,6 @@ const { site } = Astro.props;
     line-height: 1.15;
   }
 
-  .toggle {
-    flex-shrink: 0;
-  }
-
   .tagline {
     margin: 0.75rem 0 0.25rem;
     font-size: 1.125rem;
@@ -60,5 +59,12 @@ const { site } = Astro.props;
   .facts {
     margin: 0 0 0.5rem;
     color: var(--text-muted);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1rem 0 0.5rem;
   }
 </style>

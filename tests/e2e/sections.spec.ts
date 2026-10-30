@@ -4,7 +4,7 @@ const GROUPS = ['Languages', 'Frameworks', 'Data', 'Infrastructure'];
 
 test('sections appear in page order', async ({ page }) => {
   await page.goto('/');
-  const selectors = ['header.intro', '#about', '#projects', '#experience', '#skills', 'footer'];
+  const selectors = ['.intro', '#about', '#projects', '#experience', '#skills', 'footer'];
   const tops: number[] = [];
   for (const selector of selectors) {
     const box = await page.locator(selector).boundingBox();

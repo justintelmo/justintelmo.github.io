@@ -5,7 +5,7 @@ import FeaturedProject from '../components/FeaturedProject.astro';
 import Footer from '../components/Footer.astro';
 import IntroHeader from '../components/IntroHeader.astro';
 import JourneyTimeline from '../components/JourneyTimeline.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
+import SiteHeader from '../components/SiteHeader.astro';
 import Toolbox from '../components/Toolbox.astro';
 import { site } from '../data/site';
 import { skillGroups } from '../data/skills';
@@ -18,10 +18,9 @@ const journey = sortJobs(await getCollection('jobs')).map((job) => ({ job, proje
 ---
 
 <Base title={site.name} description={site.tagline}>
-  <IntroHeader site={site}>
-    <ThemeToggle />
-  </IntroHeader>
+  <SiteHeader name={site.name} />
   <main class="container">
+    <IntroHeader site={site} />
     <section id="about" aria-labelledby="about-heading">
       <h2 id="about-heading">About</h2>
       <About text={site.about} />
@@ -50,8 +49,8 @@ const journey = sortJobs(await getCollection('jobs')).map((job) => ({ job, proje
     font-size: 1.75rem;
   }
 
-  /* The header already supplies space above the first section. */
-  main > section:first-child > h2 {
+  /* The intro already supplies space above the first section. */
+  :global(.intro) + section > h2 {
     margin-top: 2rem;
   }
 

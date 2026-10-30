@@ -7,20 +7,20 @@ const CONTACT_HREFS = [
   '/resume.pdf',
 ];
 
-test('the intro header names Justin', async ({ page }) => {
+test('the hero names Justin', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('header h1')).toHaveText('Justin Telmo');
+  await expect(page.locator('.intro h1')).toHaveText('Justin Telmo');
 });
 
-test('the intro header links to every contact channel', async ({ page }) => {
+test('the hero links to every contact channel', async ({ page }) => {
   await page.goto('/');
-  const hrefs = await page.locator('header .contact a').evaluateAll((links) => links.map((a) => a.getAttribute('href')));
+  const hrefs = await page.locator('.intro .contact a').evaluateAll((links) => links.map((a) => a.getAttribute('href')));
   expect(hrefs).toEqual(CONTACT_HREFS);
 });
 
 test('every contact link is at least 44px tall', async ({ page }) => {
   await page.goto('/');
-  const links = page.locator('header .contact a');
+  const links = page.locator('.intro .contact a');
   await expect(links).toHaveCount(CONTACT_HREFS.length);
   for (const box of await links.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))) {
     expect(box).toBeGreaterThanOrEqual(44);
@@ -30,10 +30,10 @@ test('every contact link is at least 44px tall', async ({ page }) => {
 test.describe('at 320px wide', () => {
   test.use({ viewport: { width: 320, height: 568 } });
 
-  test('the theme toggle does not overlap the name', async ({ page }) => {
+  test('the theme toggle does not overlap the name in the header', async ({ page }) => {
     await page.goto('/');
     const toggle = (await page.locator('#theme-toggle').boundingBox())!;
-    const name = (await page.locator('header h1').boundingBox())!;
+    const name = (await page.locator('.site-header .name').boundingBox())!;
     const overlaps =
       toggle.x < name.x + name.width &&
       name.x < toggle.x + toggle.width &&

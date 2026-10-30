@@ -50,4 +50,13 @@ describe('theme.css', () => {
     const ratio = contrastRatio(tokens[mode][fg]!, tokens[mode][bg]!);
     expect(ratio).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
   });
+
+  // Filled buttons flip the pair: page background as text on an accent fill (rest and hover).
+  const buttonPairs = (['light', 'dark'] as const).flatMap((mode) =>
+    ['accent-blue', 'accent-magenta'].map((fill) => [mode, fill] as const),
+  );
+
+  it.each(buttonPairs)('%s: --bg on a --%s button meets WCAG AA', (mode, fill) => {
+    expect(contrastRatio(tokens[mode].bg!, tokens[mode][fill]!)).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
+  });
 });

@@ -10,7 +10,7 @@ test.describe('at 320x568', () => {
 
   test('the contact links are within one scroll of the top', async ({ page }) => {
     await page.goto('/');
-    const box = (await page.locator('header .contact a').last().boundingBox())!;
+    const box = (await page.locator('.intro .contact a').last().boundingBox())!;
     expect(box.y + box.height).toBeLessThanOrEqual(568 * 2);
   });
 });
@@ -20,7 +20,7 @@ test.describe('at 1280x800', () => {
 
   test('the intro and the first project start above the fold', async ({ page }) => {
     await page.goto('/');
-    for (const selector of ['header .tagline', 'header .facts', 'header .contact']) {
+    for (const selector of ['.intro .tagline', '.intro .facts', '.intro .contact']) {
       const box = (await page.locator(selector).boundingBox())!;
       expect(box.y + box.height, selector).toBeLessThanOrEqual(800);
     }

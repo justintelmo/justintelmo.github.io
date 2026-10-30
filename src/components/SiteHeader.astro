@@ -1,0 +1,159 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  name: string;
+}
+
+const { name } = Astro.props;
+
+// Rooted at "/" so the same nav works from pages other than home.
+const sections = [
+  { label: 'About', href: '/#about' },
+  { label: 'Projects', href: '/#projects' },
+  { label: 'Experience', href: '/#experience' },
+  { label: 'Skills', href: '/#skills' },
+  { label: 'Contact', href: '/#contact' },
+];
+---
+
+<header class="site-header">
+  <div class="bar container">
+    <a class="name" href="/">{name}</a>
+    <nav aria-label="Sections">
+      <ul>
+        {
+          sections.map((section) => (
+            <li>
+              <a href={section.href}>{section.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <a class="button resume" href="/resume.pdf">Resume</a>
+    <div class="toggle"><ThemeToggle /></div>
+  </div>
+</header>
+
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.site-header nav a')];
+  // Only links into this page have sections to track. Elsewhere the nav just navigates.
+  const tracked = links.flatMap((link) => {
+    const section = link.pathname === location.pathname ? document.getElementById(link.hash.slice(1)) : null;
+    return section ? [{ link, section }] : [];
+  });
+
+  // The current section is the last one whose top has passed a third of the way down the screen.
+  // The bottom of the page is special: the last few sections may never get that high. There, a section
+  // the visitor just jumped to (it's in the URL hash) wins if it's on screen, otherwise the last one does.
+  const update = () => {
+    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    const jumpedTo = tracked.find(({ section }) => `#${section.id}` === location.hash);
+    const onScreen = (section: HTMLElement) => section.getBoundingClientRect().top < window.innerHeight;
+    const current = atBottom
+      ? jumpedTo && onScreen(jumpedTo.section)
+        ? jumpedTo
+        : tracked.at(-1)
+      : tracked.findLast(({ section }) => section.getBoundingClientRect().top <= window.innerHeight / 3);
+    for (const { link } of tracked) {
+      if (link === current?.link) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    }
+  };
+
+  if (tracked.length > 0) {
+    window.addEventListener('scroll', update, { passive: true });
+    // A jump that doesn't scroll (already at the bottom) still changes which section was asked for.
+    window.addEventListener('hashchange', update);
+    update();
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  /* Phones: name, resume, and toggle on top, section links in a row below that scrolls sideways if needed.
+     The 48rem breakpoint and the header heights are mirrored by scroll-padding-top in global.css. */
+  .bar {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas:
+      'name resume toggle'
+      'nav nav nav';
+    align-items: center;
+    gap: 0 0.75rem;
+    padding-block: 0.25rem;
+  }
+
+  @media (min-width: 48rem) {
+    .bar {
+      grid-template-columns: auto 1fr auto auto;
+      grid-template-areas: 'name nav resume toggle';
+    }
+
+    nav ul {
+      justify-content: flex-end;
+    }
+  }
+
+  .name {
+    grid-area: name;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--text);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  nav {
+    grid-area: nav;
+    min-width: 0;
+    overflow-x: auto;
+  }
+
+  nav ul {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 0.5rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  nav a:hover {
+    color: var(--accent-magenta);
+  }
+
+  /* An underline as well as a color change, so the current section doesn't rely on color alone. */
+  nav a[aria-current] {
+    color: var(--text);
+    text-decoration: underline 2px var(--accent-magenta);
+    text-underline-offset: 0.35em;
+  }
+
+  .resume {
+    grid-area: resume;
+  }
+
+  .toggle {
+    grid-area: toggle;
+  }
+</style>

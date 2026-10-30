@@ -1,0 +1,67 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import Footer from '../../components/Footer.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import { site } from '../../data/site';
+import Base from '../../layouts/Base.astro';
+import { formatDateRange } from '../../lib/dates';
+import { sortProjects } from '../../lib/projects';
+
+// Same filter as the home page cards, so every card has a page and hidden projects have none.
+export async function getStaticPaths() {
+  const projects = sortProjects(await getCollection('projects'));
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+---
+
+<Base title={`${data.title} | ${site.name}`} description={data.summary}>
+  <SiteHeader name={site.name} />
+  <main class="container">
+    <h1>{data.title}</h1>
+    <p class="meta">
+      {data.studio} · {formatDateRange(data.workedFrom, data.workedTo)}
+    </p>
+    <p class="meta">{data.role}</p>
+    <div class="case-study"><Content /></div>
+  </main>
+  <Footer note={site.contactNote} links={site.links} />
+</Base>
+
+<style>
+  h1 {
+    margin: 2.5rem 0 0;
+    font-size: 2.25rem;
+    line-height: 1.2;
+  }
+
+  .meta {
+    margin: 0.25rem 0 0;
+    color: var(--text-muted);
+  }
+
+  .case-study {
+    max-width: 65ch;
+  }
+
+  .case-study :global(h2) {
+    margin: 2.5rem 0 0.75rem;
+    font-size: 1.5rem;
+  }
+
+  .case-study :global(h3) {
+    margin: 1.75rem 0 0.25rem;
+    font-size: 1.15rem;
+  }
+
+  .case-study :global(p) {
+    margin: 0.5rem 0 0;
+  }
+</style>

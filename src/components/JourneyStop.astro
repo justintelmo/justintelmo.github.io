@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry, render } from 'astro:content';
 import { formatDateRange } from '../lib/dates';
-import { projectAnchor } from '../lib/projects';
+import { projectPath } from '../lib/projects';
 
 interface Props {
   job: CollectionEntry<'jobs'>;
@@ -24,7 +24,7 @@ const several = projects.length > 1;
     {
       projects.map((project) => (
         <li>
-          <a href={`#${projectAnchor(project)}`}>
+          <a href={projectPath(project)}>
             {several ? `See ${project.data.title}` : 'See the project'}
           </a>
         </li>

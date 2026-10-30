@@ -14,6 +14,10 @@ export function projectAnchor(project: ProjectLike): string {
   return `project-${project.id}`;
 }
 
+export function projectPath(project: ProjectLike): string {
+  return `/games/${project.id}/`;
+}
+
 export function sortJobs<J extends JobLike>(jobs: J[]): J[] {
   return [...jobs].sort((a, b) => a.data.from.localeCompare(b.data.from));
 }

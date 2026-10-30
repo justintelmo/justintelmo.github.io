@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   projectAnchor,
+  projectPath,
   resolveJobProjects,
   sortJobs,
   sortProjects,
@@ -25,6 +26,12 @@ describe('projectAnchor', () => {
   it('points every project at its card', () => {
     expect(projectAnchor(pirates)).toBe('project-battle-pirates');
     expect(projectAnchor(bingo)).toBe('project-big-fish-bingo');
+  });
+});
+
+describe('projectPath', () => {
+  it('points every project at its game page', () => {
+    expect(projectPath(pirates)).toBe('/games/battle-pirates/');
   });
 });
 

@@ -16,16 +16,16 @@ test('every stop has a story paragraph', async ({ page }) => {
   }
 });
 
-test('every "See" link scrolls its project into view', async ({ page }) => {
+test('every "See" link opens its game page', async ({ page }) => {
   await page.goto('/');
-  const links = page.locator('#experience .stop a[href^="#"]');
-  const count = await links.count();
-  expect(count).toBeGreaterThanOrEqual(STUDIOS.length);
-  for (let i = 0; i < count; i++) {
-    const link = links.nth(i);
-    const href = (await link.getAttribute('href'))!;
-    expect(href).toMatch(/^#project-/);
-    await link.click();
-    await expect(page.locator(href)).toBeInViewport();
+  const hrefs = await page.locator('#experience .stop .links a').evaluateAll((links) =>
+    links.map((a) => a.getAttribute('href')!),
+  );
+  expect(hrefs.length).toBeGreaterThanOrEqual(STUDIOS.length);
+  for (const href of hrefs) {
+    expect(href).toMatch(/^\/games\/[a-z0-9-]+\/$/);
+    const response = await page.goto(href);
+    expect(response?.status()).toBe(200);
+    await expect(page.locator('main h1')).not.toBeEmpty();
   }
 });

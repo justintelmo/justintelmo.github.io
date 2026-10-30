@@ -12,11 +12,12 @@ const GAMES = {
 };
 
 for (const [slug, title] of Object.entries(GAMES)) {
-  test(`/games/${slug}/ shows ${title}`, async ({ page }) => {
+  test(`/games/${slug}/ shows ${title} and its case study`, async ({ page }) => {
     const response = await page.goto(`/games/${slug}/`);
     expect(response?.status()).toBe(200);
     await expect(page.locator('main h1')).toHaveText(title);
     await expect(page).toHaveTitle(`${title} | Justin Telmo`);
+    await expect(page.locator('.case-study h2').first()).toHaveText('Key features');
   });
 }
 

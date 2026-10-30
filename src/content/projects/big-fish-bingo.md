@@ -22,3 +22,18 @@ links:
   - label: Official Facebook page
     url: https://www.facebook.com/bigfishbingo/
 ---
+Big Fish Bingo was my first job in games. I joined as a junior engineer at Self-Aware Games, which Big Fish Games had recently acquired. I worked on player-facing features and internal tools.
+
+## Key features
+
+### Game features and back-end services
+
+I built game features and the back-end services behind them. I also helped move gameplay logic from the client to the server.
+
+**Tech:** PHP, MySQL, Redis, Memcached
+
+### Powerup tool for designers
+
+I maintained an internal tool that designers used to create in-game powerups.
+
+**Tech:** PHP

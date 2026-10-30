@@ -25,3 +25,24 @@ links:
   - label: Official site
     url: https://www.kixeye.com/battlepirates
 ---
+Battle Pirates is a naval strategy game from KIXEYE. Most of the back end was PHP, with a live battle simulation server in C++, an ActionScript 3 client, and a small chat service in Python. I worked across all of it. Most of my work was features, from small refactors to tentpole work like new content updates and game modes.
+
+## Key features
+
+### Server-authoritative game logic
+
+I helped move critical game features from client-authoritative to server-authoritative. This closed exploits that were costing the game revenue.
+
+**Tech:** PHP, ActionScript 3
+
+### Rendering performance
+
+I improved the game's Stage3D rendering performance by 25%.
+
+**Tech:** ActionScript 3, Stage3D
+
+### Code quality and tools
+
+I added SonarQube static analysis to the build and helped upgrade the PHP stack from PHP 5 to 7.2.4. I also built internal tools for the marketing and design teams.
+
+**Tech:** PHP, SonarQube

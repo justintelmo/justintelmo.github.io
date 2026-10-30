@@ -28,3 +28,30 @@ links:
   - label: App Store
     url: https://apps.apple.com/us/app/covet-fashion-dress-up-game/id620112416
 ---
+Covet Fashion is a dress-up game and was a revenue driver for Glu Mobile, with $66.1M in bookings in 2019. I was on the server team, working in a legacy PHP codebase. Most of the job was balancing modernization with new features, and setting up team practices that gave the game a stronger foundation. I stayed until shortly after EA acquired Glu and our team became part of EA Mobile in 2022.
+
+## Key features
+
+### Kotlin microservices
+
+I helped move parts of the PHP monolith into Kotlin microservices that other titles could reuse. The first was a generic metrics system. I also integrated Glu's internal subscription service into Covet, which taught me a lot about working with engineers across teams.
+
+**Tech:** Kotlin, PHP
+
+### Faster PHP
+
+I helped upgrade the codebase from PHP 5 to 7.2. Response times got more than 50% faster.
+
+**Tech:** PHP, MySQL
+
+### A better first session
+
+I rebuilt the new user flow, which raised Day 30 retention by 15%.
+
+**Tech:** PHP
+
+### CI/CD and mentoring
+
+I ran CI/CD on GitLab CI, Jenkins, and AWS ECS, and mentored interns and junior engineers.
+
+**Tech:** GitLab CI, Jenkins, AWS ECS

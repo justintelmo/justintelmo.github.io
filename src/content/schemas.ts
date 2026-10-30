@@ -18,6 +18,8 @@ export function projectSchema({ image }: { image: () => z.ZodType }) {
       studio: z.string(),
       platforms: z.array(z.string()),
       role: z.string(),
+      // One line on the home page card. The cap keeps it from wrapping into a paragraph.
+      summary: z.string().max(120),
       workedFrom: yearMonth,
       workedTo: yearMonth.optional(),
       launched: z.number().int().optional(),

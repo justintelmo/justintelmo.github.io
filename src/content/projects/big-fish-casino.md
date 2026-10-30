@@ -3,6 +3,7 @@ title: Big Fish Casino
 studio: Big Fish Games
 platforms: [iOS, Android, Facebook]
 role: Game Engineer
+summary: "Shipped features and back-end work for a casino game with 250k peak daily players."
 workedFrom: 2014-10
 workedTo: 2015-09
 launched: 2012

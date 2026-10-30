@@ -3,6 +3,7 @@ title: Covet Fashion
 studio: EA / Glu Mobile
 platforms: [iOS, Android]
 role: Server Software Engineer II
+summary: "Modernized a PHP back end, split out Kotlin microservices, and raised Day 30 retention 15%."
 workedFrom: 2018-10
 workedTo: 2022-11
 launched: 2013

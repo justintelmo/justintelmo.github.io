@@ -3,6 +3,7 @@ title: Unreleased Title
 studio: The Game Band
 platforms: [Multi-platform]
 role: Senior Back-End & Full-Stack Engineer
+summary: "Senior engineer and main vendor contact for an unannounced game's back end and build pipeline."
 workedFrom: 2024-04
 workedTo: 2025-03
 featured: true

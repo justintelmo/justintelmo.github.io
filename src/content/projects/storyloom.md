@@ -3,6 +3,7 @@ title: StoryLoom
 studio: Pixelberry Studios
 platforms: [iOS, Android]
 role: Full-Stack Engineer II
+summary: "Helped take StoryLoom to a global launch with a lighter React client and Node.js services on AWS."
 workedFrom: 2023-04
 workedTo: 2024-03
 launched: 2023

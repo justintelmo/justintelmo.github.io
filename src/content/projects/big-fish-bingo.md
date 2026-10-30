@@ -3,6 +3,7 @@ title: Big Fish Bingo
 studio: Big Fish Games
 platforms: [iOS, Android]
 role: Junior Game Engineer
+summary: "My first job in games: PHP back-end features and an internal powerup tool for designers."
 workedFrom: 2013-10
 workedTo: 2014-09
 featured: true

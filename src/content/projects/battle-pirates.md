@@ -3,6 +3,7 @@ title: Battle Pirates
 studio: KIXEYE
 platforms: [Facebook, Web]
 role: Game & Backend Engineer
+summary: "Moved game logic to the server to close revenue exploits, across PHP, C++, and ActionScript 3."
 workedFrom: 2016-05
 workedTo: 2018-07
 launched: 2011

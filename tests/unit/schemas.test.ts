@@ -9,6 +9,7 @@ const validProject = {
   studio: 'KIXEYE',
   platforms: ['Facebook', 'Web'],
   role: 'Senior Software Engineer',
+  summary: 'Built the live events backend for a long-running naval strategy game.',
   workedFrom: '2016-03',
   workedTo: '2018-06',
   featured: true,
@@ -46,6 +47,15 @@ describe('projectSchema', () => {
   it('rejects an image without attribution', () => {
     const { attribution, ...image } = validProject.images[0]!;
     expect(schema.safeParse(withImage(image)).success).toBe(false);
+  });
+
+  it('rejects a project without a summary', () => {
+    const { summary, ...project } = validProject;
+    expect(schema.safeParse(project).success).toBe(false);
+  });
+
+  it('rejects a summary longer than one line (120 characters)', () => {
+    expect(schema.safeParse({ ...validProject, summary: 'x'.repeat(121) }).success).toBe(false);
   });
 
   it('rejects a month outside 01-12', () => {

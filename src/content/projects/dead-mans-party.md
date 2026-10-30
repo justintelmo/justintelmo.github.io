@@ -3,6 +3,7 @@ title: "Dead Man's Party: A Knives Out Game"
 studio: The Game Band
 platforms: [Netflix TV, iOS, Android]
 role: Senior Back-End & Full-Stack Engineer
+summary: "Built the Netflix SDK link that turns phones into controllers, plus Unity animation, audio, and UI work."
 workedFrom: 2025-03
 workedTo: 2026-02
 launched: 2025

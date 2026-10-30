@@ -43,6 +43,13 @@ test.describe('at 320px wide', () => {
   });
 });
 
+test('the footer is the contact section', async ({ page }) => {
+  await page.goto('/');
+  const footer = page.locator('footer#contact');
+  await expect(footer.getByRole('heading', { level: 2 })).toHaveText('Contact');
+  await expect(footer.locator('p')).not.toBeEmpty();
+});
+
 test('the footer repeats the contact links', async ({ page }) => {
   await page.goto('/');
   const hrefs = await page.locator('footer a').evaluateAll((links) => links.map((a) => a.getAttribute('href')));

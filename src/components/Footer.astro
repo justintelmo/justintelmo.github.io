@@ -3,12 +3,18 @@ import type { SiteLink } from '../data/site';
 import ContactLinks from './ContactLinks.astro';
 
 interface Props {
+  note: string;
   links: SiteLink[];
 }
+
+const { note, links } = Astro.props;
 ---
 
-<footer class="container">
-  <ContactLinks links={Astro.props.links} />
+<!-- Doubles as the Contact section, so every page ends with a way to reach Justin. -->
+<footer id="contact" class="container" aria-labelledby="contact-heading">
+  <h2 id="contact-heading">Contact</h2>
+  <p>{note}</p>
+  <ContactLinks links={links} />
 </footer>
 
 <style>
@@ -16,5 +22,15 @@ interface Props {
     margin-top: 4rem;
     padding-block: 2rem;
     border-top: 1px solid var(--border);
+  }
+
+  h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.75rem;
+  }
+
+  p {
+    max-width: 65ch;
+    margin: 0 0 0.5rem;
   }
 </style>

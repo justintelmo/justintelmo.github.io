@@ -41,7 +41,7 @@ const journey = sortJobs(await getCollection('jobs')).map((job) => ({ job, proje
       <Toolbox groups={skillGroups} />
     </section>
   </main>
-  <Footer links={site.links} />
+  <Footer note={site.contactNote} links={site.links} />
 </Base>
 
 <style>

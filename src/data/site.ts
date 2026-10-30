@@ -10,6 +10,7 @@ export const site = {
   facts: ['13+ years in games', 'C#, TypeScript, PHP', 'AWS and Docker'],
   about:
     "I've spent more than 13 years on the parts of games most players never see: the servers, pipelines, and tools that keep them running. I like work that makes a team more efficient.",
+  contactNote: 'Email is the best way to reach me, and my resume has the full history.',
   links: [
     { label: 'Email', href: 'mailto:justin.telmo@gmail.com', icon: 'email' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/justin-telmo', icon: 'linkedin' },

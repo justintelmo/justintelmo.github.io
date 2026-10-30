@@ -120,6 +120,26 @@ html {
       animation-timeline: view();
       animation-range: entry 0 entry 8rem;
     }
+
+    /* The header brand takes over from the hero: it fades in while the hero's avatar and name
+       slide under the header. The view timeline's default inset is the page's scroll-padding,
+       so "exit" already starts at the header's bottom edge. Pages without a hero have no --hero
+       timeline, so the animation never runs and the brand just shows. */
+    body {
+      timeline-scope: --hero;
+    }
+
+    .intro .top-row {
+      view-timeline-name: --hero;
+    }
+
+    .site-header .name {
+      animation-name: brand-in;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --hero;
+      animation-range: exit 0% exit 100%;
+    }
   }
 }
 
@@ -128,5 +148,13 @@ html {
 @keyframes reveal {
   from {
     opacity: 0;
+  }
+}
+
+/* Visibility as well as opacity, so the hidden brand can't be tabbed to or read out. */
+@keyframes brand-in {
+  from {
+    opacity: 0;
+    visibility: hidden;
   }
 }

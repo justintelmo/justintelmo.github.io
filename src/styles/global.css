@@ -101,3 +101,32 @@ html {
   background: var(--accent-magenta);
   color: var(--bg);
 }
+
+/* Motion is opt-out: visitors who ask for reduced motion get instant jumps and no fades. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Tied to scroll position, so no script can fail and leave a section hidden.
+     Browsers without scroll-driven animations show sections as-is.
+     Longhands on purpose: the build minifier folds an `animation` shorthand and `animation-timeline`
+     into one shorthand that Chromium rejects, which silently turns the fade off. */
+  @supports (animation-timeline: view()) {
+    main > section {
+      animation-name: reveal;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0 entry 8rem;
+    }
+  }
+}
+
+/* Opacity only. A slide would move the section after a nav jump has already aimed at it,
+   leaving its heading under the sticky header. */
+@keyframes reveal {
+  from {
+    opacity: 0;
+  }
+}

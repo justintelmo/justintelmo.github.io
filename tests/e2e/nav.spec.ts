@@ -10,6 +10,24 @@ const SECTIONS = [
 
 const navLinks = (page: Page) => page.locator('.site-header nav a');
 
+// Clicks a nav link and waits for smooth scrolling to stop. Playwright scrolls before each click,
+// which would cut an in-progress smooth scroll short; a person's next click comes after it settles.
+async function jumpTo(page: Page, label: string) {
+  await navLinks(page).getByText(label, { exact: true }).click();
+  await page.waitForFunction(
+    () =>
+      new Promise((resolve) => {
+        let last = -1;
+        const check = () => {
+          if (window.scrollY === last) return resolve(true);
+          last = window.scrollY;
+          setTimeout(check, 100);
+        };
+        check();
+      }),
+  );
+}
+
 test('the nav links to every section, in page order', async ({ page }) => {
   await page.goto('/');
   await expect(navLinks(page)).toHaveText(SECTIONS.map((s) => s.label));
@@ -50,12 +68,11 @@ for (const viewport of [
     test('each nav link lands its heading just below the header', async ({ page }) => {
       await page.goto('/');
       for (const { label, id } of SECTIONS) {
-        await navLinks(page).getByText(label, { exact: true }).click();
+        await jumpTo(page, label);
         const heading = page.locator(`#${id} h2`);
         await expect(heading).toBeInViewport();
         const headerBottom = await page.locator('.site-header').evaluate((el) => el.getBoundingClientRect().bottom);
-        // Poll because smooth scrolling may still be moving.
-        await expect.poll(async () => (await heading.boundingBox())!.y).toBeGreaterThanOrEqual(headerBottom);
+        expect((await heading.boundingBox())!.y).toBeGreaterThanOrEqual(headerBottom);
       }
     });
 
@@ -72,7 +89,7 @@ for (const viewport of [
 test('the nav marks the section on screen as current', async ({ page }) => {
   await page.goto('/');
   for (const { label } of SECTIONS) {
-    await navLinks(page).getByText(label, { exact: true }).click();
+    await jumpTo(page, label);
     await expect(page.locator('.site-header nav a[aria-current="location"]')).toHaveText([label]);
   }
 });

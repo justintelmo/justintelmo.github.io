@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 const CONTACT_HREFS = [
-  'mailto:justin.telmo@gmail.com',
   'https://www.linkedin.com/in/justin-telmo',
+  'mailto:justin.telmo@gmail.com',
   'https://github.com/justintelmo',
   '/resume.pdf',
 ];

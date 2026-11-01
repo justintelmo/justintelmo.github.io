@@ -3,7 +3,7 @@ title: Big Fish Casino
 studio: Big Fish Games
 platforms: [iOS, Android, Facebook]
 role: Game Engineer
-summary: "Shipped features and back-end work for a casino game with 250k peak daily players."
+summary: "Shipped features and back-end work for a casino game with 250k peak DAU."
 workedFrom: 2014-10
 workedTo: 2015-09
 launched: 2012
@@ -14,7 +14,7 @@ contributions:
   - Built Cocos2d-JS UI that worked alongside native iOS and Android code.
   - Reworked legacy back-end code and internal tools.
 stats: []
-tech: [PHP, MySQL, Redis, Memcached, Cocos2d-JS]
+tech: [PHP, MySQL, Redis, Memcached, JavaScript, Cocos2d-JS]
 images:
   - src: ../../assets/projects/big-fish-casino/app-store.png
     alt: "Big Fish Casino app icon: a buffalo above the game's logo"
@@ -27,14 +27,14 @@ Big Fish Casino had 250k peak daily players. I moved to this team after being pr
 
 ## Key features
 
-### UI across web and native
+### Slot machine mechanics
 
-I built Cocos2d-JS UI that worked alongside the game's native iOS and Android code.
+I was tasked with implementing new slot machine mechanics proposed by game designers. Each new slot machine mechanic would be given a full pass from design, to engineering, to QA, before release. This was my first time working directly with **JavaScript** in a professional setting.
 
-**Tech:** Cocos2d-JS, JavaScript
+### RTP tools
 
-### Back end and tools
+I helped maintain an internal tool that allowed us to test RTP values on slot machines. As new mechanics were introduced to the games engine, these mechanics were tested on test machines with debug reels in order to simulate and estimate RTP values.
 
-I shipped player-facing features and reworked legacy back-end code and internal tools.
+### Responsive UI
 
-**Tech:** PHP, MySQL, Redis, Memcached
+I helped work on a feature that would bring responsive UI to the game, so that players would be able to play on different form factors while having the same core experience. This involved coordinating with artists, designers, and other engineers.

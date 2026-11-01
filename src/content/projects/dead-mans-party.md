@@ -3,7 +3,7 @@ title: "Dead Man's Party: A Knives Out Game"
 studio: The Game Band
 platforms: [Netflix TV, iOS, Android]
 role: Senior Back-End & Full-Stack Engineer
-summary: "Built the Netflix SDK link that turns phones into controllers, plus Unity animation, audio, and UI work."
+summary: "Built the Netflix SDK link that turns phones into controllers, plus performance optimization, audio, and UI work."
 workedFrom: 2025-03
 workedTo: 2026-02
 launched: 2025
@@ -13,9 +13,9 @@ contributions:
   - Built the first Netflix SDK integration that turns a phone into a controller, paired to the TV with a QR code.
   - Cut load time from 10s to under 4s by restructuring asset bundles and loading localized content async.
   - Built the device communication backbone and a 12-language localization pipeline.
-  - Wired the Netflix Haptics API so phone vibration stays in sync with TV gameplay.
+  - Leveraged the Netflix Haptics API so phone vibration stays in sync with TV gameplay.
 stats: []
-tech: [Unity, C#, Netflix SDK, Netflix Haptics API]
+tech: [Unity, C#, Netflix SDK, Netflix Haptics API, FMOD]
 images:
   - src: ../../assets/projects/dead-mans-party/teaser.png
     alt: "Animated title art from Dead Man's Party: a silhouetted guest in a doorway behind the body of the victim"
@@ -24,36 +24,30 @@ links:
   - label: The Game Band
     url: https://thegameband.com/game/dead-mans-party
 ---
-I was the first developer moved fully onto the project that became *Dead Man's Party*, a Knives Out party game for Netflix where players use their phones as controllers while the story plays on the TV. My first job was getting phones and TVs talking through the Netflix SDK. After that I moved into gameplay work in Unity, and I was part of the team that localized the game into 12 languages.
+I was the first developer moved fully onto the project that became *Dead Man's Party: A Knives Out Game*, a party game for Netflix where players use their phones as controllers while the story plays on the TV. My first job was getting phones and TVs talking through the Netflix SDK. After that I moved into gameplay work in Unity, and I was part of the team that localized the game into 12 languages.
 
 ## Key features
 
 ### Phones as controllers
 
-I built the first Netflix SDK integration that turns a phone into a controller, paired to the TV with a QR code. That grew into the device communication backbone the rest of the game sends its messages through.
+I integrated the **Netflix SDK** into our game's Unity project, building a proof of concept around its event messaging system. This proved our game was a viable project and helped us receive a greenlight from Netflix. Players pair their mobile device to a large-sccreen device via QR code, and the phone becomes a controller.
 
-**Tech:** Unity, C#, Netflix SDK
+### Multi-platform build targets
+
+The game shipped from one Unity project that contained two separate build targets: a Linux build for large screen devices 
 
 ### Faster loading
 
-Load time was around 10 seconds. I restructured the asset bundles and loaded localized content asynchronously, which brought it under 4 seconds.
+One of Netflix's requirements for our game was to meet a strict time-to-interaction metric. I coordinated with Netflix engineers as well as fellow engineers on this project to bring our time-to-interaction to below 4 seconds, down from an initial 10 seconds. This involved implementing background asset loading, and optimizing our asset bundling code to package fewer bundles for the controller build target.
 
-**Tech:** Unity, C#
+### Localized audio for 12 languages 
 
-### Localization in 12 languages
+On this project, I leveraged **FMOD** with coordination from an audio engineer to implement sounds and music into the game. We coordinated with multiple voice actors to have voice lines recorded in twelve different languages, and I was tasked with implementing the system that properly loaded the necessary audio per language and played sound effects and music throughout the game. 
 
-I built the pipeline that brings translated text and audio into the game. I worked with audio engineers and QA to get both into all 12 languages.
+### Event-driven haptics
 
-**Tech:** Unity, C#
+One of the major features of this project was implementing haptic feedback for our mobile builds. We leveraged the **Netflix Haptics API**, part of the **Netflix SDK**, to have specific haptics events fire with coordination from the TV build, adding a level of immersion to the experience designed to keep players more engaged. 
 
-### Haptics in sync with the TV
+### Murder-mystery gameplay features
 
-I wired up the Netflix Haptics API so phone vibration stays in sync with what happens on the TV.
-
-**Tech:** Netflix Haptics API, Unity
-
-### Gameplay polish
-
-I helped build player-facing features with Unity Timeline for animation, FMOD for audio, and the Animate UI Materials package for UI effects, and I helped tune gameplay.
-
-**Tech:** Unity Timeline, FMOD, Animate UI Materials
+I helped implement some of the core gameplay features of this game, including the system that determines game phase, the voting system, and parts of the menu system. On top of this, I also implemented many of the mobile gameplay screens to designer spec, and ensured the gameplay flow for all players met designer criteria. 

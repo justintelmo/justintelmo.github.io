@@ -3,7 +3,7 @@ title: Big Fish Bingo
 studio: Big Fish Games
 platforms: [iOS, Android]
 role: Junior Game Engineer
-summary: "My first job in games: PHP back-end features and an internal powerup tool for designers."
+summary: "My first role in the games industry, mostly server feature work on both the game itself and internal tools."
 workedFrom: 2013-10
 workedTo: 2014-09
 featured: true
@@ -28,12 +28,8 @@ Big Fish Bingo was my first job in games. I joined as a junior engineer at Self-
 
 ### Game features and back-end services
 
-I built game features and the back-end services behind them. I also helped move gameplay logic from the client to the server.
+I helped fix bugs on game features and helped validate client moves behind the server to help cut down on cheaters. Our stack on the back-end was a monolithic **PHP** codebase with a **MySQL** database which had a thin caching layer of **Memcached** and **Redis** lying on top of it. 
 
-**Tech:** PHP, MySQL, Redis, Memcached
+### CMS tools for engineers and designers
 
-### Powerup tool for designers
-
-I maintained an internal tool that designers used to create in-game powerups.
-
-**Tech:** PHP
+I helped maintain and update a Content Management System that was used to help game designers implement new pieces of content, such as powerups. This was an extension of our **PHP** codebase and was largely used to shape models that were used as sources of truth for our game.

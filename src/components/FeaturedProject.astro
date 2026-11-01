@@ -2,39 +2,30 @@
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import { formatDateRange } from '../lib/dates';
-import { projectAnchor } from '../lib/projects';
+import { projectAnchor, projectPath } from '../lib/projects';
 
 interface Props {
   project: CollectionEntry<'projects'>;
-  reverse: boolean;
 }
 
-const { project, reverse } = Astro.props;
+const { project } = Astro.props;
 const { data } = project;
-// The NDA card never shows images or links, even if some slip into its frontmatter.
+// The NDA card never shows an image, even if one slips into its frontmatter.
+// Image credits live on the game page, since a second link would fight the card-wide link.
 const image = data.nda ? undefined : data.images[0];
-const links = data.nda ? [] : data.links;
 ---
 
-<article id={projectAnchor(project)} class:list={['project', { reverse }]}>
+<article id={projectAnchor(project)} class="project">
   <div class="media">
     {
       image ? (
-        <figure>
-          <Image
-            src={image.src as ImageMetadata}
-            alt={image.alt}
-            widths={[480, 800, 1200]}
-            sizes="(min-width: 640px) 32rem, 100vw"
-            loading="lazy"
-          />
-          <figcaption>
-            <a href={image.attribution}>
-              Image source<span class="visually-hidden"> for {data.title}</span>
-            </a>
-          </figcaption>
-        </figure>
+        <Image
+          src={image.src as ImageMetadata}
+          alt={image.alt}
+          widths={[480, 800]}
+          sizes="(min-width: 640px) 31rem, 100vw"
+          loading="lazy"
+        />
       ) : (
         <div class="image-placeholder" role="img" aria-label="Unreleased game, no public screenshots">
           Unreleased
@@ -42,97 +33,39 @@ const links = data.nda ? [] : data.links;
       )
     }
   </div>
-
-  <div class="body">
-    <h3>{data.title}</h3>
-    <p class="meta">
-      {data.studio} · {formatDateRange(data.workedFrom, data.workedTo)}
-    </p>
-    <p class="role">{data.role}</p>
-    <p class="platforms">
-      {data.platforms.join(', ')}{data.launched && ` · Launched ${data.launched}`}
-    </p>
-
-    <h4>What I did</h4>
-    <ul class="contributions">
-      {data.contributions.map((item) => <li>{item}</li>)}
-    </ul>
-
-    {
-      data.stats.length > 0 && (
-        <ul class="stats">
-          {data.stats.map((stat) => (
-            <li class="stat">
-              <strong>{stat.value}</strong> {stat.label} ({stat.year}),{' '}
-              <a href={stat.sourceUrl}>
-                source<span class="visually-hidden"> for {stat.label}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      )
-    }
-
-    <p class="tech">{data.tech.join(' · ')}</p>
-
-    {
-      links.length > 0 && (
-        <ul class="links">
-          {links.map((link) => (
-            <li>
-              <a href={link.url}>{link.label}</a>
-            </li>
-          ))}
-        </ul>
-      )
-    }
-  </div>
+  <h3><a href={projectPath(project)}>{data.title}</a></h3>
+  <p class="role">{data.role} · {data.studio}</p>
+  <p class="summary">{data.summary}</p>
+  <!-- Not a link: the title already links the whole card, and screen readers would hear "Read more" seven times. -->
+  <p class="more" aria-hidden="true">Read more →</p>
 </article>
 
 <style>
   .project {
-    display: grid;
-    gap: 1rem 2rem;
-    align-items: start;
-  }
-
-  @media (min-width: 640px) {
-    .project {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .reverse .media {
-      order: 2;
-    }
-  }
-
-  figure {
-    margin: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
   /* One frame shape for every card. Portrait store screenshots letterbox instead of towering or cropping. */
-  figure img,
+  .media img,
   .image-placeholder {
     display: block;
     width: 100%;
+    height: auto;
     aspect-ratio: 4 / 3;
     border: 1px solid var(--border);
     border-radius: 0.5rem;
     background: var(--surface);
   }
 
-  figure img {
+  .media {
+    margin-bottom: 0.75rem;
+  }
+
+  .media img {
     object-fit: contain;
-  }
-
-  figcaption {
-    font-size: 0.875rem;
-  }
-
-  figcaption a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
   }
 
   .image-placeholder {
@@ -147,59 +80,53 @@ const links = data.nda ? [] : data.links;
 
   h3 {
     margin: 0;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     line-height: 1.25;
   }
 
-  .meta,
+  h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  /* Stretches the title link over the whole card, so a click anywhere opens the game page. */
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+  }
+
+  h3 a:focus-visible {
+    outline: none;
+  }
+
+  h3 a:focus-visible::after {
+    outline: 2px solid var(--accent-magenta);
+    outline-offset: 4px;
+  }
+
+  .project:hover h3 a {
+    color: var(--accent-magenta);
+  }
+
   .role,
-  .platforms {
-    margin: 0.25rem 0 0;
-    color: var(--text-muted);
-  }
-
-  h4 {
-    margin: 1rem 0 0.25rem;
-    font-size: 1rem;
-    color: var(--accent-lavender);
-  }
-
-  .contributions,
-  .stats {
+  .summary,
+  .more {
     margin: 0;
-    padding-left: 1.25rem;
   }
 
-  .stats {
-    margin-top: 0.75rem;
-    padding: 0;
-    list-style: none;
-  }
-
-  .tech {
-    margin: 0.75rem 0 0;
-    font-size: 0.9375rem;
+  .role {
     color: var(--text-muted);
   }
 
-  .links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 1rem;
-    margin: 0.25rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .links a,
-  .stat a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
+  .more {
+    margin-top: 0.25rem;
+    color: var(--accent-blue);
     font-weight: 600;
   }
 
-  .stat a {
-    font-weight: 400;
+  .project:hover .more {
+    color: var(--accent-magenta);
   }
 </style>

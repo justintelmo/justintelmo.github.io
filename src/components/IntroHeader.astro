@@ -119,12 +119,16 @@ const art = heroArt(projects);
     list-style: none;
   }
 
+  /* The <li> boxes stay stacked in the middle while their cards move out sideways, so an empty
+     <li> would sit over a neighbor's visible card and swallow its clicks. Only the cards take the pointer. */
   .art li {
     grid-area: 1 / 1;
     width: var(--w);
+    pointer-events: none;
   }
 
-  /* First project in front. */
+  /* First project in front. The order never changes, even on hover: a raised card would cover
+     its neighbors and hold the pointer, so moving across the fan would feel different each way. */
   .art li:nth-child(1) {
     --x: -1.5;
     --r: -8deg;
@@ -153,15 +157,11 @@ const art = heroArt(projects);
     z-index: 1;
   }
 
-  .art li:hover,
-  .art li:focus-within {
-    z-index: 5;
-  }
-
   /* Rotation and spread live on the link; the scroll drift lives on the <li>, so the two
      transforms never overwrite each other. */
   .art a {
     display: block;
+    pointer-events: auto;
     border-radius: 0.75rem;
     transform: translate(calc(var(--x) * var(--step) * var(--w)), var(--lift, 0rem)) rotate(calc(var(--r) * var(--turn)));
   }
@@ -237,7 +237,7 @@ const art = heroArt(projects);
       animation-delay: 350ms;
     }
 
-    /* Spread: the fan opens on hover or keyboard focus, and the hovered card lifts. */
+    /* Spread: the fan opens on hover or keyboard focus, and the hovered or focused card lifts in place. */
     .art:hover,
     .art:focus-within {
       --step: 0.3;

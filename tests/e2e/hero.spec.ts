@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 const ART = [
   ["Dead Man's Party", '/games/dead-mans-party/'],
@@ -56,3 +56,50 @@ test.describe('on a phone with motion on', () => {
     }
   });
 });
+
+// The stacking order never changes. A raised card would cover its neighbors and keep the pointer
+// until it left the whole card, so hovering across the fan felt different in each direction.
+for (const width of [390, 1280]) {
+  test.describe(`at ${width}px with motion on, the fan keeps its stacking order`, () => {
+    test.use({ viewport: { width, height: 900 }, reducedMotion: 'no-preference' });
+
+    const zIndexes = (page: Page) =>
+      page.locator('.intro .art li').evaluateAll((lis) => lis.map((li) => getComputedStyle(li).zIndex));
+    // translate(x, lift) rotate(r) leaves the lift in the matrix's last value.
+    const lift = (page: Page, i: number) =>
+      page.locator('.intro .art a').nth(i).evaluate((a) => Math.round(new DOMMatrix(getComputedStyle(a).transform).f));
+
+    test('while hovering each card in turn', async ({ page }) => {
+      await page.goto('/');
+      await page.waitForTimeout(800); // let the entrance finish
+      for (const i of [0, 1, 2, 3, 2, 1, 0]) {
+        // Aim at a point where this card is the one on top.
+        const point = await page.locator('.intro .art a').nth(i).evaluate((a) => {
+          const box = a.getBoundingClientRect();
+          for (let fx = 0.95; fx > 0; fx -= 0.05) {
+            const x = box.left + box.width * fx;
+            const y = box.top + box.height / 2;
+            if (document.elementFromPoint(x, y)?.closest('a') === a) return { x, y };
+          }
+          return null;
+        });
+        expect(point, `card ${i} has a visible spot`).not.toBeNull();
+        await page.mouse.move(point!.x, point!.y);
+        await expect.poll(() => lift(page, i), `card ${i} lifts`).toBe(-12);
+        expect(await zIndexes(page), `hovering card ${i}`).toEqual(['4', '3', '2', '1']);
+      }
+    });
+
+    test('while tabbing through the cards', async ({ page }) => {
+      await page.goto('/');
+      await page.waitForTimeout(800);
+      await page.locator('.intro .contact a').last().focus();
+      for (let i = 0; i < 4; i++) {
+        await page.keyboard.press('Tab');
+        await expect(page.locator('.intro .art a').nth(i)).toBeFocused();
+        await expect.poll(() => lift(page, i), `card ${i} lifts`).toBe(-12);
+        expect(await zIndexes(page), `focusing card ${i}`).toEqual(['4', '3', '2', '1']);
+      }
+    });
+  });
+}

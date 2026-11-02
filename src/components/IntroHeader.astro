@@ -45,7 +45,7 @@ const art = heroArt(projects);
               src={project.data.images[0].src as ImageMetadata}
               alt={project.data.images[0].alt}
               widths={[260, 520]}
-              sizes="(min-width: 48rem) 16.25rem, 32vw"
+              sizes="(min-width: 48rem) clamp(9rem, 20vw, 16.25rem), 32vw"
               loading="eager"
             />
           </a>
@@ -257,18 +257,21 @@ const art = heroArt(projects);
       --lift: -0.75rem;
     }
 
-    /* Drift: as the hero scrolls away, each card rises at its own rate. */
+    /* Drift: as the hero scrolls away, each card rises at its own rate. Two columns only:
+       stacked on phones, the cards would rise over the contact links and take their taps. */
     @supports (animation-timeline: view()) {
-      .intro {
-        view-timeline-name: --intro;
-      }
+      @media (min-width: 48rem) {
+        .intro {
+          view-timeline-name: --intro;
+        }
 
-      .art li {
-        animation-name: drift;
-        animation-timing-function: linear;
-        animation-fill-mode: both;
-        animation-timeline: --intro;
-        animation-range: exit;
+        .art li {
+          animation-name: drift;
+          animation-timing-function: linear;
+          animation-fill-mode: both;
+          animation-timeline: --intro;
+          animation-range: exit;
+        }
       }
     }
   }

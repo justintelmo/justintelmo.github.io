@@ -36,3 +36,23 @@ for (const width of [768, 1024]) {
     }
   });
 }
+
+test.describe('on a phone with motion on', () => {
+  test.use({ viewport: { width: 390, height: 844 }, reducedMotion: 'no-preference' });
+
+  // Stacked below the contact links, a drifting card could slide over them and take their taps.
+  test('the art never rises over the contact links while scrolling', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(800); // let the entrance finish
+    for (let y = 0; y <= 900; y += 100) {
+      await page.evaluate((top) => window.scrollTo(0, top), y);
+      await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+      const gap = await page.evaluate(() => {
+        const contact = document.querySelector('.intro .contact')!.getBoundingClientRect().bottom;
+        const cards = [...document.querySelectorAll('.intro .art a')].map((a) => a.getBoundingClientRect().top);
+        return Math.min(...cards) - contact;
+      });
+      expect(gap, `scrolled to ${y}`).toBeGreaterThanOrEqual(0);
+    }
+  });
+});

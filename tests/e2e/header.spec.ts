@@ -57,8 +57,9 @@ test('the footer shows the email address as text', async ({ page }) => {
   await expect(page.locator('footer#contact .email')).toHaveText('justin.telmo@gmail.com');
 });
 
-test('the footer repeats the contact links', async ({ page }) => {
+test('the footer repeats the contact links, minus Resume which the header already shows', async ({ page }) => {
   await page.goto('/');
   const hrefs = await page.locator('footer a').evaluateAll((links) => links.map((a) => a.getAttribute('href')));
-  expect(hrefs).toEqual(CONTACT_HREFS);
+  expect(hrefs).toEqual(HERO_HREFS);
+  await expect(page.locator('footer#contact .email')).toBeVisible();
 });

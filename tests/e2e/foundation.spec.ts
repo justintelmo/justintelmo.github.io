@@ -40,3 +40,28 @@ test('cards, panels, header, and footer have no outlines', async ({ page }) => {
     for (const b of await borders(sel)) expect(b, sel).toBe('0px 0px 0px 0px');
   }
 });
+
+test('About reads as a statement and Contact is a full-width band', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const aboutSize = await page.locator('#about p').evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  expect(aboutSize).toBeGreaterThanOrEqual(24);
+  const footer = page.locator('footer#contact');
+  expect((await footer.boundingBox())!.width).toBe(1440);
+  const bg = await footer.evaluate((el) => getComputedStyle(el).backgroundColor);
+  const surface = await page.evaluate(() => {
+    const probe = document.createElement('div');
+    probe.style.background = 'var(--surface)';
+    document.body.append(probe);
+    return getComputedStyle(probe).backgroundColor;
+  });
+  expect(bg).toBe(surface);
+});
+
+test('Contact is a closing statement: a large heading, the email, then smaller links', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const size = (sel: string) => page.locator(sel).first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  expect(await size('footer#contact h2')).toBe(await size('#about h2'));
+  expect(await size('footer#contact .email')).toBeGreaterThan(await size('footer#contact .contact a'));
+});

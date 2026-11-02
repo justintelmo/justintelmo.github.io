@@ -136,12 +136,12 @@ test('a game page offers the Resume button and contact links, with no arrows', a
   expect(await talk.textContent()).not.toMatch(/[↓→]/);
 });
 
-// The header, hero, footer, and game pages all link the PDF. Each opens in a new tab and says so.
+// The header, hero, and game pages all link the PDF (the footer leaves it to the header). Each opens in a new tab and says so.
 for (const path of ['/', '/games/storyloom/']) {
   test(`every resume link on ${path} opens the PDF in a new tab`, async ({ page }) => {
     await page.goto(path);
     const links = page.locator('a[href="/resume.pdf"]');
-    expect(await links.count()).toBeGreaterThanOrEqual(3);
+    expect(await links.count()).toBeGreaterThanOrEqual(2);
     for (const link of await links.all()) {
       await expect(link).toHaveAttribute('target', '_blank');
       await expect(link).toHaveAttribute('rel', /noopener/);

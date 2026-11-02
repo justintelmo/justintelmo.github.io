@@ -1,0 +1,122 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { skillGroups } from '../data/skills';
+import { domainYears, percentOf, skillSpans, skillYears, timelineDomain } from '../lib/skills';
+
+interface Props {
+  groups: typeof skillGroups;
+  projects: CollectionEntry<'projects'>[];
+}
+
+const { groups, projects } = Astro.props;
+const domain = timelineDomain(projects);
+// Every other year is labeled; phones keep every fourth so the labels don't collide.
+const ticks = domainYears(domain)
+  .map((year, i) => ({ year, left: percentOf(year * 12, domain), minor: i % 4 !== 0 }))
+  .filter((_, i) => i % 2 === 0);
+---
+
+<div class="chart">
+  <div class="row axis" aria-hidden="true">
+    <span></span>
+    <span class="track">
+      {ticks.map((tick) => <span class:list={['tick', { minor: tick.minor }]} style={`left: ${tick.left}%`}>{tick.year}</span>)}
+    </span>
+  </div>
+  {
+    groups.map((group) => (
+      <div class="group">
+        <h3>{group.name}</h3>
+        <ul>
+          {group.items.map((skill) => {
+            const spans = skillSpans(skill, projects, domain);
+            return (
+              <li class="row skill">
+                <span class="name">
+                  {skill}<span class="visually-hidden">, {skillYears(skill, projects)}, on {spans.flatMap((s) => s.titles).join(', ')}</span>
+                </span>
+                <span class="track" aria-hidden="true">
+                  {spans.map((span) => (
+                    <span class="bar" style={`left: ${span.left}%; width: ${span.width}%`} title={span.titles.join(', ')} />
+                  ))}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    gap: 0 1rem;
+    align-items: center;
+  }
+
+  .track {
+    position: relative;
+    display: block;
+    height: 100%;
+    min-height: 1.75rem;
+  }
+
+  .axis {
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .tick {
+    position: absolute;
+    bottom: 0.25rem;
+    /* Starts the label at its year's line rather than centering on it, so the first one stays in the chart. */
+    padding-left: 0.25rem;
+    border-left: 1px solid var(--border);
+    line-height: 1;
+  }
+
+  @media (max-width: 40rem) {
+    .tick.minor {
+      display: none;
+    }
+  }
+
+  .group + .group {
+    margin-top: 1rem;
+  }
+
+  h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+    color: var(--accent-lavender);
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .skill .track {
+    /* A faint baseline, so a skill's gaps read as time passing rather than empty space. */
+    background: linear-gradient(var(--border), var(--border)) center / 100% 1px no-repeat;
+  }
+
+  .bar {
+    position: absolute;
+    top: 50%;
+    height: 0.6rem;
+    border-radius: 0.3rem;
+    background: var(--accent-blue);
+    transform: translateY(-50%);
+  }
+
+  .skill:hover .bar {
+    background: var(--accent-magenta);
+  }
+</style>

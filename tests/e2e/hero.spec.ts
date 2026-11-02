@@ -103,3 +103,46 @@ for (const width of [390, 1280]) {
     });
   });
 }
+
+test('the tagline and buttons are set in Archivo, the facts line is not', async ({ page }) => {
+  await page.goto('/');
+  const font = (sel: string) => page.locator(sel).first().evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(await font('.intro .tagline')).toContain('Archivo');
+  expect(await font('.intro .button')).toContain('Archivo');
+  expect(await font('.site-header .button')).toContain('Archivo');
+  expect(await font('.intro .facts')).not.toContain('Archivo');
+});
+
+test('the hero buttons keep their plain names, arrows aside', async ({ page }) => {
+  await page.goto('/');
+  const actions = page.locator('.intro .actions a');
+  await expect(actions.nth(0)).toHaveAccessibleName('Resume');
+  await expect(actions.nth(1)).toHaveAccessibleName('Contact');
+});
+
+test.describe('button hover with motion on', () => {
+  test.use({ reducedMotion: 'no-preference' });
+
+  test('the Contact button lifts and its fill sweeps in', async ({ page }) => {
+    await page.goto('/');
+    const contact = page.locator('.intro .actions a', { hasText: 'Contact' });
+    await page.waitForTimeout(800); // let the entrance finish
+    await contact.hover();
+    await expect.poll(() => contact.evaluate((a) => new DOMMatrix(getComputedStyle(a).transform).f)).toBe(-1);
+    await expect
+      .poll(() => contact.evaluate((a) => getComputedStyle(a, '::before').transform))
+      .toBe('matrix(1, 0, 0, 1, 0, 0)');
+  });
+});
+
+test.describe('button hover with reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+
+  test('the Contact button does not move', async ({ page }) => {
+    await page.goto('/');
+    const contact = page.locator('.intro .actions a', { hasText: 'Contact' });
+    await contact.hover();
+    await page.waitForTimeout(300);
+    expect(await contact.evaluate((a) => getComputedStyle(a).transform)).toBe('none');
+  });
+});

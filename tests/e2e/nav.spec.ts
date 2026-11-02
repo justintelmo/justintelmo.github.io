@@ -43,7 +43,10 @@ test('the header has a resume button', async ({ page }) => {
 test('the hero offers resume and contact buttons', async ({ page }) => {
   await page.goto('/');
   const actions = page.locator('.intro .actions a');
-  await expect(actions).toHaveText(['Resume', 'Contact']);
+  // Accessible names, not text: the buttons carry aria-hidden arrows.
+  await expect(actions.nth(0)).toHaveAccessibleName('Resume');
+  await expect(actions.nth(1)).toHaveAccessibleName('Contact');
+  await expect(actions).toHaveCount(2);
   expect(await actions.evaluateAll((links) => links.map((a) => a.getAttribute('href')))).toEqual([
     '/resume.pdf',
     '/#contact',

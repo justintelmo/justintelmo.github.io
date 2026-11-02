@@ -25,7 +25,7 @@ export function adjacentProjects<P extends ProjectLike>(sorted: P[], id: string)
 }
 
 export function sortJobs<J extends JobLike>(jobs: J[]): J[] {
-  return [...jobs].sort((a, b) => a.data.from.localeCompare(b.data.from));
+  return [...jobs].sort((a, b) => b.data.from.localeCompare(a.data.from));
 }
 
 export function resolveJobProjects<P extends ProjectLike>(job: JobLike, projects: P[]): P[] {

@@ -50,9 +50,9 @@ describe('adjacentProjects', () => {
 });
 
 describe('sortJobs', () => {
-  it('orders jobs oldest first', () => {
+  it('orders jobs newest first', () => {
     const jobs = [job('kixeye', '2016-03', []), job('big-fish', '2013-06', []), job('glu', '2018-07', [])];
-    expect(sortJobs(jobs).map((j) => j.id)).toEqual(['big-fish', 'kixeye', 'glu']);
+    expect(sortJobs(jobs).map((j) => j.id)).toEqual(['glu', 'kixeye', 'big-fish']);
   });
 });
 

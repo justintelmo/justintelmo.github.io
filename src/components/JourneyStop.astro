@@ -1,5 +1,5 @@
 ---
-import { type CollectionEntry, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import { formatDateRange } from '../lib/dates';
 import { projectPath } from '../lib/projects';
 
@@ -9,9 +9,8 @@ interface Props {
 }
 
 const { job, projects } = Astro.props;
-const { Content } = await render(job);
-// With one project, "See the project" is enough. With several, each link names its game.
-const several = projects.length > 1;
+// The job's Markdown story isn't rendered. The game pages tell it now, and keeping it in the file
+// makes it easy to bring back.
 ---
 
 <li class="stop">
@@ -19,14 +18,11 @@ const several = projects.length > 1;
   <p class="meta">
     {job.data.role} · {formatDateRange(job.data.from, job.data.to)}
   </p>
-  <div class="story"><Content /></div>
   <ul class="links">
     {
       projects.map((project) => (
         <li>
-          <a href={projectPath(project)}>
-            {several ? `See ${project.data.title}` : 'See the project'}
-          </a>
+          <a href={projectPath(project)}>{project.data.title}</a>
         </li>
       ))
     }
@@ -61,14 +57,6 @@ const several = projects.length > 1;
   .meta {
     margin: 0.15rem 0 0;
     color: var(--text-muted);
-  }
-
-  .story {
-    max-width: 65ch;
-  }
-
-  .story :global(p) {
-    margin: 0.5rem 0 0;
   }
 
   .links {

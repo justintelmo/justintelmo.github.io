@@ -1,10 +1,12 @@
 ---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import Footer from '../../components/Footer.astro';
+import GameGlance from '../../components/GameGlance.astro';
 import SiteHeader from '../../components/SiteHeader.astro';
 import { site } from '../../data/site';
 import Base from '../../layouts/Base.astro';
-import { formatDateRange } from '../../lib/dates';
 import { sortProjects } from '../../lib/projects';
 
 // Same filter as the home page cards, so every card has a page and hidden projects have none.
@@ -20,17 +22,42 @@ interface Props {
 const { project } = Astro.props;
 const { data } = project;
 const { Content } = await render(project);
+// The NDA page never shows an image, even if one slips into its frontmatter.
+const image = data.nda ? undefined : data.images[0];
 ---
 
 <Base title={`${data.title} | ${site.name}`} description={data.summary}>
   <SiteHeader name={site.name} />
   <main class="container">
     <h1>{data.title}</h1>
-    <p class="meta">
-      {data.studio} · {formatDateRange(data.workedFrom, data.workedTo)}
-    </p>
-    <p class="meta">{data.role}</p>
-    <div class="case-study"><Content /></div>
+    <p class="lede">{data.summary}</p>
+    <div class="layout">
+      <div class="hero">
+        {
+          image ? (
+            <figure>
+              <Image
+                src={image.src as ImageMetadata}
+                alt={image.alt}
+                widths={[480, 800, 1200]}
+                sizes="(min-width: 48rem) 40rem, 100vw"
+              />
+              <figcaption>
+                <a href={image.attribution}>
+                  Image source<span class="visually-hidden"> for {data.title}</span>
+                </a>
+              </figcaption>
+            </figure>
+          ) : (
+            <div class="image-placeholder" role="img" aria-label="Unreleased game, no public screenshots">
+              Unreleased
+            </div>
+          )
+        }
+      </div>
+      <div class="side"><GameGlance project={project} /></div>
+      <div class="case-study"><Content /></div>
+    </div>
   </main>
   <Footer note={site.contactNote} links={site.links} />
 </Base>
@@ -42,13 +69,90 @@ const { Content } = await render(project);
     line-height: 1.2;
   }
 
-  .meta {
-    margin: 0.25rem 0 0;
+  .lede {
+    margin: 0.5rem 0 0;
+    max-width: 65ch;
+    font-size: 1.15rem;
     color: var(--text-muted);
   }
 
+  /* Phones stack image, facts, then story. Wider screens put the facts in a sticky sidebar. */
+  .layout {
+    display: grid;
+    grid-template-areas: 'hero' 'side' 'body';
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  @media (min-width: 48rem) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr) 17rem;
+      grid-template-areas: 'hero side' 'body side';
+      column-gap: 3rem;
+    }
+
+    /* The one-row sticky header is 4.5rem tall at this width, plus a little air. */
+    .side {
+      position: sticky;
+      top: 5.5rem;
+      align-self: start;
+    }
+  }
+
+  .hero {
+    grid-area: hero;
+  }
+
+  .side {
+    grid-area: side;
+  }
+
   .case-study {
+    grid-area: body;
     max-width: 65ch;
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  /* Natural shape, capped so a portrait store screenshot doesn't fill the screen. */
+  figure img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 28rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+  }
+
+  figcaption {
+    font-size: 0.875rem;
+  }
+
+  figcaption a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .image-placeholder {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .case-study > :global(:first-child) {
+    margin-top: 0;
   }
 
   .case-study :global(h2) {

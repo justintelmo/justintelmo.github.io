@@ -1,0 +1,128 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDateRange } from '../lib/dates';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { data } = project;
+// The NDA page never links out, even if links slip into its frontmatter.
+const links = data.nda ? [] : data.links;
+---
+
+<aside class="glance" aria-labelledby="glance-heading">
+  <h2 id="glance-heading">At a glance</h2>
+  <dl>
+    <dt>Studio</dt>
+    <dd>{data.studio}</dd>
+    <dt>Role</dt>
+    <dd>{data.role}</dd>
+    <dt>Dates</dt>
+    <dd>{formatDateRange(data.workedFrom, data.workedTo)}</dd>
+    <dt>Platforms</dt>
+    <dd>{data.platforms.join(', ')}</dd>
+    {
+      data.launched && (
+        <>
+          <dt>Launched</dt>
+          <dd>{data.launched}</dd>
+        </>
+      )
+    }
+    <dt>Tech</dt>
+    <dd>{data.tech.join(' · ')}</dd>
+  </dl>
+
+  {
+    data.stats.length > 0 && (
+      <ul class="stats">
+        {data.stats.map((stat) => (
+          <li class="stat">
+            <strong>{stat.value}</strong> {stat.label} ({stat.year}),{' '}
+            <a href={stat.sourceUrl}>
+              source<span class="visually-hidden"> for {stat.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    links.length > 0 && (
+      <ul class="links">
+        {links.map((link) => (
+          <li>
+            <a href={link.url}>{link.label}</a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</aside>
+
+<style>
+  .glance {
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--surface);
+  }
+
+  h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    color: var(--accent-lavender);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  dl {
+    margin: 0;
+  }
+
+  dt {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  dt:first-child {
+    margin-top: 0;
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  .stats,
+  .links {
+    margin: 1rem 0 0;
+    padding: 1rem 0 0;
+    border-top: 1px solid var(--border);
+    list-style: none;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1rem;
+  }
+
+  .stats + .links {
+    margin-top: 0.5rem;
+  }
+
+  .links a,
+  .stat a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .links a {
+    font-weight: 600;
+  }
+</style>

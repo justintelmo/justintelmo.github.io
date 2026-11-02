@@ -9,11 +9,6 @@ workedTo: 2026-02
 launched: 2025
 featured: true
 order: 1
-contributions:
-  - Built the first Netflix SDK integration that turns a phone into a controller, paired to the TV with a QR code.
-  - Cut load time from 10s to under 4s by restructuring asset bundles and loading localized content async.
-  - Built the device communication backbone and a 12-language localization pipeline.
-  - Leveraged the Netflix Haptics API so phone vibration stays in sync with TV gameplay.
 stats: []
 tech: [Unity, C#, Netflix SDK, Netflix Haptics API, FMOD]
 images:

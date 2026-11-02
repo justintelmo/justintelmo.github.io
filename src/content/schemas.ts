@@ -25,7 +25,6 @@ export function projectSchema({ image }: { image: () => z.ZodType }) {
       launched: z.number().int().optional(),
       featured: z.boolean(),
       order: z.number(),
-      contributions: z.array(z.string()),
       stats: z.array(statSchema).default([]),
       tech: z.array(z.string()),
       images: z

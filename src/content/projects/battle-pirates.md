@@ -9,12 +9,6 @@ workedTo: 2018-07
 launched: 2011
 featured: true
 order: 5
-contributions:
-  - Worked across the PHP back end, C++ real-time matchmaking, ActionScript 3 client, and Python chat service.
-  - Moved game logic to server-authoritative models, closing revenue exploits.
-  - Improved Stage3D rendering performance by 25%.
-  - Added SonarQube static analysis to the build.
-  - Created internal tools to assist marketing and design teams with their work.
 stats: []
 tech: [PHP, MySQL, Redis, Memcached, C++, Python, ActionScript 3, SonarQube, Stage3D]
 images:

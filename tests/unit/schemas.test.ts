@@ -14,7 +14,6 @@ const validProject = {
   workedTo: '2018-06',
   featured: true,
   order: 4,
-  contributions: ['Built the live events backend'],
   stats: [{ value: '1.3M', label: 'monthly players', year: 2011, sourceUrl: 'https://example.com/a' }],
   tech: ['PHP'],
   images: [{ src: 'battle-pirates/1.png', alt: 'A fleet at sea', attribution: 'https://example.com/b' }],

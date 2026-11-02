@@ -9,10 +9,6 @@ workedTo: 2015-09
 launched: 2012
 featured: true
 order: 6
-contributions:
-  - Promoted from junior within a year and shipped features and back-end work for a game with 250k peak daily players.
-  - Built Cocos2d-JS UI that worked alongside native iOS and Android code.
-  - Reworked legacy back-end code and internal tools.
 stats: []
 tech: [PHP, MySQL, Redis, Memcached, JavaScript, Cocos2d-JS]
 images:

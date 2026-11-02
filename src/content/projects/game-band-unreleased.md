@@ -9,10 +9,6 @@ workedTo: 2025-03
 featured: true
 order: 2
 nda: true
-contributions:
-  - Built the core back end and the build pipeline on Docker, AWS, and Jenkins.
-  - Wrote Kotlin microservices for player voting, achievements, and purchases.
-  - Integrated a large language model API wrapper to drive dynamic story beats and dialogue.
 stats: []
 tech: [Unity, C#, Kotlin, Docker, AWS, Jenkins]
 images: []

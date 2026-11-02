@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 test('headings use Archivo and body text stays system-ui', async ({ page }) => {
   await page.goto('/');
@@ -59,9 +59,12 @@ test('About reads as a statement and Contact is a full-width band', async ({ pag
 });
 
 test('Contact is a closing statement: a large heading, the email, then smaller links', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/');
-  const size = (sel: string) => page.locator(sel).first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
-  expect(await size('footer#contact h2')).toBe(await size('#about h2'));
-  expect(await size('footer#contact .email')).toBeGreaterThan(await size('footer#contact .contact a'));
+  const size = (page: Page, sel: string) => page.locator(sel).first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  // The clamp's 3.25rem cap hides a mismatch at 1440, so compare at a phone width too.
+  for (const width of [375, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    expect(await size(page, 'footer#contact h2'), `h2 at ${width}px`).toBe(await size(page, '#about h2'));
+  }
+  expect(await size(page, 'footer#contact .email')).toBeGreaterThan(await size(page, 'footer#contact .contact a'));
 });

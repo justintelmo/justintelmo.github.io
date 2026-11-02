@@ -11,6 +11,8 @@
 /* Archivo is for the name and headings only; body text keeps the system stack. */
 :root {
   --font-display: 'Archivo Variable', system-ui, sans-serif;
+  /* One size for every section heading, including the Contact band. */
+  --size-section-heading: clamp(2rem, 1.4rem + 2.5vw, 3.25rem);
 }
 
 h1,

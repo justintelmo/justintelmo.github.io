@@ -14,7 +14,7 @@ stats:
     label: bookings
     year: 2019
     sourceUrl: https://www.fool.com/earnings/call-transcripts/2020/02/05/glu-mobile-inc-gluu-q4-2019-earnings-call-transcri.aspx
-tech: [PHP, Kotlin, MySQL, AWS ECS, Redis, Memcached, Blackfire.io, GitLab CI, Jenkins]
+tech: [PHP, Kotlin, Spring Boot, MySQL, AWS ECS, Redis, Memcached, Blackfire.io, GitLab CI, Jenkins]
 images:
   - src: ../../assets/projects/covet-fashion/facebook.jpg
     alt: "Three models in dark fantasy outfits, the center one in a purple winged gown, above the Covet Fashion logo"

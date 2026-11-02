@@ -10,7 +10,7 @@ launched: 2011
 featured: true
 order: 5
 stats: []
-tech: [PHP, MySQL, Redis, Memcached, C++, Python, ActionScript 3, SonarQube, Stage3D]
+tech: [PHP, Laravel, Symfony, MySQL, Redis, Memcached, C++, Python, ActionScript 3, SonarQube, Stage3D]
 images:
   - src: ../../assets/projects/battle-pirates/base.jpg
     alt: "Isometric view of a fortified island base with walls, turrets, and docked ships"

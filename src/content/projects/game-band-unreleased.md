@@ -10,7 +10,7 @@ featured: true
 order: 2
 nda: true
 stats: []
-tech: [Unity, C#, Kotlin, Docker, AWS, Jenkins]
+tech: [Unity, C#, Kotlin, Ktor, Docker, AWS, Jenkins]
 images: []
 links: []
 ---

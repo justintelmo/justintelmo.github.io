@@ -18,6 +18,12 @@ export function projectPath(project: ProjectLike): string {
   return `/games/${project.id}/`;
 }
 
+// Neighbors in the order given. The ends don't wrap: jumping from the newest game to the oldest would feel random.
+export function adjacentProjects<P extends ProjectLike>(sorted: P[], id: string): { previous?: P; next?: P } {
+  const index = sorted.findIndex((p) => p.id === id);
+  return { previous: sorted[index - 1], next: sorted[index + 1] };
+}
+
 export function sortJobs<J extends JobLike>(jobs: J[]): J[] {
   return [...jobs].sort((a, b) => a.data.from.localeCompare(b.data.from));
 }

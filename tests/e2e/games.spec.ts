@@ -89,3 +89,31 @@ for (const [slug, theme] of [['dead-mans-party', 'light'], ['dead-mans-party', '
     expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
   });
 }
+
+test('previous and next follow the home page order without wrapping', async ({ page }) => {
+  const slugs = Object.keys(GAMES);
+  for (const [i, slug] of slugs.entries()) {
+    await page.goto(`/games/${slug}/`);
+    const nav = page.getByRole('navigation', { name: 'More games' });
+    const previous = nav.locator('a[rel="prev"]');
+    const next = nav.locator('a[rel="next"]');
+    if (i === 0) await expect(previous).toHaveCount(0);
+    else await expect(previous).toHaveAttribute('href', `/games/${slugs[i - 1]}/`);
+    if (i === slugs.length - 1) await expect(next).toHaveCount(0);
+    else await expect(next).toHaveAttribute('href', `/games/${slugs[i + 1]}/`);
+  }
+});
+
+test('previous and next links name their games', async ({ page }) => {
+  await page.goto('/games/storyloom/');
+  const nav = page.getByRole('navigation', { name: 'More games' });
+  await expect(nav.locator('a[rel="prev"]')).toContainText(GAMES['game-band-unreleased']);
+  await expect(nav.locator('a[rel="next"]')).toContainText(GAMES['covet-fashion']);
+});
+
+test('the bottom of a game page offers the resume and contact', async ({ page }) => {
+  await page.goto('/games/storyloom/');
+  const bar = page.locator('main .talk');
+  await expect(bar.getByRole('link', { name: 'Resume' })).toHaveAttribute('href', '/resume.pdf');
+  await expect(bar.getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '#contact');
+});

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  adjacentProjects,
   projectAnchor,
   projectPath,
   resolveJobProjects,
@@ -32,6 +33,19 @@ describe('projectAnchor', () => {
 describe('projectPath', () => {
   it('points every project at its game page', () => {
     expect(projectPath(pirates)).toBe('/games/battle-pirates/');
+  });
+});
+
+describe('adjacentProjects', () => {
+  const sorted = [pirates, casino, bingo];
+
+  it('returns the games on either side', () => {
+    expect(adjacentProjects(sorted, 'big-fish-casino')).toEqual({ previous: pirates, next: bingo });
+  });
+
+  it('does not wrap past the first or last game', () => {
+    expect(adjacentProjects(sorted, 'battle-pirates')).toEqual({ previous: undefined, next: casino });
+    expect(adjacentProjects(sorted, 'big-fish-bingo')).toEqual({ previous: casino, next: undefined });
   });
 });
 

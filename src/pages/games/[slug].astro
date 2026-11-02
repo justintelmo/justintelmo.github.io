@@ -7,19 +7,24 @@ import GameGlance from '../../components/GameGlance.astro';
 import SiteHeader from '../../components/SiteHeader.astro';
 import { site } from '../../data/site';
 import Base from '../../layouts/Base.astro';
-import { sortProjects } from '../../lib/projects';
+import { adjacentProjects, projectPath, sortProjects } from '../../lib/projects';
 
 // Same filter as the home page cards, so every card has a page and hidden projects have none.
 export async function getStaticPaths() {
   const projects = sortProjects(await getCollection('projects'));
-  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project, ...adjacentProjects(projects, project.id) },
+  }));
 }
 
 interface Props {
   project: CollectionEntry<'projects'>;
+  previous?: CollectionEntry<'projects'>;
+  next?: CollectionEntry<'projects'>;
 }
 
-const { project } = Astro.props;
+const { project, previous, next } = Astro.props;
 const { data } = project;
 const { Content } = await render(project);
 // The NDA page never shows an image, even if one slips into its frontmatter.
@@ -57,6 +62,29 @@ const image = data.nda ? undefined : data.images[0];
       </div>
       <div class="side"><GameGlance project={project} /></div>
       <div class="case-study"><Content /></div>
+    </div>
+    <nav class="more-games" aria-label="More games">
+      {
+        previous && (
+          <a href={projectPath(previous)} rel="prev">
+            <span class="direction">← Previous</span>
+            {previous.data.title}
+          </a>
+        )
+      }
+      {
+        next && (
+          <a href={projectPath(next)} rel="next">
+            <span class="direction">Next →</span>
+            {next.data.title}
+          </a>
+        )
+      }
+    </nav>
+    <div class="talk">
+      <p>Want to talk about this work?</p>
+      <a class="button primary" href="/resume.pdf">Resume</a>
+      <a class="button" href="#contact">Contact</a>
     </div>
   </main>
   <Footer note={site.contactNote} links={site.links} />
@@ -149,6 +177,64 @@ const image = data.nda ? undefined : data.images[0];
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+
+  .more-games {
+    display: grid;
+    gap: 1rem;
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (min-width: 48rem) {
+    .more-games {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .more-games a {
+    display: flex;
+    flex-direction: column;
+    min-height: 44px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .more-games a:hover {
+    text-decoration: underline;
+  }
+
+  /* Pinned to the right column even when there's no "previous" beside it. */
+  .more-games a[rel='next'] {
+    grid-column: -2;
+    text-align: right;
+  }
+
+  .direction {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .talk {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .talk p {
+    margin: 0;
+    flex-basis: 100%;
+    font-size: 1.15rem;
+  }
+
+  @media (min-width: 48rem) {
+    .talk p {
+      flex-basis: auto;
+    }
   }
 
   .case-study > :global(:first-child) {

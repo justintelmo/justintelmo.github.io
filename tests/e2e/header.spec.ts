@@ -6,6 +6,8 @@ const CONTACT_HREFS = [
   'https://github.com/justintelmo',
   '/resume.pdf',
 ];
+// The hero's Resume button already covers the PDF, so its contact links leave it out.
+const HERO_HREFS = CONTACT_HREFS.slice(0, 3);
 
 test('the hero names Justin', async ({ page }) => {
   await page.goto('/');
@@ -15,13 +17,13 @@ test('the hero names Justin', async ({ page }) => {
 test('the hero links to every contact channel', async ({ page }) => {
   await page.goto('/');
   const hrefs = await page.locator('.intro .contact a').evaluateAll((links) => links.map((a) => a.getAttribute('href')));
-  expect(hrefs).toEqual(CONTACT_HREFS);
+  expect(hrefs).toEqual(HERO_HREFS);
 });
 
 test('every contact link is at least 44px tall', async ({ page }) => {
   await page.goto('/');
   const links = page.locator('.intro .contact a');
-  await expect(links).toHaveCount(CONTACT_HREFS.length);
+  await expect(links).toHaveCount(HERO_HREFS.length);
   for (const box of await links.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))) {
     expect(box).toBeGreaterThanOrEqual(44);
   }

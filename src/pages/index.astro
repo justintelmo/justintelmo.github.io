@@ -17,7 +17,7 @@ const featured = sortProjects(await getCollection('projects'));
 <Base title={site.name} description={site.tagline}>
   <SiteHeader name={site.name} />
   <main class="container">
-    <IntroHeader site={site} />
+    <IntroHeader site={site} projects={featured} />
     <section id="about" aria-labelledby="about-heading">
       <h2 id="about-heading">About</h2>
       <About text={site.about} />

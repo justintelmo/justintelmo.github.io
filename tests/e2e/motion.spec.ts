@@ -32,4 +32,10 @@ test.describe('with reduced motion', () => {
     expect(await page.evaluate(style('#skills', 'animation-name'))).toBe('none');
     expect(await page.evaluate(style('#skills', 'opacity'))).toBe('1');
   });
+
+  test('nothing is animating', async ({ page }) => {
+    await page.goto('/');
+    const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length);
+    expect(running).toBe(0);
+  });
 });

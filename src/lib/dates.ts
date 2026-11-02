@@ -9,3 +9,9 @@ export function formatYearMonth(ym: string): string {
 export function formatDateRange(from: string, to?: string): string {
   return `${formatYearMonth(from)} – ${to ? formatYearMonth(to) : 'Present'}`;
 }
+
+// Years only, for places with no room for months. One year when the work started and ended in it.
+export function formatYearRange(from: string, to?: string): string {
+  const [start, end] = [from.slice(0, 4), to ? to.slice(0, 4) : 'Present'];
+  return start === end ? start : `${start} – ${end}`;
+}

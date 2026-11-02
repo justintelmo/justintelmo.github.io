@@ -50,6 +50,12 @@ test('every card shows its role, studio, and summary', async ({ page }) => {
   await expect(page.locator('#projects article .summary')).toHaveCount(FEATURED_COUNT);
 });
 
+test('every card shows the years worked', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#project-covet-fashion .years')).toHaveText('2018 – 2022');
+  await expect(page.locator('#projects article .years')).toHaveCount(FEATURED_COUNT);
+});
+
 test('clicking anywhere on a card opens its game page', async ({ page }) => {
   await page.goto('/');
   // Top-left corner of the card is the image, well away from the title link's own text.

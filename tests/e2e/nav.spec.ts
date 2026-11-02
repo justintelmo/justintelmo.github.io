@@ -40,16 +40,15 @@ test('the header has a resume button', async ({ page }) => {
   await expect(page.locator('.site-header').getByRole('link', { name: 'Resume' })).toHaveAttribute('href', '/resume.pdf');
 });
 
-test('the hero offers resume and contact buttons', async ({ page }) => {
+test('the hero offers a resume button, then the contact links', async ({ page }) => {
   await page.goto('/');
   const actions = page.locator('.intro .actions a');
-  // Accessible names, not text: the buttons carry aria-hidden arrows.
-  await expect(actions.nth(0)).toHaveAccessibleName('Resume');
-  await expect(actions.nth(1)).toHaveAccessibleName('Contact');
-  await expect(actions).toHaveCount(2);
+  await expect(actions.first()).toHaveAccessibleName('Resume (PDF, opens in a new tab)');
   expect(await actions.evaluateAll((links) => links.map((a) => a.getAttribute('href')))).toEqual([
     '/resume.pdf',
-    '/#contact',
+    'https://www.linkedin.com/in/justin-telmo',
+    'mailto:justin.telmo@gmail.com',
+    'https://github.com/justintelmo',
   ]);
 });
 

@@ -6,6 +6,7 @@ import logo from '../assets/Avi2.png';
 import type { site as siteData } from '../data/site';
 import { heroArt, projectPath } from '../lib/projects';
 import ContactLinks from './ContactLinks.astro';
+import ResumeButton from './ResumeButton.astro';
 
 interface Props {
   site: typeof siteData;
@@ -14,7 +15,7 @@ interface Props {
 
 const { site, projects } = Astro.props;
 const words = site.name.split(' ');
-// The Resume button already links the PDF, so the hero's contact row leaves it out.
+// The Resume button already links the PDF, so the contact links beside it leave it out.
 const links = site.links.filter((link) => link.icon !== 'resume');
 const art = heroArt(projects);
 ---
@@ -29,11 +30,11 @@ const art = heroArt(projects);
     <div class="body">
       <p class="tagline">{site.tagline}</p>
       <p class="facts">{site.facts.join(' · ')}</p>
-      <p class="actions">
-        <a class="button primary" href="/resume.pdf">Resume<span class="arrow down" aria-hidden="true">↓</span></a>
-        <a class="button" href="/#contact">Contact<span class="arrow" aria-hidden="true">→</span></a>
-      </p>
-      <ContactLinks links={links} />
+      <!-- One call to action, then the direct contact links. They share a row when it fits. -->
+      <div class="actions">
+        <ResumeButton />
+        <ContactLinks links={links} />
+      </div>
     </div>
   </div>
   <ul class="art">
@@ -103,12 +104,13 @@ const art = heroArt(projects);
   .actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    margin: 1rem 0 0.5rem;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    margin: 1.25rem 0 0.5rem;
   }
 
-  /* The hero's main calls to action, a step up from the default button. */
-  .actions .button {
+  /* The hero's call to action, a step up from the default button. */
+  .actions :global(.button) {
     min-height: 3rem;
     padding: 0 1.25rem;
     font-size: 1.125rem;

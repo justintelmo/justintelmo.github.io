@@ -78,7 +78,8 @@ test('the unreleased game page is text only with no outside links', async ({ pag
   await page.goto('/games/game-band-unreleased/');
   await expect(page.locator('main .image-placeholder')).toHaveText('Unreleased');
   await expect(page.locator('main img')).toHaveCount(0);
-  await expect(page.locator('main a[href^="http"]')).toHaveCount(0);
+  // The contact links at the bottom are Justin's own, not the game's.
+  await expect(page.locator('main a[href^="http"]:not(.talk a)')).toHaveCount(0);
 });
 
 for (const [slug, theme] of [['dead-mans-party', 'light'], ['dead-mans-party', 'dark'], ['game-band-unreleased', 'light'], ['game-band-unreleased', 'dark']]) {
@@ -111,9 +112,9 @@ test('previous and next links name their games', async ({ page }) => {
   await expect(nav.locator('a[rel="next"]')).toContainText(GAMES['covet-fashion']);
 });
 
-test('the bottom of a game page offers the resume and contact', async ({ page }) => {
+test('the bottom of a game page offers the resume and contact links', async ({ page }) => {
   await page.goto('/games/storyloom/');
   const bar = page.locator('main .talk');
-  await expect(bar.getByRole('link', { name: 'Resume' })).toHaveAttribute('href', '/resume.pdf');
-  await expect(bar.getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '#contact');
+  await expect(bar.getByRole('link', { name: /^Resume/ })).toHaveAttribute('href', '/resume.pdf');
+  await expect(bar.getByRole('link', { name: 'Email' })).toHaveAttribute('href', 'mailto:justin.telmo@gmail.com');
 });

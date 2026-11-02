@@ -116,12 +116,6 @@ html {
   color: var(--bg);
 }
 
-/* A decorative arrow after the label. aria-hidden in the markup keeps the names "Resume" and "Contact". */
-.button .arrow {
-  display: inline-block;
-  margin-left: 0.4em;
-}
-
 /* Motion is opt-out: visitors who ask for reduced motion get instant jumps and no fades. */
 @media (prefers-reduced-motion: no-preference) {
   html {
@@ -170,22 +164,6 @@ html {
   .button:not(.primary):hover::before,
   .button:not(.primary):focus-visible::before {
     transform: scaleX(1);
-  }
-
-  .button .arrow {
-    transition-property: transform;
-    transition-duration: 150ms;
-    transition-timing-function: ease-out;
-  }
-
-  .button:hover .arrow,
-  .button:focus-visible .arrow {
-    transform: translateX(4px);
-  }
-
-  .button:hover .arrow.down,
-  .button:focus-visible .arrow.down {
-    transform: translateY(3px);
   }
 
   /* Tied to scroll position, so no script can fail and leave a section hidden.

@@ -52,6 +52,11 @@ test('the footer is the contact section', async ({ page }) => {
   await expect(footer.locator('p')).not.toBeEmpty();
 });
 
+test('the footer shows the email address as text', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('footer#contact .email')).toHaveText('justin.telmo@gmail.com');
+});
+
 test('the footer repeats the contact links', async ({ page }) => {
   await page.goto('/');
   const hrefs = await page.locator('footer a').evaluateAll((links) => links.map((a) => a.getAttribute('href')));

@@ -13,10 +13,18 @@ const { links } = Astro.props;
   {
     links.map((link) => (
       <li>
-        <a href={link.href}>
-          <Icon name={link.icon} />
-          {link.label}
-        </a>
+        {link.icon === 'resume' ? (
+          <a href={link.href} target="_blank" rel="noopener">
+            <Icon name={link.icon} />
+            {link.label}
+            <span class="visually-hidden"> (PDF, opens in a new tab)</span>
+          </a>
+        ) : (
+          <a href={link.href}>
+            <Icon name={link.icon} />
+            {link.label}
+          </a>
+        )}
       </li>
     ))
   }

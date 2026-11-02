@@ -113,24 +113,55 @@ test('the tagline and buttons are set in Archivo, the facts line is not', async 
   expect(await font('.intro .facts')).not.toContain('Archivo');
 });
 
-test('the hero buttons keep their plain names, arrows aside', async ({ page }) => {
+test('the hero has one button, the Resume, and no arrows', async ({ page }) => {
   await page.goto('/');
-  const actions = page.locator('.intro .actions a');
-  await expect(actions.nth(0)).toHaveAccessibleName('Resume');
-  await expect(actions.nth(1)).toHaveAccessibleName('Contact');
+  const buttons = page.locator('.intro .button');
+  await expect(buttons).toHaveCount(1);
+  await expect(buttons).toHaveAttribute('href', '/resume.pdf');
+  await expect(page.locator('.intro').getByRole('link', { name: 'Contact', exact: true })).toHaveCount(0);
+  const text = await page.locator('.intro').textContent();
+  expect(text).not.toMatch(/[↓→]/);
 });
+
+test('a game page offers the Resume button and contact links, with no arrows', async ({ page }) => {
+  await page.goto('/games/storyloom/');
+  const talk = page.locator('main .talk');
+  await expect(talk.locator('.button')).toHaveCount(1);
+  await expect(talk.locator('.button')).toHaveAttribute('href', '/resume.pdf');
+  expect(await talk.locator('.contact a').evaluateAll((links) => links.map((a) => a.getAttribute('href')))).toEqual([
+    'https://www.linkedin.com/in/justin-telmo',
+    'mailto:justin.telmo@gmail.com',
+    'https://github.com/justintelmo',
+  ]);
+  expect(await talk.textContent()).not.toMatch(/[↓→]/);
+});
+
+// The header, hero, footer, and game pages all link the PDF. Each opens in a new tab and says so.
+for (const path of ['/', '/games/storyloom/']) {
+  test(`every resume link on ${path} opens the PDF in a new tab`, async ({ page }) => {
+    await page.goto(path);
+    const links = page.locator('a[href="/resume.pdf"]');
+    expect(await links.count()).toBeGreaterThanOrEqual(3);
+    for (const link of await links.all()) {
+      await expect(link).toHaveAttribute('target', '_blank');
+      await expect(link).toHaveAttribute('rel', /noopener/);
+      await expect(link).toHaveAccessibleName(/^Resume.*new tab/);
+    }
+  });
+}
 
 test.describe('button hover with motion on', () => {
   test.use({ reducedMotion: 'no-preference' });
 
-  test('the Contact button lifts and its fill sweeps in', async ({ page }) => {
+  // The header's compact Resume is the outlined button left on the page.
+  test('an outlined button lifts and its fill sweeps in', async ({ page }) => {
     await page.goto('/');
-    const contact = page.locator('.intro .actions a', { hasText: 'Contact' });
+    const resume = page.locator('.site-header .button');
     await page.waitForTimeout(800); // let the entrance finish
-    await contact.hover();
-    await expect.poll(() => contact.evaluate((a) => new DOMMatrix(getComputedStyle(a).transform).f)).toBe(-1);
+    await resume.hover();
+    await expect.poll(() => resume.evaluate((a) => new DOMMatrix(getComputedStyle(a).transform).f)).toBe(-1);
     await expect
-      .poll(() => contact.evaluate((a) => getComputedStyle(a, '::before').transform))
+      .poll(() => resume.evaluate((a) => getComputedStyle(a, '::before').transform))
       .toBe('matrix(1, 0, 0, 1, 0, 0)');
   });
 });
@@ -138,11 +169,13 @@ test.describe('button hover with motion on', () => {
 test.describe('button hover with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
 
-  test('the Contact button does not move', async ({ page }) => {
+  test('the buttons do not move', async ({ page }) => {
     await page.goto('/');
-    const contact = page.locator('.intro .actions a', { hasText: 'Contact' });
-    await contact.hover();
-    await page.waitForTimeout(300);
-    expect(await contact.evaluate((a) => getComputedStyle(a).transform)).toBe('none');
+    for (const selector of ['.intro .button', '.site-header .button']) {
+      const button = page.locator(selector);
+      await button.hover();
+      await page.waitForTimeout(300);
+      expect(await button.evaluate((a) => getComputedStyle(a).transform), selector).toBe('none');
+    }
   });
 });

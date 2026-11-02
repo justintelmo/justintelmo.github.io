@@ -4,7 +4,7 @@ const GROUPS = ['Languages', 'Frameworks', 'Data', 'Infrastructure'];
 
 test('sections appear in page order', async ({ page }) => {
   await page.goto('/');
-  const selectors = ['.intro', '#about', '#projects', '#experience', '#skills', 'footer'];
+  const selectors = ['.intro', '#about', '#projects', '#skills', 'footer'];
   const tops: number[] = [];
   for (const selector of selectors) {
     const box = await page.locator(selector).boundingBox();
@@ -16,7 +16,7 @@ test('sections appear in page order', async ({ page }) => {
 
 test('section headings use the names recruiters scan for', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('main h2')).toHaveText(['About', 'Projects', 'Experience', 'Skills']);
+  await expect(page.locator('main h2')).toHaveText(['About', 'Projects', 'Skills']);
 });
 
 test('the skills section shows every skill group', async ({ page }) => {

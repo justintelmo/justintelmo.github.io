@@ -4,8 +4,6 @@ type ProjectLike = {
   data: { featured: boolean; order: number };
 };
 
-type JobLike = { id: string; data: { from: string; projectSlugs: string[] } };
-
 export function sortProjects<P extends ProjectLike>(projects: P[]): P[] {
   return projects.filter((p) => p.data.featured).sort((a, b) => a.data.order - b.data.order);
 }
@@ -22,16 +20,4 @@ export function projectPath(project: ProjectLike): string {
 export function adjacentProjects<P extends ProjectLike>(sorted: P[], id: string): { previous?: P; next?: P } {
   const index = sorted.findIndex((p) => p.id === id);
   return { previous: sorted[index - 1], next: sorted[index + 1] };
-}
-
-export function sortJobs<J extends JobLike>(jobs: J[]): J[] {
-  return [...jobs].sort((a, b) => b.data.from.localeCompare(a.data.from));
-}
-
-export function resolveJobProjects<P extends ProjectLike>(job: JobLike, projects: P[]): P[] {
-  return job.data.projectSlugs.map((slug) => {
-    const project = projects.find((p) => p.id === slug);
-    if (!project) throw new Error(`Job "${job.id}" lists unknown project "${slug}"`);
-    return project;
-  });
 }

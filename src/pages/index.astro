@@ -39,7 +39,7 @@ const featured = sortProjects(await getCollection('projects'));
 <style>
   h2 {
     margin: 4rem 0 1.5rem;
-    font-size: 1.75rem;
+    font-size: clamp(2rem, 1.4rem + 2.5vw, 3.25rem);
   }
 
   /* The intro already supplies space above the first section. */

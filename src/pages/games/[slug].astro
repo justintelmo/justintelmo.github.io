@@ -151,8 +151,8 @@ const image = data.nda ? undefined : data.images[0];
     max-width: 100%;
     height: auto;
     max-height: 28rem;
-    border: 1px solid var(--border);
     border-radius: 0.5rem;
+    background: var(--surface);
   }
 
   figcaption {
@@ -169,7 +169,6 @@ const image = data.nda ? undefined : data.images[0];
     display: grid;
     place-items: center;
     aspect-ratio: 16 / 9;
-    border: 1px solid var(--border);
     border-radius: 0.5rem;
     background: var(--surface);
     color: var(--text-muted);
@@ -183,8 +182,6 @@ const image = data.nda ? undefined : data.images[0];
     display: grid;
     gap: 1rem;
     margin-top: 4rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
   }
 
   @media (min-width: 48rem) {

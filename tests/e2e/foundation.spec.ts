@@ -24,3 +24,19 @@ test.describe('at 1440px wide', () => {
     expect(about).toBeLessThanOrEqual(40); // 65ch at 1rem is about 32em; Task 4 resizes About, so allow headroom
   });
 });
+
+test('cards, panels, header, and footer have no outlines', async ({ page }) => {
+  const borders = (sel: string) =>
+    page.locator(sel).evaluateAll((els) => els.map((el) => {
+      const s = getComputedStyle(el);
+      return [s.borderTopWidth, s.borderRightWidth, s.borderBottomWidth, s.borderLeftWidth].join(' ');
+    }));
+  await page.goto('/');
+  for (const sel of ['#projects .media img', '#projects .image-placeholder', '.site-header', 'footer#contact']) {
+    for (const b of await borders(sel)) expect(b, sel).toBe('0px 0px 0px 0px');
+  }
+  await page.goto('/games/dead-mans-party/');
+  for (const sel of ['aside.glance', '.glance .stats', '.glance .links', 'main figure img', 'nav.more-games']) {
+    for (const b of await borders(sel)) expect(b, sel).toBe('0px 0px 0px 0px');
+  }
+});

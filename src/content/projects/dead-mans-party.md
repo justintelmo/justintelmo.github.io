@@ -25,7 +25,7 @@ I was the first developer moved fully onto the project that became *Dead Man's P
 
 ### Phones as controllers
 
-I integrated the **Netflix SDK** into our game's Unity project, building a proof of concept around its event messaging system. This proved our game was a viable project and helped us receive a greenlight from Netflix. Players pair their mobile device to a large-sccreen device via QR code, and the phone becomes a controller.
+I integrated the **Netflix SDK** into our game's Unity project, building a proof of concept around its event messaging system. This proved our game was a viable project and helped us receive a greenlight from Netflix. Players pair their mobile device to a large-screen device via QR code, and the phone becomes a controller.
 
 ### Multi-platform build targets
 

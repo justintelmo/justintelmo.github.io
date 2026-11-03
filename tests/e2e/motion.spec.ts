@@ -13,7 +13,6 @@ const token = (page: Page, name: string) =>
 
 const skillRows = (page: Page) => page.locator('#skills .skill');
 
-
 const style = (selector: string, property: string) =>
   `getComputedStyle(document.querySelector('${selector}')).getPropertyValue('${property}')`;
 
@@ -59,12 +58,19 @@ test.describe('with no motion preference', () => {
       .poll(() => hovered.locator('.name').evaluate((el) => getComputedStyle(el).color))
       .toBe(magenta);
     await expect
+      .poll(() => bar.evaluate((el) => getComputedStyle(el).backgroundColor))
+      .toBe(magenta);
+    await expect
+      .poll(async () => hovered.evaluate((el) => getComputedStyle(el).backgroundColor))
+      .toBe(await token(page, '--surface'));
+    await expect
       .poll(async () => Number(await other.locator('.bar').first().evaluate((el) => getComputedStyle(el).opacity)))
       .toBeCloseTo(0.35, 1);
     // scaleY(n) is matrix(1, 0, 0, n, 0, 0): thicker than at rest.
     await expect
       .poll(async () => Number((await bar.evaluate((el) => getComputedStyle(el).transform)).split(',')[3]))
       .toBeGreaterThan(1);
+    expect(await bar.evaluate((el) => getComputedStyle(el).transitionDuration)).toBe('0.2s');
   });
 });
 
@@ -92,6 +98,10 @@ test.describe('with reduced motion', () => {
     await rows.nth(0).hover();
     const magenta = await token(page, '--accent-magenta');
     await expect.poll(() => rows.nth(0).locator('.name').evaluate((el) => getComputedStyle(el).color)).toBe(magenta);
+    await expect.poll(() => bar.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(magenta);
+    await expect
+      .poll(() => rows.nth(0).evaluate((el) => getComputedStyle(el).backgroundColor))
+      .toBe(await token(page, '--surface'));
     await expect
       .poll(async () => Number(await rows.nth(1).locator('.bar').first().evaluate((el) => getComputedStyle(el).opacity)))
       .toBeCloseTo(0.35, 1);

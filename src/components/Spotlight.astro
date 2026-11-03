@@ -304,6 +304,8 @@ const slides = spotlightProjects(Astro.props.projects);
 
     rotation.addEventListener('click', () => {
       paused = !paused;
+      // Play is an explicit request, so it overrides the hold from the pointer and focus already on it.
+      if (!paused) hovering = focusWithin = false;
       render();
       restart();
     });

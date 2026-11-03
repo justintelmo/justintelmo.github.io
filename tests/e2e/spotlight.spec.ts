@@ -92,6 +92,14 @@ test('pressing Play after stepping resumes auto-advance', async ({ page }) => {
   expect(await label(page)).toBe('3 of 6');
 });
 
+test('pressing Play resumes even while the pointer and focus stay on the button', async ({ page }) => {
+  await openInView(page);
+  await page.locator('.spotlight .next').click();
+  await page.locator('.spotlight .rotation').click();
+  await page.clock.runFor(7000);
+  expect(await label(page)).toBe('3 of 6');
+});
+
 test('the spotlight keeps one height across every slide', async ({ page }) => {
   // Phone width stacks the text under the image, so summary length would show in the height.
   await page.setViewportSize({ width: 390, height: 844 });

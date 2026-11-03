@@ -70,7 +70,7 @@ const image = data.nda ? undefined : data.images[0];
         previous && (
           <a href={projectPath(previous)} rel="prev">
             <span class="direction">← Previous</span>
-            {previous.data.title}
+            <span class="title">{previous.data.title}</span>
           </a>
         )
       }
@@ -78,7 +78,7 @@ const image = data.nda ? undefined : data.images[0];
         next && (
           <a href={projectPath(next)} rel="next">
             <span class="direction">Next →</span>
-            {next.data.title}
+            <span class="title">{next.data.title}</span>
           </a>
         )
       }
@@ -95,7 +95,7 @@ const image = data.nda ? undefined : data.images[0];
 <style>
   h1 {
     margin: 2.5rem 0 0;
-    font-size: 2.25rem;
+    font-size: clamp(2.25rem, 1.5rem + 3vw, 4rem);
     line-height: 1.2;
   }
 
@@ -208,6 +208,12 @@ const image = data.nda ? undefined : data.images[0];
   .more-games a[rel='next'] {
     grid-column: -2;
     text-align: right;
+  }
+
+  .title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.2;
   }
 
   .direction {

@@ -118,3 +118,31 @@ test('the bottom of a game page offers the resume and contact links', async ({ p
   await expect(bar.getByRole('link', { name: /^Resume/ })).toHaveAttribute('href', '/resume.pdf');
   await expect(bar.getByRole('link', { name: 'Email' })).toHaveAttribute('href', 'mailto:justin.telmo@gmail.com');
 });
+
+test('the game image is never shown wider than its source', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  for (const slug of ['dead-mans-party', 'covet-fashion']) {
+    await page.goto(`/games/${slug}/`);
+    const img = page.locator('main figure img').first();
+    const [shown, natural] = await img.evaluate((el: HTMLImageElement) => [
+      el.getBoundingClientRect().width,
+      el.naturalWidth,
+    ]);
+    expect(shown).toBeLessThanOrEqual(natural);
+  }
+});
+
+test('the title is in Archivo at display size', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/games/dead-mans-party/');
+  const h1 = page.locator('main h1');
+  expect(await h1.evaluate((el) => getComputedStyle(el).fontFamily)).toContain('Archivo');
+  expect(await h1.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(48);
+});
+
+test('previous and next titles are set in the display font', async ({ page }) => {
+  await page.goto('/games/storyloom/');
+  const link = page.locator('.more-games a[rel="next"] .title');
+  expect(await link.evaluate((el) => getComputedStyle(el).fontFamily)).toContain('Archivo');
+  expect(await link.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(22);
+});

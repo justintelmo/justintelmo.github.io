@@ -108,11 +108,25 @@ const slides = spotlightProjects(Astro.props.projects);
     background: var(--accent-magenta);
   }
 
+  /* Every slide shares one cell, so the spotlight is as tall as its tallest slide and never jumps. */
+  .slides {
+    display: grid;
+  }
+
   .slide {
     position: relative;
     display: grid;
+    grid-area: 1 / 1;
     gap: 1.5rem;
     align-items: center;
+  }
+
+  /* Overrides the global [hidden] rule so hidden slides keep their place in the cell and can fade.
+     visibility: hidden still keeps them out of the tab order and the accessibility tree. */
+  .spotlight .slide[hidden] {
+    display: grid !important;
+    visibility: hidden;
+    opacity: 0;
   }
 
   @media (min-width: 48rem) {
@@ -191,18 +205,16 @@ const slides = spotlightProjects(Astro.props.projects);
     max-width: 65ch;
   }
 
-  /* The global [hidden] rule removes the outgoing slide at once, so only the incoming one fades in. */
+  /* Crossfade. The outgoing slide turns invisible only once its fade ends, so both show mid-fade. */
   @media (prefers-reduced-motion: no-preference) {
     .slide {
-      transition-property: opacity;
-      transition-duration: 400ms;
+      transition-property: opacity, visibility;
+      transition-duration: 400ms, 0s;
       transition-timing-function: ease-out;
     }
 
-    @starting-style {
-      .slide {
-        opacity: 0;
-      }
+    .spotlight .slide[hidden] {
+      transition-delay: 0s, 400ms;
     }
   }
 </style>
@@ -218,7 +230,7 @@ const slides = spotlightProjects(Astro.props.projects);
     const rotation = root.querySelector<HTMLButtonElement>('.rotation')!;
 
     let index = 0;
-    let userStopped = false; // Set by prev, next, or a dot. Never cleared: the visitor took over.
+    // Set by Pause, by prev, next, or a dot, and at start for reduced motion. Only Play clears it.
     let paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let hovering = false;
     let focusWithin = false;
@@ -237,11 +249,11 @@ const slides = spotlightProjects(Astro.props.projects);
       rotation.textContent = text;
       rotation.setAttribute('aria-label', text);
       // Screen readers announce slide changes only when the visitor makes them.
-      list.setAttribute('aria-live', !userStopped && !paused ? 'off' : 'polite');
+      list.setAttribute('aria-live', paused ? 'polite' : 'off');
     };
 
     const tick = () => {
-      if (!userStopped && !paused && !hovering && !focusWithin && onScreen && tabVisible) show(index + 1);
+      if (!paused && !hovering && !focusWithin && onScreen && tabVisible) show(index + 1);
     };
 
     // Restarting gives the current slide its full time again.
@@ -251,7 +263,7 @@ const slides = spotlightProjects(Astro.props.projects);
     };
 
     const step = (next: number) => {
-      userStopped = true;
+      paused = true;
       show(next);
       render();
     };

@@ -74,9 +74,35 @@ test('using next or a dot changes the slide and stops auto-advance for good', as
   await page.locator('.spotlight .dot').nth(4).click();
   expect(await label(page)).toBe('5 of 6');
   await expect(page.locator('.spotlight .dot').nth(4)).toHaveAttribute('aria-current', 'true');
+  await expect(page.locator('.spotlight .rotation')).toHaveAccessibleName('Play');
+  await expect(page.locator('.spotlight .slides')).toHaveAttribute('aria-live', 'polite');
   await page.mouse.move(0, 0);
   await page.clock.runFor(21000);
   expect(await label(page)).toBe('5 of 6');
+});
+
+test('pressing Play after stepping resumes auto-advance', async ({ page }) => {
+  await openInView(page);
+  await page.locator('.spotlight .next').click();
+  await page.locator('.spotlight .rotation').click();
+  await expect(page.locator('.spotlight .rotation')).toHaveAccessibleName('Pause');
+  await page.mouse.move(0, 0);
+  await page.locator('.site-header a').first().focus();
+  await page.clock.runFor(7000);
+  expect(await label(page)).toBe('3 of 6');
+});
+
+test('the spotlight keeps one height across every slide', async ({ page }) => {
+  // Phone width stacks the text under the image, so summary length would show in the height.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const height = async () => (await page.locator('.spotlight').boundingBox())!.height;
+  const first = await height();
+  for (let i = 2; i <= 6; i++) {
+    await page.locator('.spotlight .next').click();
+    expect(await label(page)).toBe(`${i} of 6`);
+    expect(await height()).toBe(first);
+  }
 });
 
 test('previous wraps from the first slide to the last', async ({ page }) => {

@@ -52,4 +52,15 @@
   .theme-toggle:hover {
     color: var(--accent-magenta);
   }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .theme-toggle svg {
+      transition: transform 300ms;
+    }
+
+    .theme-toggle:hover svg,
+    .theme-toggle:active svg {
+      transform: rotate(180deg);
+    }
+  }
 </style>

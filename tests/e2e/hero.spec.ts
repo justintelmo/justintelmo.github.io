@@ -11,9 +11,9 @@ test('the art stack links four games to their pages', async ({ page }) => {
   await page.goto('/');
   const links = page.locator('.intro .art a');
   await expect(links).toHaveCount(4);
-  for (const [i, [, href]] of ART.entries()) {
+  for (const [i, [title, href]] of ART.entries()) {
     await expect(links.nth(i)).toHaveAttribute('href', href);
-    expect((await links.nth(i).locator('img').getAttribute('alt'))?.trim()).toBeTruthy();
+    await expect(links.nth(i)).toHaveAccessibleName(new RegExp(title));
   }
 });
 

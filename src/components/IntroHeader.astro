@@ -41,7 +41,7 @@ const art = heroArt(projects);
     {
       art.map((project) => (
         <li>
-          <a href={projectPath(project)}>
+          <a href={projectPath(project)} aria-label={project.data.title}>
             <Image
               src={project.data.images[0].src as ImageMetadata}
               alt={project.data.images[0].alt}

@@ -8,7 +8,7 @@
   display: none !important;
 }
 
-/* Archivo is for the name and headings only; body text keeps the system stack. */
+/* Archivo is for the name, headings, hero tagline and button labels; body text keeps the system stack. */
 :root {
   --font-display: 'Archivo Variable', system-ui, sans-serif;
   /* One size for every section heading, including the Contact band. */

@@ -35,7 +35,9 @@ const sections = [
         }
       </ul>
     </nav>
-    <a class="button resume" href="/resume.pdf">Resume</a>
+    <a class="button resume" href="/resume.pdf" target="_blank" rel="noopener"
+      >Resume<span class="visually-hidden"> (PDF, opens in a new tab)</span></a
+    >
     <div class="toggle"><ThemeToggle /></div>
   </div>
 </header>
@@ -79,7 +81,6 @@ const sections = [
     position: sticky;
     top: 0;
     z-index: 10;
-    border-bottom: 1px solid var(--border);
     background: var(--bg);
   }
 
@@ -139,6 +140,7 @@ const sections = [
   }
 
   nav a {
+    position: relative;
     display: inline-flex;
     align-items: center;
     min-height: 44px;
@@ -154,10 +156,30 @@ const sections = [
   }
 
   /* An underline as well as a color change, so the current section doesn't rely on color alone. */
+  nav a::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0.5rem;
+    bottom: 0.55rem;
+    height: 2px;
+    background: var(--accent-magenta);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  nav a:hover::after,
+  nav a[aria-current]::after {
+    transform: scaleX(1);
+  }
+
   nav a[aria-current] {
     color: var(--text);
-    text-decoration: underline 2px var(--accent-magenta);
-    text-underline-offset: 0.35em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    nav a::after {
+      transition: transform 200ms;
+    }
   }
 
   .resume {

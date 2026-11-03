@@ -1,6 +1,8 @@
 ---
 import { getImage } from 'astro:assets';
 import logo from '../assets/Avi2.png';
+import '@fontsource-variable/archivo/wdth.css';
+import archivoLatin from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
 import '../styles/theme.css';
 import '../styles/global.css';
 
@@ -20,6 +22,7 @@ const favicon = await getImage({ src: logo, width: 64, height: 64, format: 'png'
     <meta name="description" content={description} />
     <title>{title}</title>
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="preload" as="font" type="font/woff2" href={archivoLatin} crossorigin />
     <link rel="icon" type="image/png" href={favicon.src} />
     <!-- Runs before first paint so a saved theme never flashes the wrong colors. -->
     <script is:inline>

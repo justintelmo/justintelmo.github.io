@@ -2,8 +2,10 @@
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import { type CollectionEntry, getCollection, render } from 'astro:content';
+import ContactLinks from '../../components/ContactLinks.astro';
 import Footer from '../../components/Footer.astro';
 import GameGlance from '../../components/GameGlance.astro';
+import ResumeButton from '../../components/ResumeButton.astro';
 import SiteHeader from '../../components/SiteHeader.astro';
 import { site } from '../../data/site';
 import Base from '../../layouts/Base.astro';
@@ -68,7 +70,7 @@ const image = data.nda ? undefined : data.images[0];
         previous && (
           <a href={projectPath(previous)} rel="prev">
             <span class="direction">← Previous</span>
-            {previous.data.title}
+            <span class="title">{previous.data.title}</span>
           </a>
         )
       }
@@ -76,15 +78,15 @@ const image = data.nda ? undefined : data.images[0];
         next && (
           <a href={projectPath(next)} rel="next">
             <span class="direction">Next →</span>
-            {next.data.title}
+            <span class="title">{next.data.title}</span>
           </a>
         )
       }
     </nav>
     <div class="talk">
       <p>Want to talk about this work?</p>
-      <a class="button primary" href="/resume.pdf">Resume</a>
-      <a class="button" href="#contact">Contact</a>
+      <ResumeButton />
+      <ContactLinks links={site.links.filter((link) => link.icon !== 'resume')} />
     </div>
   </main>
   <Footer note={site.contactNote} links={site.links} />
@@ -93,7 +95,7 @@ const image = data.nda ? undefined : data.images[0];
 <style>
   h1 {
     margin: 2.5rem 0 0;
-    font-size: 2.25rem;
+    font-size: clamp(2.25rem, 1.5rem + 3vw, 4rem);
     line-height: 1.2;
   }
 
@@ -151,8 +153,8 @@ const image = data.nda ? undefined : data.images[0];
     max-width: 100%;
     height: auto;
     max-height: 28rem;
-    border: 1px solid var(--border);
     border-radius: 0.5rem;
+    background: var(--surface);
   }
 
   figcaption {
@@ -169,7 +171,6 @@ const image = data.nda ? undefined : data.images[0];
     display: grid;
     place-items: center;
     aspect-ratio: 16 / 9;
-    border: 1px solid var(--border);
     border-radius: 0.5rem;
     background: var(--surface);
     color: var(--text-muted);
@@ -183,8 +184,6 @@ const image = data.nda ? undefined : data.images[0];
     display: grid;
     gap: 1rem;
     margin-top: 4rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
   }
 
   @media (min-width: 48rem) {
@@ -209,6 +208,12 @@ const image = data.nda ? undefined : data.images[0];
   .more-games a[rel='next'] {
     grid-column: -2;
     text-align: right;
+  }
+
+  .title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.2;
   }
 
   .direction {

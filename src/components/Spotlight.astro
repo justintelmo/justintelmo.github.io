@@ -1,0 +1,334 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatYearRange } from '../lib/dates';
+import { projectPath, spotlightProjects } from '../lib/projects';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+
+const slides = spotlightProjects(Astro.props.projects);
+---
+
+<section class="spotlight" aria-roledescription="carousel" aria-label="Spotlight">
+  <div class="slides" aria-live="off">
+    {
+      slides.map((project, i) => {
+        const { data } = project;
+        const image = data.images[0];
+        return (
+          <div class="slide" role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}`} hidden={i !== 0}>
+            <div class="media">
+              <Image
+                src={image.src as ImageMetadata}
+                alt={image.alt}
+                widths={[480, 800]}
+                sizes="(min-width: 48rem) 39rem, 100vw"
+                loading="lazy"
+              />
+            </div>
+            <div class="text">
+              <p class="years">{formatYearRange(data.workedFrom, data.workedTo)}</p>
+              <h3>
+                <a href={projectPath(project)}>{data.title}</a>
+              </h3>
+              <p class="role">
+                {data.role} · {data.studio}
+              </p>
+              <p class="summary">{data.summary}</p>
+            </div>
+          </div>
+        );
+      })
+    }
+  </div>
+  <!-- Hidden until the script runs, so a page without JavaScript shows the first game and no dead buttons. -->
+  <div class="controls" hidden>
+    <button type="button" class="rotation" aria-label="Pause">
+      <svg class="pause" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1" /><rect x="9.5" y="2" width="3.5" height="12" rx="1" /></svg>
+      <svg class="play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11a1 1 0 0 0 1.5.85l9-5.5a1 1 0 0 0 0-1.7l-9-5.5A1 1 0 0 0 4 2.5z" /></svg>
+    </button>
+    <button type="button" class="prev" aria-label="Previous game"><span aria-hidden="true">←</span></button>
+    <div class="dots">
+      {
+        slides.map((project, i) => (
+          <button type="button" class="dot" aria-label={`Show ${project.data.title}`} aria-current={i === 0 ? 'true' : undefined} />
+        ))
+      }
+    </div>
+    <button type="button" class="next" aria-label="Next game"><span aria-hidden="true">→</span></button>
+  </div>
+</section>
+
+<style>
+  .spotlight {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 4rem;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  /* No fill: the round 44px button is only a hit area, and hover colors the icon. */
+  .controls button {
+    display: grid;
+    place-items: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .controls button:hover {
+    color: var(--accent-magenta);
+  }
+
+  .rotation svg {
+    width: 1rem;
+    height: 1rem;
+    fill: currentColor;
+  }
+
+  .rotation[data-paused] .pause,
+  .rotation:not([data-paused]) .play {
+    display: none;
+  }
+
+  .dots {
+    display: flex;
+  }
+
+  /* A 24px-wide, 44px-tall hit area around a small visible dot, so the pips sit close together. */
+  .controls .dot {
+    min-width: 0;
+    width: 1.5rem;
+  }
+
+  .dot::before {
+    content: '';
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--text-muted);
+  }
+
+  /* Blue acknowledges the hover; magenta stays for the slide that is showing. */
+  .dot:hover::before {
+    background: var(--accent-blue);
+  }
+
+  .dot[aria-current='true']::before {
+    background: var(--accent-magenta);
+  }
+
+  /* Every slide shares one cell, so the spotlight is as tall as its tallest slide and never jumps. */
+  .slides {
+    display: grid;
+  }
+
+  .slide {
+    position: relative;
+    display: grid;
+    grid-area: 1 / 1;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  /* Overrides the global [hidden] rule so hidden slides keep their place in the cell and can fade.
+     visibility: hidden still keeps them out of the tab order and the accessibility tree. */
+  .spotlight .slide[hidden] {
+    display: grid !important;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .slide {
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  .media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    border-radius: 0.5rem;
+    background: var(--surface);
+    object-fit: contain;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .years,
+  .role,
+  .summary {
+    margin: 0;
+  }
+
+  .years {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem);
+    line-height: 1.15;
+  }
+
+  h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  /* Stretches the title link over the whole slide, so a click anywhere opens the game page. */
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+  }
+
+  h3 a:focus-visible {
+    outline: none;
+  }
+
+  h3 a:focus-visible::after {
+    outline: 2px solid var(--accent-magenta);
+    outline-offset: 4px;
+  }
+
+  .slide:hover h3 a {
+    color: var(--accent-magenta);
+  }
+
+  .role {
+    color: var(--text-muted);
+  }
+
+  .summary {
+    max-width: 65ch;
+  }
+
+  /* Crossfade. The outgoing slide turns invisible only once its fade ends, so both show mid-fade. */
+  @media (prefers-reduced-motion: no-preference) {
+    .slide {
+      transition-property: opacity, visibility;
+      transition-duration: 400ms, 0s;
+      transition-timing-function: ease-out;
+    }
+
+    .spotlight .slide[hidden] {
+      transition-delay: 0s, 400ms;
+    }
+
+    .dot::before {
+      transition: background-color 200ms ease-out;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.spotlight');
+
+  if (root) {
+    const slides = [...root.querySelectorAll<HTMLElement>('.slide')];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('.dot')];
+    const list = root.querySelector<HTMLElement>('.slides')!;
+    const controls = root.querySelector<HTMLElement>('.controls')!;
+    const rotation = root.querySelector<HTMLButtonElement>('.rotation')!;
+
+    let index = 0;
+    // Set by Pause, by prev, next, or a dot, and at start for reduced motion. Only Play clears it.
+    let paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let hovering = false;
+    let focusWithin = false;
+    let onScreen = false;
+    let tabVisible = document.visibilityState === 'visible';
+    let timer: ReturnType<typeof setInterval> | undefined;
+
+    const show = (next: number) => {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((slide, i) => (slide.hidden = i !== index));
+      dots.forEach((dot, i) => (i === index ? dot.setAttribute('aria-current', 'true') : dot.removeAttribute('aria-current')));
+    };
+
+    const render = () => {
+      rotation.setAttribute('aria-label', paused ? 'Play' : 'Pause');
+      rotation.toggleAttribute('data-paused', paused);
+      // Screen readers announce slide changes only when the visitor makes them.
+      list.setAttribute('aria-live', paused ? 'polite' : 'off');
+    };
+
+    const tick = () => {
+      if (!paused && !hovering && !focusWithin && onScreen && tabVisible) show(index + 1);
+    };
+
+    // Restarting gives the current slide its full time again.
+    const restart = () => {
+      clearInterval(timer);
+      timer = setInterval(tick, 5000);
+    };
+
+    const step = (next: number) => {
+      paused = true;
+      show(next);
+      render();
+    };
+
+    root.querySelector('.prev')!.addEventListener('click', () => step(index - 1));
+    root.querySelector('.next')!.addEventListener('click', () => step(index + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => step(i)));
+
+    rotation.addEventListener('click', () => {
+      paused = !paused;
+      // Play is an explicit request, so it overrides the hold from the pointer and focus already on it.
+      if (!paused) hovering = focusWithin = false;
+      render();
+      restart();
+    });
+
+    root.addEventListener('mouseenter', () => (hovering = true));
+    root.addEventListener('mouseleave', () => {
+      hovering = false;
+      restart();
+    });
+
+    root.addEventListener('focusin', () => (focusWithin = true));
+    root.addEventListener('focusout', (event) => {
+      // Moving between controls inside the spotlight is not leaving it.
+      if (root.contains(event.relatedTarget as Node | null)) return;
+      focusWithin = false;
+      restart();
+    });
+
+    new IntersectionObserver(([entry]) => (onScreen = entry.intersectionRatio >= 0.5), { threshold: 0.5 }).observe(root);
+    document.addEventListener('visibilitychange', () => (tabVisible = document.visibilityState === 'visible'));
+
+    controls.hidden = false;
+    render();
+    restart();
+  }
+</script>

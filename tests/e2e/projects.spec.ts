@@ -63,18 +63,14 @@ test('clicking anywhere on a card opens its game page', async ({ page }) => {
   await expect(page).toHaveURL(/\/games\/storyloom\/$/);
 });
 
-test('cards sit in one column on phones and two on wider screens', async ({ page }) => {
-  const columns = async () => {
-    const cards = page.locator('#projects article');
-    const [a, b] = [(await cards.nth(0).boundingBox())!, (await cards.nth(1).boundingBox())!];
-    return a.y === b.y ? 2 : 1;
-  };
-  await page.setViewportSize({ width: 375, height: 800 });
-  await page.goto('/');
-  expect(await columns()).toBe(1);
-  await page.setViewportSize({ width: 1280, height: 800 });
-  expect(await columns()).toBe(2);
-});
+for (const [width, expected] of [[1440, 4], [900, 2], [390, 1]] as const) {
+  test(`cards sit in ${expected} column(s) at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    const tops = await page.locator('#projects article').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
+    expect(tops.filter((t) => t === tops[0]).length).toBe(expected);
+  });
+}
 
 test('there is no archive table', async ({ page }) => {
   await page.goto('/');

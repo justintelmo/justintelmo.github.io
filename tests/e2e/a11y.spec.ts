@@ -1,6 +1,9 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
+// Axe reads the blended color of a section caught mid scroll-fade, which is a transient, not a real contrast failure.
+test.use({ reducedMotion: 'reduce' });
+
 for (const theme of ['light', 'dark']) {
   test(`axe finds no WCAG A/AA violations in ${theme} mode`, async ({ page }) => {
     await page.goto('/');

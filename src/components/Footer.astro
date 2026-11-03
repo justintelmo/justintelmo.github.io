@@ -8,29 +8,42 @@ interface Props {
 }
 
 const { note, links } = Astro.props;
+// Shown as text too, so visitors who use webmail can copy it instead of opening a mail app.
+const email = links.find((link) => link.icon === 'email')?.href.replace(/^mailto:/, '');
 ---
 
-<!-- Doubles as the Contact section, so every page ends with a way to reach Justin. -->
-<footer id="contact" class="container" aria-labelledby="contact-heading">
-  <h2 id="contact-heading">Contact</h2>
-  <p>{note}</p>
-  <ContactLinks links={links} />
+<!-- Doubles as the Contact section, so every page ends with a way to reach Justin. The sticky header already shows Resume, so it is left out here. -->
+<footer id="contact" aria-labelledby="contact-heading">
+  <div class="container">
+    <h2 id="contact-heading">Contact</h2>
+    <p>{note}</p>
+    {email && <address class="email">{email}</address>}
+    <ContactLinks links={links.filter((link) => link.icon !== 'resume')} />
+  </div>
 </footer>
 
 <style>
   footer {
     margin-top: 4rem;
-    padding-block: 2rem;
-    border-top: 1px solid var(--border);
+    padding-block: 4rem;
+    background: var(--surface);
   }
 
   h2 {
-    margin: 0 0 0.5rem;
-    font-size: 1.75rem;
+    margin: 0 0 1rem;
+    font-size: var(--size-section-heading);
   }
 
   p {
     max-width: 65ch;
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.75rem;
+  }
+
+  .email {
+    margin: 0 0 1.5rem;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 600;
+    overflow-wrap: anywhere;
   }
 </style>

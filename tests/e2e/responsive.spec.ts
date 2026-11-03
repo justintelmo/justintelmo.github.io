@@ -18,13 +18,12 @@ test.describe('at 320x568', () => {
 test.describe('at 1280x800', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
-  test('the intro and the first project start above the fold', async ({ page }) => {
+  // The hero art is what shows games above the fold now.
+  test('the intro and its game art start above the fold', async ({ page }) => {
     await page.goto('/');
-    for (const selector of ['.intro .tagline', '.intro .facts', '.intro .contact']) {
+    for (const selector of ['.intro .tagline', '.intro .facts', '.intro .actions', '.intro .art']) {
       const box = (await page.locator(selector).boundingBox())!;
       expect(box.y + box.height, selector).toBeLessThanOrEqual(800);
     }
-    const first = (await page.locator('#projects article').first().boundingBox())!;
-    expect(first.y).toBeLessThanOrEqual(800);
   });
 });

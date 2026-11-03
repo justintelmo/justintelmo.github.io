@@ -8,6 +8,19 @@
   display: none !important;
 }
 
+/* Archivo is for the name, headings, hero tagline and button labels; body text keeps the system stack. */
+:root {
+  --font-display: 'Archivo Variable', system-ui, sans-serif;
+  /* One size for every section heading, including the Contact band. */
+  --size-section-heading: clamp(2rem, 1.4rem + 2.5vw, 3.25rem);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }
@@ -41,7 +54,7 @@ a:hover {
 }
 
 .container {
-  max-width: 64rem;
+  max-width: 80rem;
   margin-inline: auto;
   padding-inline: 1rem;
 }
@@ -81,12 +94,14 @@ html {
   border: 1px solid var(--accent-blue);
   border-radius: 0.5rem;
   color: var(--accent-blue);
+  font-family: var(--font-display);
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
 }
 
-.button:hover {
+.button:hover,
+.button:focus-visible {
   border-color: var(--accent-magenta);
   color: var(--accent-magenta);
 }
@@ -96,7 +111,8 @@ html {
   color: var(--bg);
 }
 
-.button.primary:hover {
+.button.primary:hover,
+.button.primary:focus-visible {
   border-color: var(--accent-magenta);
   background: var(--accent-magenta);
   color: var(--bg);
@@ -106,6 +122,50 @@ html {
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+
+  /* Buttons lift a pixel on hover and press in on click. The outlined button's fill sweeps in
+     from the left, drawn on ::before behind the label (isolation keeps it above the page). */
+  .button {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+
+  .button:hover,
+  .button:focus-visible {
+    transform: translateY(-1px);
+  }
+
+  .button:active {
+    transform: scale(0.98);
+  }
+
+  .button:not(.primary)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--accent-blue);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition-property: transform;
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
+  }
+
+  .button:not(.primary):hover,
+  .button:not(.primary):focus-visible {
+    border-color: var(--accent-blue);
+    color: var(--bg);
+  }
+
+  .button:not(.primary):hover::before,
+  .button:not(.primary):focus-visible::before {
+    transform: scaleX(1);
   }
 
   /* Tied to scroll position, so no script can fail and leave a section hidden.

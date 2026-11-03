@@ -17,6 +17,12 @@ test('the art stack links four games to their pages', async ({ page }) => {
   }
 });
 
+test('the hero avatar is 96px', async ({ page }) => {
+  await page.goto('/');
+  const box = (await page.locator('.intro .logo').boundingBox())!;
+  expect([box.width, box.height]).toEqual([96, 96]);
+});
+
 test('the name is display size at 1440px', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');

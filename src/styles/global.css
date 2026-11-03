@@ -205,6 +205,30 @@ html {
       animation-timeline: --hero;
       animation-range: exit 0% exit 100%;
     }
+
+    /* Meanwhile the hero avatar flies to the header avatar's spot, shrinking to its size, then hands
+       off to it. The page scrolls the avatar up at a steady rate while the translate grows at a steady
+       rate, so a linear animation is a straight line on screen. IntroHeader's script measures
+       --fly-x and --fly-y. Above the header while it flies, and never in the way of a click. */
+    .intro .logo {
+      position: relative;
+      z-index: 11;
+      pointer-events: none;
+      transform-origin: top left;
+      animation-name: avatar-fly;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --hero;
+      animation-range: exit 0% exit 100%;
+    }
+
+    .site-header .avatar {
+      animation-name: avatar-land;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --hero;
+      animation-range: exit 0% exit 100%;
+    }
   }
 }
 
@@ -212,6 +236,25 @@ html {
    leaving its heading under the sticky header. */
 @keyframes reveal {
   from {
+    opacity: 0;
+  }
+}
+
+/* The two avatars swap in the last 1%, when both are the same size in the same spot. */
+@keyframes avatar-fly {
+  99% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(var(--fly-x, 0px), var(--fly-y, 0px)) scale(calc(32 / 96));
+  }
+}
+
+@keyframes avatar-land {
+  from,
+  99% {
     opacity: 0;
   }
 }

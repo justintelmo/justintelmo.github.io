@@ -61,8 +61,11 @@ const image = data.nda ? undefined : data.images[0];
     background: var(--surface);
   }
 
+  /* The tile clips the image zoom to the rounded frame. */
   .media {
     margin-bottom: 0.75rem;
+    overflow: hidden;
+    border-radius: 0.5rem;
   }
 
   .media img {
@@ -141,5 +144,46 @@ const image = data.nda ? undefined : data.images[0];
 
   .project:hover .more {
     color: var(--accent-magenta);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .project {
+      transition-property: transform;
+      transition-duration: 200ms;
+      transition-timing-function: ease-out;
+    }
+
+    .media img {
+      transition-property: transform;
+      transition-duration: 200ms;
+      transition-timing-function: ease-out;
+    }
+
+    .project:hover {
+      transform: translateY(-0.25rem);
+    }
+
+    .project:hover .media img {
+      transform: scale(1.03);
+    }
+
+    /* Each card rises on its own view timeline. The keyframe moves the article, never the section.
+       Longhands on purpose: the build minifier folds the `animation` shorthand into a form Chromium rejects. */
+    @supports (animation-timeline: view()) {
+      .project {
+        animation-name: project-rise;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 0 entry 6rem;
+      }
+    }
+  }
+
+  @keyframes project-rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
   }
 </style>

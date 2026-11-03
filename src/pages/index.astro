@@ -52,9 +52,15 @@ const featured = sortProjects(await getCollection('projects'));
     gap: 3rem 2rem;
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 40rem) {
     .featured {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .featured {
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 </style>

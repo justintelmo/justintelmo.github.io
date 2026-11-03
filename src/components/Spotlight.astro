@@ -126,6 +126,11 @@ const slides = spotlightProjects(Astro.props.projects);
     background: var(--text-muted);
   }
 
+  /* Blue acknowledges the hover; magenta stays for the slide that is showing. */
+  .dot:hover::before {
+    background: var(--accent-blue);
+  }
+
   .dot[aria-current='true']::before {
     background: var(--accent-magenta);
   }
@@ -237,6 +242,10 @@ const slides = spotlightProjects(Astro.props.projects);
 
     .spotlight .slide[hidden] {
       transition-delay: 0s, 400ms;
+    }
+
+    .dot::before {
+      transition: background-color 200ms ease-out;
     }
   }
 </style>

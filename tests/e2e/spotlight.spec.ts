@@ -157,6 +157,34 @@ test('the pips sit 24px apart and every control is 44px tall', async ({ page }) 
   }
 });
 
+test('a hovered pip fades to blue, turns magenta when clicked, and fades back when left', async ({ page }) => {
+  await page.goto('/');
+  const dot = page.locator('.spotlight .dot').nth(2);
+  const fill = () => dot.evaluate((el) => getComputedStyle(el, '::before').backgroundColor);
+  const token = (name: string) =>
+    page.evaluate((name) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${name})`;
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    }, name);
+  const [muted, blue, magenta] = [await token('--text-muted'), await token('--accent-blue'), await token('--accent-magenta')];
+
+  expect(await dot.evaluate((el) => getComputedStyle(el, '::before').transitionDuration)).toBe('0.2s');
+  expect(await fill()).toBe(muted);
+  await dot.hover();
+  await expect.poll(fill).toBe(blue);
+  await dot.click();
+  await expect.poll(fill).toBe(magenta);
+  await page.locator('.spotlight .dot').nth(3).hover();
+  await expect.poll(fill).toBe(magenta);
+  await page.locator('.spotlight .dot').nth(1).click();
+  await page.mouse.move(0, 0);
+  await expect.poll(fill).toBe(muted);
+});
+
 test('the controls fit on one row at 390px', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');

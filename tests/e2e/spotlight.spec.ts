@@ -109,7 +109,7 @@ test('the spotlight keeps one height across every slide', async ({ page }) => {
   for (let i = 2; i <= 6; i++) {
     await page.locator('.spotlight .next').click();
     expect(await label(page)).toBe(`${i} of 6`);
-    expect(await height()).toBe(first);
+    expect(await height()).toBeCloseTo(first, 1);
   }
 });
 

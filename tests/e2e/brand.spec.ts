@@ -8,7 +8,9 @@ test.describe('with no motion preference', () => {
   test('the header brand is hidden while the hero shows the name', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('.intro h1')).toBeInViewport();
-    await expect(page.locator(brand)).toBeHidden();
+    // Without scroll-driven animations there is no hand-off, so the brand just shows.
+    const scrollDriven = await page.evaluate(() => CSS.supports('animation-timeline: view()'));
+    await expect(page.locator(brand)).toBeVisible({ visible: !scrollDriven });
   });
 
   test('the header brand appears once the hero scrolls away', async ({ page }) => {

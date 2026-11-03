@@ -84,6 +84,8 @@ test('the unreleased game page is text only with no outside links', async ({ pag
 
 for (const [slug, theme] of [['dead-mans-party', 'light'], ['dead-mans-party', 'dark'], ['game-band-unreleased', 'light'], ['game-band-unreleased', 'dark']]) {
   test(`axe finds no WCAG A/AA violations on /games/${slug}/ in ${theme} mode`, async ({ page }) => {
+    // Axe reads a button's blended color mid theme transition, which is a transient, not a real failure.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(`/games/${slug}/`);
     await page.evaluate((t) => document.documentElement.setAttribute('data-theme', t), theme);
     const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();

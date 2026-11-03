@@ -13,6 +13,12 @@ const token = (page: Page, name: string) =>
 
 const skillRows = (page: Page) => page.locator('#skills .skill');
 
+// Browsers without scroll-driven animations (Firefox, as of 157) skip the @supports block and show everything as-is.
+const scrollDriven = (page: Page) => page.evaluate(() => CSS.supports('animation-timeline: view()'));
+
+// A drawn bar has no transform left: 'none' without the animation, the identity matrix after it.
+const isDrawn = (el: Element) => new DOMMatrix(getComputedStyle(el).transform).isIdentity;
+
 const style = (selector: string, property: string) =>
   `getComputedStyle(document.querySelector('${selector}')).getPropertyValue('${property}')`;
 
@@ -26,7 +32,7 @@ test.describe('with no motion preference', () => {
 
   test('sections fade in as they scroll into view', async ({ page }) => {
     await page.goto('/');
-    expect(await page.evaluate(style('#skills', 'animation-name'))).toBe('reveal');
+    expect(await page.evaluate(style('#skills', 'animation-name'))).toBe((await scrollDriven(page)) ? 'reveal' : 'none');
   });
 
   test('a section is fully visible once scrolled to', async ({ page }) => {
@@ -38,9 +44,9 @@ test.describe('with no motion preference', () => {
   test('skill bars draw in and are fully drawn once scrolled to', async ({ page }) => {
     await page.goto('/');
     const bar = page.locator('#skills .bar').first();
-    expect(await bar.evaluate((el) => getComputedStyle(el).animationName)).toBe('draw');
+    expect(await bar.evaluate((el) => getComputedStyle(el).animationName)).toBe((await scrollDriven(page)) ? 'draw' : 'none');
     await page.locator('.site-header nav a', { hasText: 'Skills' }).click();
-    await expect.poll(() => bar.evaluate((el) => getComputedStyle(el).transform)).toBe('matrix(1, 0, 0, 1, 0, 0)');
+    await expect.poll(() => bar.evaluate(isDrawn)).toBe(true);
   });
 
   test('hovering a skill highlights its row and dims the others', async ({ page }) => {
@@ -51,7 +57,7 @@ test.describe('with no motion preference', () => {
     const other = rows.nth(1);
     await hovered.scrollIntoViewIfNeeded();
     const bar = hovered.locator('.bar').first();
-    await expect.poll(() => bar.evaluate((el) => getComputedStyle(el).transform)).toBe('matrix(1, 0, 0, 1, 0, 0)');
+    await expect.poll(() => bar.evaluate(isDrawn)).toBe(true);
     await hovered.hover();
     const magenta = await token(page, '--accent-magenta');
     await expect

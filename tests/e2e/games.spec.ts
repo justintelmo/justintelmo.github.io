@@ -119,16 +119,20 @@ test('the bottom of a game page offers the resume and contact links', async ({ p
   await expect(bar.getByRole('link', { name: 'Email' })).toHaveAttribute('href', 'mailto:justin.telmo@gmail.com');
 });
 
-test('the game image is never shown wider than its source', async ({ page }) => {
+test('the game image keeps its own width and never exceeds its column', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   for (const slug of ['dead-mans-party', 'covet-fashion']) {
     await page.goto(`/games/${slug}/`);
     const img = page.locator('main figure img').first();
-    const [shown, natural] = await img.evaluate((el: HTMLImageElement) => [
+    // Computed width is always a pixel value, so compare it with the width attribute (the source's own
+    // width). A rule like width: 100% would stretch a narrow source past it; max-width caps it to the column.
+    const [attrWidth, shown, maxWidth] = await img.evaluate((el: HTMLImageElement) => [
+      Number(el.getAttribute('width')),
       el.getBoundingClientRect().width,
-      el.naturalWidth,
+      getComputedStyle(el).maxWidth,
     ]);
-    expect(shown).toBeLessThanOrEqual(natural);
+    expect(maxWidth).toBe('100%');
+    expect(shown).toBeLessThanOrEqual(attrWidth);
   }
 });
 

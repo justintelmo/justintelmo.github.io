@@ -27,10 +27,10 @@ test('it shows one slide per released game, first one first', async ({ page }) =
   await expect(page.locator('#projects article')).toHaveCount(7);
 });
 
-test('it advances after 7 seconds', async ({ page }) => {
+test('it advances after 5 seconds', async ({ page }) => {
   await openInView(page);
   await page.mouse.move(0, 0);
-  await page.clock.runFor(7000);
+  await page.clock.runFor(5000);
   expect(await label(page)).toBe('2 of 6');
   await expect(page.locator('.spotlight .slides')).toHaveAttribute('aria-live', 'off');
 });
@@ -41,7 +41,7 @@ test('it holds while hovered and resumes after', async ({ page }) => {
   await page.clock.runFor(15000);
   expect(await label(page)).toBe('1 of 6');
   await page.mouse.move(0, 0);
-  await page.clock.runFor(7000);
+  await page.clock.runFor(5000);
   expect(await label(page)).toBe('2 of 6');
 });
 
@@ -52,7 +52,7 @@ test('it holds while focus is inside and resumes after focus leaves', async ({ p
   await page.clock.runFor(15000);
   expect(await label(page)).toBe('1 of 6');
   await page.locator('.site-header a').first().focus();
-  await page.clock.runFor(7000);
+  await page.clock.runFor(5000);
   expect(await label(page)).toBe('2 of 6');
 });
 
@@ -88,7 +88,7 @@ test('pressing Play after stepping resumes auto-advance', async ({ page }) => {
   await expect(page.locator('.spotlight .rotation')).toHaveAccessibleName('Pause');
   await page.mouse.move(0, 0);
   await page.locator('.site-header a').first().focus();
-  await page.clock.runFor(7000);
+  await page.clock.runFor(5000);
   expect(await label(page)).toBe('3 of 6');
 });
 
@@ -96,7 +96,7 @@ test('pressing Play resumes even while the pointer and focus stay on the button'
   await openInView(page);
   await page.locator('.spotlight .next').click();
   await page.locator('.spotlight .rotation').click();
-  await page.clock.runFor(7000);
+  await page.clock.runFor(5000);
   expect(await label(page)).toBe('3 of 6');
 });
 

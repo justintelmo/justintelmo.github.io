@@ -289,7 +289,7 @@ const slides = spotlightProjects(Astro.props.projects);
     // Restarting gives the current slide its full time again.
     const restart = () => {
       clearInterval(timer);
-      timer = setInterval(tick, 7000);
+      timer = setInterval(tick, 5000);
     };
 
     const step = (next: number) => {

@@ -1,0 +1,290 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatYearRange } from '../lib/dates';
+import { projectPath, spotlightProjects } from '../lib/projects';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+
+const slides = spotlightProjects(Astro.props.projects);
+---
+
+<section class="spotlight" aria-roledescription="carousel" aria-label="Spotlight">
+  <!-- Hidden until the script runs, so a page without JavaScript shows the first game and no dead buttons. -->
+  <div class="controls" hidden>
+    <button type="button" class="rotation" aria-label="Pause">Pause</button>
+    <button type="button" class="prev" aria-label="Previous game"><span aria-hidden="true">←</span></button>
+    <button type="button" class="next" aria-label="Next game"><span aria-hidden="true">→</span></button>
+    {
+      slides.map((project, i) => (
+        <button type="button" class="dot" aria-label={`Show ${project.data.title}`} aria-current={i === 0 ? 'true' : undefined} />
+      ))
+    }
+  </div>
+  <div class="slides" aria-live="off">
+    {
+      slides.map((project, i) => {
+        const { data } = project;
+        const image = data.images[0];
+        return (
+          <div class="slide" role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}`} hidden={i !== 0}>
+            <div class="media">
+              <Image
+                src={image.src as ImageMetadata}
+                alt={image.alt}
+                widths={[480, 800]}
+                sizes="(min-width: 48rem) 39rem, 100vw"
+                loading="lazy"
+              />
+            </div>
+            <div class="text">
+              <p class="years">{formatYearRange(data.workedFrom, data.workedTo)}</p>
+              <h3>
+                <a href={projectPath(project)}>{data.title}</a>
+              </h3>
+              <p class="role">
+                {data.role} · {data.studio}
+              </p>
+              <p class="summary">{data.summary}</p>
+            </div>
+          </div>
+        );
+      })
+    }
+  </div>
+</section>
+
+<style>
+  .spotlight {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 4rem;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .controls button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .controls button:hover {
+    color: var(--accent-magenta);
+  }
+
+  /* A full-size hit area around a small visible dot. */
+  .controls .dot {
+    display: grid;
+    place-items: center;
+    padding: 0;
+    background: none;
+  }
+
+  .dot::before {
+    content: '';
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--text-muted);
+  }
+
+  .dot[aria-current='true']::before {
+    background: var(--accent-magenta);
+  }
+
+  .slide {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 48rem) {
+    .slide {
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  .media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    border-radius: 0.5rem;
+    background: var(--surface);
+    object-fit: contain;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .years,
+  .role,
+  .summary {
+    margin: 0;
+  }
+
+  .years {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem);
+    line-height: 1.15;
+  }
+
+  h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  /* Stretches the title link over the whole slide, so a click anywhere opens the game page. */
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+  }
+
+  h3 a:focus-visible {
+    outline: none;
+  }
+
+  h3 a:focus-visible::after {
+    outline: 2px solid var(--accent-magenta);
+    outline-offset: 4px;
+  }
+
+  .slide:hover h3 a {
+    color: var(--accent-magenta);
+  }
+
+  .role {
+    color: var(--text-muted);
+  }
+
+  .summary {
+    max-width: 65ch;
+  }
+
+  /* The global [hidden] rule removes the outgoing slide at once, so only the incoming one fades in. */
+  @media (prefers-reduced-motion: no-preference) {
+    .slide {
+      transition-property: opacity;
+      transition-duration: 400ms;
+      transition-timing-function: ease-out;
+    }
+
+    @starting-style {
+      .slide {
+        opacity: 0;
+      }
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.spotlight');
+
+  if (root) {
+    const slides = [...root.querySelectorAll<HTMLElement>('.slide')];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('.dot')];
+    const list = root.querySelector<HTMLElement>('.slides')!;
+    const controls = root.querySelector<HTMLElement>('.controls')!;
+    const rotation = root.querySelector<HTMLButtonElement>('.rotation')!;
+
+    let index = 0;
+    let userStopped = false; // Set by prev, next, or a dot. Never cleared: the visitor took over.
+    let paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let hovering = false;
+    let focusWithin = false;
+    let onScreen = false;
+    let tabVisible = document.visibilityState === 'visible';
+    let timer: ReturnType<typeof setInterval> | undefined;
+
+    const show = (next: number) => {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((slide, i) => (slide.hidden = i !== index));
+      dots.forEach((dot, i) => (i === index ? dot.setAttribute('aria-current', 'true') : dot.removeAttribute('aria-current')));
+    };
+
+    const render = () => {
+      const text = paused ? 'Play' : 'Pause';
+      rotation.textContent = text;
+      rotation.setAttribute('aria-label', text);
+      // Screen readers announce slide changes only when the visitor makes them.
+      list.setAttribute('aria-live', !userStopped && !paused ? 'off' : 'polite');
+    };
+
+    const tick = () => {
+      if (!userStopped && !paused && !hovering && !focusWithin && onScreen && tabVisible) show(index + 1);
+    };
+
+    // Restarting gives the current slide its full time again.
+    const restart = () => {
+      clearInterval(timer);
+      timer = setInterval(tick, 7000);
+    };
+
+    const step = (next: number) => {
+      userStopped = true;
+      show(next);
+      render();
+    };
+
+    root.querySelector('.prev')!.addEventListener('click', () => step(index - 1));
+    root.querySelector('.next')!.addEventListener('click', () => step(index + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => step(i)));
+
+    rotation.addEventListener('click', () => {
+      paused = !paused;
+      render();
+      restart();
+    });
+
+    root.addEventListener('mouseenter', () => (hovering = true));
+    root.addEventListener('mouseleave', () => {
+      hovering = false;
+      restart();
+    });
+
+    root.addEventListener('focusin', () => (focusWithin = true));
+    root.addEventListener('focusout', (event) => {
+      // Moving between controls inside the spotlight is not leaving it.
+      if (root.contains(event.relatedTarget as Node | null)) return;
+      focusWithin = false;
+      restart();
+    });
+
+    new IntersectionObserver(([entry]) => (onScreen = entry.intersectionRatio >= 0.5), { threshold: 0.5 }).observe(root);
+    document.addEventListener('visibilitychange', () => (tabVisible = document.visibilityState === 'visible'));
+
+    controls.hidden = false;
+    render();
+    restart();
+  }
+</script>

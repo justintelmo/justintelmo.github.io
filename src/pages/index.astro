@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import IntroHeader from '../components/IntroHeader.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SkillTimeline from '../components/SkillTimeline.astro';
+import Spotlight from '../components/Spotlight.astro';
 import { site } from '../data/site';
 import { skillGroups } from '../data/skills';
 import Base from '../layouts/Base.astro';
@@ -24,6 +25,7 @@ const featured = sortProjects(await getCollection('projects'));
     </section>
     <section id="projects" aria-labelledby="projects-heading">
       <h2 id="projects-heading">Projects</h2>
+      <Spotlight projects={featured} />
       <div class="featured">
         {featured.map((project) => <FeaturedProject project={project} />)}
       </div>

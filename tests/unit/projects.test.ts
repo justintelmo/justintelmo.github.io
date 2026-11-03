@@ -5,6 +5,7 @@ import {
   projectAnchor,
   projectPath,
   sortProjects,
+  spotlightProjects,
 } from '../../src/lib/projects';
 
 type Fixture = { title: string; featured: boolean; order: number; workedFrom: string; launched?: number; nda?: boolean; images?: unknown[] };
@@ -60,5 +61,12 @@ describe('heroArt', () => {
   });
   it('returns fewer when fewer qualify', () => {
     expect(heroArt([unreleased, dmp]).map((p) => p.id)).toEqual(['dead-mans-party']);
+  });
+});
+
+describe('spotlightProjects', () => {
+  it('keeps every released game with an image, in order', () => {
+    expect(spotlightProjects([dmp, unreleased, storyloom, noImage, covet]).map((p) => p.id))
+      .toEqual(['dead-mans-party', 'storyloom', 'covet-fashion']);
   });
 });

@@ -1,0 +1,123 @@
+import { expect, test, type Page } from '@playwright/test';
+
+const active = (page: Page) => page.locator('.spotlight .slide:not([hidden])');
+const label = async (page: Page) => active(page).getAttribute('aria-label');
+
+// Fake timers, then bring the spotlight on screen. The probe's first callback lands in the same
+// rendering step as the component's observer, so by the time it resolves the spotlight knows it is on screen.
+async function openInView(page: Page) {
+  await page.clock.install();
+  await page.goto('/');
+  await page.locator('.spotlight').scrollIntoViewIfNeeded();
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        new IntersectionObserver((_, observer) => {
+          observer.disconnect();
+          resolve();
+        }).observe(document.querySelector('.spotlight')!);
+      }),
+  );
+}
+
+test('it shows one slide per released game, first one first', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.spotlight .slide')).toHaveCount(6);
+  expect(await label(page)).toBe('1 of 6');
+  await expect(page.locator('#projects article')).toHaveCount(7);
+});
+
+test('it advances after 7 seconds', async ({ page }) => {
+  await openInView(page);
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(7000);
+  expect(await label(page)).toBe('2 of 6');
+  await expect(page.locator('.spotlight .slides')).toHaveAttribute('aria-live', 'off');
+});
+
+test('it holds while hovered and resumes after', async ({ page }) => {
+  await openInView(page);
+  await page.locator('.spotlight').hover();
+  await page.clock.runFor(15000);
+  expect(await label(page)).toBe('1 of 6');
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(7000);
+  expect(await label(page)).toBe('2 of 6');
+});
+
+test('it holds while focus is inside and resumes after focus leaves', async ({ page }) => {
+  await openInView(page);
+  await page.mouse.move(0, 0);
+  await page.locator('.spotlight .rotation').focus();
+  await page.clock.runFor(15000);
+  expect(await label(page)).toBe('1 of 6');
+  await page.locator('.site-header a').first().focus();
+  await page.clock.runFor(7000);
+  expect(await label(page)).toBe('2 of 6');
+});
+
+test('the pause button stops it and says Play', async ({ page }) => {
+  await openInView(page);
+  await page.mouse.move(0, 0);
+  await page.locator('.spotlight .rotation').click();
+  await page.mouse.move(0, 0);
+  await expect(page.locator('.spotlight .rotation')).toHaveAccessibleName('Play');
+  await expect(page.locator('.spotlight .slides')).toHaveAttribute('aria-live', 'polite');
+  await page.clock.runFor(21000);
+  expect(await label(page)).toBe('1 of 6');
+});
+
+test('using next or a dot changes the slide and stops auto-advance for good', async ({ page }) => {
+  await openInView(page);
+  await page.locator('.spotlight .next').click();
+  expect(await label(page)).toBe('2 of 6');
+  await page.locator('.spotlight .dot').nth(4).click();
+  expect(await label(page)).toBe('5 of 6');
+  await expect(page.locator('.spotlight .dot').nth(4)).toHaveAttribute('aria-current', 'true');
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(21000);
+  expect(await label(page)).toBe('5 of 6');
+});
+
+test('previous wraps from the first slide to the last', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('.spotlight .prev').click();
+  expect(await label(page)).toBe('6 of 6');
+});
+
+test('it does not advance while scrolled off screen', async ({ page }) => {
+  // At 1280x800 the spotlight starts below the fold.
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.clock.install();
+  await page.goto('/');
+  await expect(page.locator('.spotlight')).not.toBeInViewport();
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(21000);
+  expect(await label(page)).toBe('1 of 6');
+});
+
+test.describe('with reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+
+  test('it never auto-advances, steps by hand, and switches instantly', async ({ page }) => {
+    await openInView(page);
+    await page.mouse.move(0, 0);
+    await page.clock.runFor(21000);
+    expect(await label(page)).toBe('1 of 6');
+    await expect(page.locator('.spotlight .rotation')).toHaveAccessibleName('Play');
+    await page.locator('.spotlight .next').click();
+    expect(await label(page)).toBe('2 of 6');
+    const duration = await active(page).evaluate((el) => getComputedStyle(el).transitionDuration);
+    expect(duration).toBe('0s');
+  });
+});
+
+test.describe('without JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+
+  test('the first slide shows and the controls stay hidden', async ({ page }) => {
+    await page.goto('/');
+    expect(await label(page)).toBe('1 of 6');
+    await expect(page.locator('.spotlight .controls')).toBeHidden();
+  });
+});

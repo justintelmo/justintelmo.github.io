@@ -33,3 +33,8 @@ export function isShowcased(project: ShowcaseLike): boolean {
 export function heroArt<P extends ShowcaseLike>(sorted: P[], count = 4): P[] {
   return sorted.filter(isShowcased).slice(0, count);
 }
+
+// The spotlight carousel: every showcased game, keeping the home page order.
+export function spotlightProjects<P extends ShowcaseLike>(sorted: P[]): P[] {
+  return sorted.filter(isShowcased);
+}

@@ -20,13 +20,18 @@ test('the hero links to every contact channel', async ({ page }) => {
   expect(hrefs).toEqual(HERO_HREFS);
 });
 
-test('every contact link is at least 44px tall', async ({ page }) => {
-  await page.goto('/');
-  const links = page.locator('.intro .contact a');
-  await expect(links).toHaveCount(HERO_HREFS.length);
-  for (const box of await links.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))) {
-    expect(box).toBeGreaterThanOrEqual(44);
-  }
+test.describe('with motion settled', () => {
+  // The hero's rise-in entrance translates the links, which makes their rect height fractional mid-animation.
+  test.use({ reducedMotion: 'reduce' });
+
+  test('every contact link is at least 44px tall', async ({ page }) => {
+    await page.goto('/');
+    const links = page.locator('.intro .contact a');
+    await expect(links).toHaveCount(HERO_HREFS.length);
+    for (const box of await links.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))) {
+      expect(box).toBeGreaterThanOrEqual(44);
+    }
+  });
 });
 
 test.describe('at 320px wide', () => {

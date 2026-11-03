@@ -105,6 +105,65 @@ test('the spotlight keeps one height across every slide', async ({ page }) => {
   }
 });
 
+test('the controls sit centered below the slides', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  const slides = (await page.locator('.spotlight .slides').boundingBox())!;
+  const controls = (await page.locator('.spotlight .controls').boundingBox())!;
+  const buttons = page.locator('.spotlight .controls button');
+  const first = (await buttons.first().boundingBox())!;
+  const last = (await buttons.last().boundingBox())!;
+  expect(controls.y).toBeGreaterThanOrEqual(slides.y + slides.height);
+  const rowCenter = (first.x + last.x + last.width) / 2;
+  expect(Math.abs(rowCenter - (slides.x + slides.width / 2))).toBeLessThanOrEqual(1);
+});
+
+test('the rotation button shows one icon and no text', async ({ page }) => {
+  await page.goto('/');
+  const rotation = page.locator('.spotlight .rotation');
+  await expect(rotation.locator('svg:visible')).toHaveCount(1);
+  expect((await rotation.innerText()).trim()).toBe('');
+  await rotation.click();
+  await expect(rotation).toHaveAccessibleName('Play');
+  await expect(rotation.locator('svg:visible')).toHaveCount(1);
+});
+
+test('the control buttons have no background and turn magenta on hover', async ({ page }) => {
+  await page.goto('/');
+  for (const name of ['rotation', 'prev', 'next']) {
+    const button = page.locator(`.spotlight .${name}`);
+    expect(await button.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
+    await button.hover();
+    const [color, magenta] = await button.evaluate((el) => {
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--accent-magenta)';
+      el.append(probe);
+      const result = [getComputedStyle(el).color, getComputedStyle(probe).color];
+      probe.remove();
+      return result;
+    });
+    expect(color).toBe(magenta);
+  }
+});
+
+test('the pips sit 24px apart and every control is 44px tall', async ({ page }) => {
+  await page.goto('/');
+  const dots = page.locator('.spotlight .dot');
+  const a = (await dots.nth(0).boundingBox())!;
+  const b = (await dots.nth(1).boundingBox())!;
+  expect(b.x - a.x).toBe(24);
+  for (const box of await page.locator('.spotlight .controls button').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))) {
+    expect(box).toBeGreaterThanOrEqual(44);
+  }
+});
+
+test('the controls fit on one row at 390px', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const tops = await page.locator('.spotlight .controls button').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
+  expect(new Set(tops).size).toBe(1);
+});
+
 test('previous wraps from the first slide to the last', async ({ page }) => {
   await page.goto('/');
   await page.locator('.spotlight .prev').click();

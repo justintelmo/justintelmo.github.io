@@ -13,17 +13,6 @@ const slides = spotlightProjects(Astro.props.projects);
 ---
 
 <section class="spotlight" aria-roledescription="carousel" aria-label="Spotlight">
-  <!-- Hidden until the script runs, so a page without JavaScript shows the first game and no dead buttons. -->
-  <div class="controls" hidden>
-    <button type="button" class="rotation" aria-label="Pause">Pause</button>
-    <button type="button" class="prev" aria-label="Previous game"><span aria-hidden="true">←</span></button>
-    <button type="button" class="next" aria-label="Next game"><span aria-hidden="true">→</span></button>
-    {
-      slides.map((project, i) => (
-        <button type="button" class="dot" aria-label={`Show ${project.data.title}`} aria-current={i === 0 ? 'true' : undefined} />
-      ))
-    }
-  </div>
   <div class="slides" aria-live="off">
     {
       slides.map((project, i) => {
@@ -55,6 +44,22 @@ const slides = spotlightProjects(Astro.props.projects);
       })
     }
   </div>
+  <!-- Hidden until the script runs, so a page without JavaScript shows the first game and no dead buttons. -->
+  <div class="controls" hidden>
+    <button type="button" class="rotation" aria-label="Pause">
+      <svg class="pause" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1" /><rect x="9.5" y="2" width="3.5" height="12" rx="1" /></svg>
+      <svg class="play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11a1 1 0 0 0 1.5.85l9-5.5a1 1 0 0 0 0-1.7l-9-5.5A1 1 0 0 0 4 2.5z" /></svg>
+    </button>
+    <button type="button" class="prev" aria-label="Previous game"><span aria-hidden="true">←</span></button>
+    <div class="dots">
+      {
+        slides.map((project, i) => (
+          <button type="button" class="dot" aria-label={`Show ${project.data.title}`} aria-current={i === 0 ? 'true' : undefined} />
+        ))
+      }
+    </div>
+    <button type="button" class="next" aria-label="Next game"><span aria-hidden="true">→</span></button>
+  </div>
 </section>
 
 <style>
@@ -67,17 +72,21 @@ const slides = spotlightProjects(Astro.props.projects);
   .controls {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.25rem;
   }
 
+  /* No fill: the round 44px button is only a hit area, and hover colors the icon. */
   .controls button {
+    display: grid;
+    place-items: center;
     min-width: 2.75rem;
     min-height: 2.75rem;
-    padding: 0 1rem;
+    padding: 0;
     border: 0;
     border-radius: 999px;
-    background: var(--surface);
+    background: none;
     color: var(--text);
     font: inherit;
     font-weight: 600;
@@ -88,12 +97,25 @@ const slides = spotlightProjects(Astro.props.projects);
     color: var(--accent-magenta);
   }
 
-  /* A full-size hit area around a small visible dot. */
+  .rotation svg {
+    width: 1rem;
+    height: 1rem;
+    fill: currentColor;
+  }
+
+  .rotation[data-paused] .pause,
+  .rotation:not([data-paused]) .play {
+    display: none;
+  }
+
+  .dots {
+    display: flex;
+  }
+
+  /* A 24px-wide, 44px-tall hit area around a small visible dot, so the pips sit close together. */
   .controls .dot {
-    display: grid;
-    place-items: center;
-    padding: 0;
-    background: none;
+    min-width: 0;
+    width: 1.5rem;
   }
 
   .dot::before {
@@ -245,9 +267,8 @@ const slides = spotlightProjects(Astro.props.projects);
     };
 
     const render = () => {
-      const text = paused ? 'Play' : 'Pause';
-      rotation.textContent = text;
-      rotation.setAttribute('aria-label', text);
+      rotation.setAttribute('aria-label', paused ? 'Play' : 'Pause');
+      rotation.toggleAttribute('data-paused', paused);
       // Screen readers announce slide changes only when the visitor makes them.
       list.setAttribute('aria-live', paused ? 'polite' : 'off');
     };

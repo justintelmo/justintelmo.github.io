@@ -235,6 +235,27 @@ test('scrolling back to it gives the current slide its full 5 seconds', async ({
   expect(await label(page)).toBe('2 of 6');
 });
 
+// Playwright can't hide a real tab, so this stands in for one: the state the page reads, and the event it hears.
+const setTabVisible = (page: Page, visible: boolean) =>
+  page.evaluate((v) => {
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => (v ? 'visible' : 'hidden') });
+    document.dispatchEvent(new Event('visibilitychange'));
+  }, visible);
+
+test('coming back to the tab gives the current slide its full 5 seconds', async ({ page }) => {
+  await openInView(page);
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(3000);
+  await setTabVisible(page, false);
+  await page.clock.runFor(10000);
+  expect(await label(page)).toBe('1 of 6');
+  await setTabVisible(page, true);
+  await page.clock.runFor(2500);
+  expect(await label(page)).toBe('1 of 6');
+  await page.clock.runFor(2500);
+  expect(await label(page)).toBe('2 of 6');
+});
+
 test.describe('with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
 

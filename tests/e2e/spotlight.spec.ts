@@ -198,12 +198,15 @@ test('a hovered pip fades to blue, turns magenta when clicked, and fades back wh
   await expect.poll(fill).toBe(muted);
 });
 
-test('the controls fit on one row at 390px', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  const tops = await page.locator('.spotlight .controls button').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
-  expect(new Set(tops).size).toBe(1);
-});
+// At 320px the row exactly fills the space inside the gutters, so any added control or gap would wrap it.
+for (const width of [320, 390]) {
+  test(`the controls fit on one row at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/');
+    const tops = await page.locator('.spotlight .controls button').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
+    expect(new Set(tops).size).toBe(1);
+  });
+}
 
 test('previous wraps from the first slide to the last', async ({ page }) => {
   await page.goto('/');

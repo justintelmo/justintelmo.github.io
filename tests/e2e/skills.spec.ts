@@ -32,6 +32,13 @@ test('bars line up with the year axis', async ({ page }) => {
   expect(kotlin.x).toBeGreaterThan(tick2019.x - 30);
 });
 
+// The last year label sits near the edge at 320px. The system font's width differs by OS (Linux's is
+// wider than Windows'), so the labels use the site's own font to be the same width everywhere.
+test('the axis years are set in Archivo', async ({ page }) => {
+  await page.goto('/');
+  expect(await page.locator('#skills .tick').first().evaluate((el) => getComputedStyle(el).fontFamily)).toContain('Archivo');
+});
+
 test('the chart fits a phone screen without sideways scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await page.goto('/');

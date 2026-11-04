@@ -23,7 +23,7 @@ const art = heroArt(projects);
 <div class="intro">
   <div class="text">
     <div class="top-row">
-      <Image src={logo} alt="" width={48} height={48} class="logo" loading="eager" />
+      <Image src={logo} alt="" width={96} height={96} class="logo" loading="eager" />
       <!-- One word per line. The space between the spans keeps the accessible name "Justin Telmo". -->
       <h1>{words.map((word, i) => <>{i > 0 && ' '}<span>{word}</span></>)}</h1>
     </div>
@@ -56,6 +56,33 @@ const art = heroArt(projects);
   </ul>
 </div>
 
+<script>
+  // Measures where the hero avatar has to fly to land on the header avatar (see `.intro .logo` in global.css).
+  // The row's height changes when Archivo loads, which moves the end of the flight, so it is watched too.
+  const logo = document.querySelector<HTMLElement>('.intro .logo');
+  const row = document.querySelector<HTMLElement>('.intro .top-row');
+  const target = document.querySelector<HTMLElement>('.site-header .avatar');
+
+  if (logo && row && target) {
+    const measure = () => {
+      // The avatar's own spot, without the flight's transform.
+      logo.style.animation = 'none';
+      const from = logo.getBoundingClientRect();
+      logo.style.animation = '';
+      // The sticky header never moves, so its avatar's spot holds at any scroll position.
+      const to = target.getBoundingClientRect();
+      const inset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop);
+      // The scroll position where the row has slid fully under the header.
+      const end = row.getBoundingClientRect().bottom + window.scrollY - inset;
+      logo.style.setProperty('--fly-x', `${to.left - from.left}px`);
+      logo.style.setProperty('--fly-y', `${to.top - (from.top + window.scrollY - end)}px`);
+    };
+
+    new ResizeObserver(measure).observe(row);
+    window.addEventListener('resize', measure);
+  }
+</script>
+
 <style>
   .intro {
     padding-block: 1.5rem 1rem;
@@ -70,14 +97,14 @@ const art = heroArt(projects);
 
   .logo {
     flex-shrink: 0;
-    width: 48px;
-    height: 48px;
+    width: 96px;
+    height: 96px;
     border-radius: 50%;
   }
 
   h1 {
     margin: 0;
-    font-size: clamp(3.5rem, 9vw, 8rem);
+    font-size: var(--size-display);
     font-variation-settings: 'wdth' 75;
     font-weight: 800;
     line-height: 0.9;
@@ -91,7 +118,7 @@ const art = heroArt(projects);
   .tagline {
     margin: 1.25rem 0 0.5rem;
     font-family: var(--font-display);
-    font-size: 1.5rem;
+    font-size: var(--size-subheading);
     font-weight: 500;
     line-height: 1.3;
   }
@@ -113,7 +140,7 @@ const art = heroArt(projects);
   .actions :global(.button) {
     min-height: 3rem;
     padding: 0 1.25rem;
-    font-size: 1.125rem;
+    font-size: var(--size-body);
   }
 
   /* The fan. All four cards share one grid cell and are pushed sideways and turned from there.

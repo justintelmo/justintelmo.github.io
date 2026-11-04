@@ -68,3 +68,26 @@ test('Contact is a closing statement: a large heading, the email, then smaller l
   }
   expect(await size(page, 'footer#contact .email')).toBeGreaterThan(await size(page, 'footer#contact .contact a'));
 });
+
+// Six steps in all: small, body, lead, subheading, section heading, display. The clamps resolve to
+// one value at a given width, so each page at each width should show six sizes at most.
+for (const path of ['/', '/games/dead-mans-party/', '/games/game-band-unreleased/']) {
+  test(`${path} uses at most six type sizes`, async ({ page }) => {
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(path);
+      const sizes = await page.evaluate(() => {
+        const found = new Map<string, string>();
+        for (const el of document.querySelectorAll('body *')) {
+          // The PDF tag is a badge sized to its button, not a step in the scale.
+          if (el.closest('.tag') || !el.checkVisibility()) continue;
+          const hasText = [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && n.textContent!.trim());
+          const size = getComputedStyle(el).fontSize;
+          if (hasText && !found.has(size)) found.set(size, el.tagName.toLowerCase() + (el.className ? '.' + el.className.split(' ')[0] : ''));
+        }
+        return [...found].map(([size, example]) => `${size} (${example})`);
+      });
+      expect(sizes.length, `${width}px: ${sizes.join(', ')}`).toBeLessThanOrEqual(6);
+    }
+  });
+}

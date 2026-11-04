@@ -187,14 +187,14 @@ const slides = spotlightProjects(Astro.props.projects);
 
   .years {
     color: var(--text-muted);
-    font-size: 0.875rem;
+    font-size: var(--size-small);
     font-weight: 600;
     letter-spacing: 0.06em;
   }
 
   h3 {
     margin: 0;
-    font-size: clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem);
+    font-size: var(--size-lead);
     line-height: 1.15;
   }
 
@@ -324,7 +324,15 @@ const slides = spotlightProjects(Astro.props.projects);
       restart();
     });
 
-    new IntersectionObserver(([entry]) => (onScreen = entry.intersectionRatio >= 0.5), { threshold: 0.5 }).observe(root);
+    new IntersectionObserver(
+      ([entry]) => {
+        const wasOnScreen = onScreen;
+        onScreen = entry.intersectionRatio >= 0.5;
+        // Coming back into view, the slide gets its full time instead of whatever the interval had left.
+        if (onScreen && !wasOnScreen) restart();
+      },
+      { threshold: 0.5 },
+    ).observe(root);
     document.addEventListener('visibilitychange', () => (tabVisible = document.visibilityState === 'visible'));
 
     controls.hidden = false;

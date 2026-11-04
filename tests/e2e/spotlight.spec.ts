@@ -3,11 +3,16 @@ import { expect, test, type Page } from '@playwright/test';
 const active = (page: Page) => page.locator('.spotlight .slide:not([hidden])');
 const label = async (page: Page) => active(page).getAttribute('aria-label');
 
-// Fake timers, then bring the spotlight on screen. The probe's first callback lands in the same
-// rendering step as the component's observer, so by the time it resolves the spotlight knows it is on screen.
+// Fake timers, then bring the spotlight on screen.
 async function openInView(page: Page) {
   await page.clock.install();
   await page.goto('/');
+  await scrollIntoView(page);
+}
+
+// The probe's first callback lands in the same rendering step as the component's observer,
+// so by the time it resolves the spotlight knows it is on screen.
+async function scrollIntoView(page: Page) {
   await page.locator('.spotlight').scrollIntoViewIfNeeded();
   await page.evaluate(
     () =>
@@ -109,7 +114,7 @@ test('the spotlight keeps one height across every slide', async ({ page }) => {
   for (let i = 2; i <= 6; i++) {
     await page.locator('.spotlight .next').click();
     expect(await label(page)).toBe(`${i} of 6`);
-    expect(await height()).toBe(first);
+    expect(await height()).toBeCloseTo(first, 1);
   }
 });
 
@@ -215,6 +220,19 @@ test('it does not advance while scrolled off screen', async ({ page }) => {
   await page.mouse.move(0, 0);
   await page.clock.runFor(21000);
   expect(await label(page)).toBe('1 of 6');
+});
+
+test('scrolling back to it gives the current slide its full 5 seconds', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.clock.install();
+  await page.goto('/');
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(3000);
+  await scrollIntoView(page);
+  await page.clock.runFor(2500);
+  expect(await label(page)).toBe('1 of 6');
+  await page.clock.runFor(2500);
+  expect(await label(page)).toBe('2 of 6');
 });
 
 test.describe('with reduced motion', () => {

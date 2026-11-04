@@ -97,7 +97,11 @@ test('the nav marks the section on screen as current', async ({ page }) => {
 
 test('scrolling to the bottom by hand marks Contact as current', async ({ page }) => {
   await page.goto('/');
-  await page.mouse.wheel(0, 100_000);
+  // Firefox scrolls about one screen per wheel event, however large the delta, so keep wheeling.
+  await expect(async () => {
+    await page.mouse.wheel(0, 1000);
+    expect(await page.evaluate(() => innerHeight + scrollY >= document.documentElement.scrollHeight - 1)).toBe(true);
+  }).toPass();
   await expect(page.locator('.site-header nav a[aria-current="location"]')).toHaveText(['Contact']);
 });
 

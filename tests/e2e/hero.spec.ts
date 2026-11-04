@@ -17,6 +17,12 @@ test('the art stack links four games to their pages', async ({ page }) => {
   }
 });
 
+test('the hero avatar is 96px', async ({ page }) => {
+  await page.goto('/');
+  const box = (await page.locator('.intro .logo').boundingBox())!;
+  expect([box.width, box.height]).toEqual([96, 96]);
+});
+
 test('the name is display size at 1440px', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
@@ -73,15 +79,17 @@ for (const width of [390, 1280]) {
       await page.goto('/');
       await page.waitForTimeout(800); // let the entrance finish
       for (const i of [0, 1, 2, 3, 2, 1, 0]) {
-        // Aim at a point where this card is the one on top.
+        // Aim at the middle of the strip where this card is on top. Near its edge, the spreading fan
+        // slides the card out from under the pointer, and Firefox moves hover to the next card.
         const point = await page.locator('.intro .art a').nth(i).evaluate((a) => {
           const box = a.getBoundingClientRect();
+          const y = box.top + box.height / 2;
+          const xs: number[] = [];
           for (let fx = 0.95; fx > 0; fx -= 0.05) {
             const x = box.left + box.width * fx;
-            const y = box.top + box.height / 2;
-            if (document.elementFromPoint(x, y)?.closest('a') === a) return { x, y };
+            if (document.elementFromPoint(x, y)?.closest('a') === a) xs.push(x);
           }
-          return null;
+          return xs.length ? { x: xs[Math.floor(xs.length / 2)], y } : null;
         });
         expect(point, `card ${i} has a visible spot`).not.toBeNull();
         await page.mouse.move(point!.x, point!.y);

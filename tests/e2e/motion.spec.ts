@@ -16,7 +16,7 @@ const skillRows = (page: Page) => page.locator('#skills .skill');
 // Browsers without scroll-driven animations (Firefox, as of 157) skip the @supports block and show everything as-is.
 const scrollDriven = (page: Page) => page.evaluate(() => CSS.supports('animation-timeline: view()'));
 
-// A drawn bar has no transform left: 'none' without the animation, the identity matrix after it.
+// A full-size bar has no scale left: transform is 'none' or the identity matrix.
 const isDrawn = (el: Element) => new DOMMatrix(getComputedStyle(el).transform).isIdentity;
 
 const style = (selector: string, property: string) =>
@@ -41,10 +41,11 @@ test.describe('with no motion preference', () => {
     await expect.poll(() => page.evaluate(style('#skills', 'opacity'))).toBe('1');
   });
 
-  test('skill bars draw in and are fully drawn once scrolled to', async ({ page }) => {
+  test('skill bars stay full size wherever the page is scrolled', async ({ page }) => {
     await page.goto('/');
     const bar = page.locator('#skills .bar').first();
-    expect(await bar.evaluate((el) => getComputedStyle(el).animationName)).toBe((await scrollDriven(page)) ? 'draw' : 'none');
+    expect(await bar.evaluate((el) => getComputedStyle(el).animationName)).toBe('none');
+    expect(await bar.evaluate(isDrawn)).toBe(true);
     await page.locator('.site-header nav a', { hasText: 'Skills' }).click();
     await expect.poll(() => bar.evaluate(isDrawn)).toBe(true);
   });

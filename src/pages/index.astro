@@ -1,6 +1,5 @@
 ---
 import { getCollection } from 'astro:content';
-import About from '../components/About.astro';
 import FeaturedProject from '../components/FeaturedProject.astro';
 import Footer from '../components/Footer.astro';
 import IntroHeader from '../components/IntroHeader.astro';
@@ -19,10 +18,6 @@ const featured = sortProjects(await getCollection('projects'));
   <SiteHeader name={site.name} />
   <main class="container">
     <IntroHeader site={site} projects={featured} />
-    <section id="about" aria-labelledby="about-heading">
-      <h2 id="about-heading">About</h2>
-      <About text={site.about} />
-    </section>
     <section id="projects" aria-labelledby="projects-heading">
       <h2 id="projects-heading">Projects</h2>
       <Spotlight projects={featured} />

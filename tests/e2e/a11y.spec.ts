@@ -43,8 +43,8 @@ test.describe('with motion on', () => {
         await Promise.all(document.getAnimations().filter((a) => a.timeline === document.timeline).map((a) => a.finished));
       });
       await expect
-        .poll(() => page.locator('main > section').evaluateAll((els) => els.map((el) => getComputedStyle(el).opacity)))
-        .toEqual(['1', '1', '1']);
+        .poll(() => page.locator('main > section').evaluateAll((els) => els.every((el) => getComputedStyle(el).opacity === '1')))
+        .toBe(true);
       expect(await violations(page)).toEqual([]);
     });
   }

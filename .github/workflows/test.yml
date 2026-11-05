@@ -24,3 +24,9 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium firefox
       - run: npm run ci
+      - uses: actions/upload-artifact@v7.0.2
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

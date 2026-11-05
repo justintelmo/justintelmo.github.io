@@ -28,8 +28,8 @@ test('the header brand always shows on a game page, which has no hero', async ({
 
 test('the header nav on a game page leads back to home page sections', async ({ page }) => {
   await page.goto('/games/storyloom/');
-  await page.locator('.site-header nav a', { hasText: 'Projects' }).click();
-  await expect(page).toHaveURL(/\/#projects$/);
+  await page.locator('.site-header nav a', { hasText: 'Games' }).click();
+  await expect(page).toHaveURL(/\/#games$/);
 });
 
 test('every game page has an at-a-glance panel with studio, role, dates, platforms, and tech', async ({ page }) => {

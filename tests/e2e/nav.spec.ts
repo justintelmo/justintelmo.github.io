@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 const SECTIONS = [
-  { label: 'Projects', id: 'projects' },
+  { label: 'Games', id: 'games' },
   { label: 'Skills', id: 'skills' },
   { label: 'Contact', id: 'contact' },
 ];

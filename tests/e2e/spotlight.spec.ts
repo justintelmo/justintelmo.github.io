@@ -198,12 +198,15 @@ test('a hovered pip fades to blue, turns magenta when clicked, and fades back wh
   await expect.poll(fill).toBe(muted);
 });
 
-test('the controls fit on one row at 390px', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  const tops = await page.locator('.spotlight .controls button').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
-  expect(new Set(tops).size).toBe(1);
-});
+// At 320px the row exactly fills the space inside the gutters, so any added control or gap would wrap it.
+for (const width of [320, 390]) {
+  test(`the controls fit on one row at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/');
+    const tops = await page.locator('.spotlight .controls button').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
+    expect(new Set(tops).size).toBe(1);
+  });
+}
 
 test('previous wraps from the first slide to the last', async ({ page }) => {
   await page.goto('/');
@@ -229,6 +232,27 @@ test('scrolling back to it gives the current slide its full 5 seconds', async ({
   await page.mouse.move(0, 0);
   await page.clock.runFor(3000);
   await scrollIntoView(page);
+  await page.clock.runFor(2500);
+  expect(await label(page)).toBe('1 of 6');
+  await page.clock.runFor(2500);
+  expect(await label(page)).toBe('2 of 6');
+});
+
+// Playwright can't hide a real tab, so this stands in for one: the state the page reads, and the event it hears.
+const setTabVisible = (page: Page, visible: boolean) =>
+  page.evaluate((v) => {
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => (v ? 'visible' : 'hidden') });
+    document.dispatchEvent(new Event('visibilitychange'));
+  }, visible);
+
+test('coming back to the tab gives the current slide its full 5 seconds', async ({ page }) => {
+  await openInView(page);
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(3000);
+  await setTabVisible(page, false);
+  await page.clock.runFor(10000);
+  expect(await label(page)).toBe('1 of 6');
+  await setTabVisible(page, true);
   await page.clock.runFor(2500);
   expect(await label(page)).toBe('1 of 6');
   await page.clock.runFor(2500);

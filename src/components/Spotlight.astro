@@ -333,7 +333,11 @@ const slides = spotlightProjects(Astro.props.projects);
       },
       { threshold: 0.5 },
     ).observe(root);
-    document.addEventListener('visibilitychange', () => (tabVisible = document.visibilityState === 'visible'));
+    document.addEventListener('visibilitychange', () => {
+      tabVisible = document.visibilityState === 'visible';
+      // Same as scrolling back into view: the slide gets its full time.
+      if (tabVisible) restart();
+    });
 
     controls.hidden = false;
     render();

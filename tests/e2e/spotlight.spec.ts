@@ -215,11 +215,11 @@ test('previous wraps from the first slide to the last', async ({ page }) => {
 });
 
 test('it does not advance while scrolled off screen', async ({ page }) => {
-  // At 1280x800 the spotlight starts below the fold.
+  // At 1280x800 only the top edge of the spotlight shows at first, under the half it needs to count as on screen.
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.clock.install();
   await page.goto('/');
-  await expect(page.locator('.spotlight')).not.toBeInViewport();
+  await expect(page.locator('.spotlight')).not.toBeInViewport({ ratio: 0.5 });
   await page.mouse.move(0, 0);
   await page.clock.runFor(21000);
   expect(await label(page)).toBe('1 of 6');

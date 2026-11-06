@@ -1,70 +1,35 @@
 import { describe, expect, it } from 'vitest';
-import { domainYears, monthIndex, percentOf, skillSpans, skillYears, timelineDomain, usesSkill } from '../../src/lib/skills';
+import { byYears, formatYears } from '../../src/lib/skills';
 
-const project = (title: string, tech: string[], workedFrom: string, workedTo?: string) => ({
-  data: { title, tech, workedFrom, workedTo },
-});
-
-const bingo = project('Bingo', ['PHP', 'MySQL'], '2013-10', '2014-09');
-const pirates = project('Pirates', ['PHP', 'Laravel', 'C++'], '2016-05', '2018-07');
-const covet = project('Covet', ['PHP', 'Kotlin', 'AWS ECS'], '2018-10', '2022-11');
-const projects = [covet, bingo, pirates];
-
-describe('usesSkill', () => {
-  it('matches the exact name', () => {
-    expect(usesSkill(['PHP', 'MySQL'], 'PHP')).toBe(true);
+describe('byYears', () => {
+  it('puts the most years first', () => {
+    const skills = [{ name: 'Kotlin', years: 3 }, { name: 'PHP', years: 9 }, { name: 'C#', years: 4 }];
+    expect(byYears(skills).map((s) => s.name)).toEqual(['PHP', 'C#', 'Kotlin']);
   });
 
-  it('matches a more specific name built on the skill', () => {
-    expect(usesSkill(['AWS ECS'], 'AWS')).toBe(true);
+  it('keeps the listed order between skills with the same years', () => {
+    const skills = [{ name: 'Redis', years: 9 }, { name: 'MySQL', years: 9, plus: true }];
+    expect(byYears(skills).map((s) => s.name)).toEqual(['Redis', 'MySQL']);
   });
 
-  it('does not match a different name that shares a prefix', () => {
-    expect(usesSkill(['JavaScript', 'C#'], 'Java')).toBe(false);
-    expect(usesSkill(['C#'], 'C')).toBe(false);
+  it('does not change the list it was given', () => {
+    const skills = [{ name: 'Kotlin', years: 3 }, { name: 'PHP', years: 9 }];
+    byYears(skills);
+    expect(skills.map((s) => s.name)).toEqual(['Kotlin', 'PHP']);
   });
 });
 
-describe('timelineDomain', () => {
-  it('runs from January of the first year to the January after the last', () => {
-    const domain = timelineDomain(projects);
-    expect(domain).toEqual({ from: monthIndex('2013-01'), to: monthIndex('2023-01') });
-    expect(domainYears(domain)).toEqual([2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]);
-  });
-});
-
-describe('skillSpans', () => {
-  const domain = { from: monthIndex('2013-01'), to: monthIndex('2023-01') };
-
-  it('gives one span per stretch of projects that used the skill, oldest first', () => {
-    expect(skillSpans('PHP', projects, domain).map((s) => s.titles)).toEqual([['Bingo'], ['Pirates'], ['Covet']]);
-    expect(skillSpans('Kotlin', projects, domain).map((s) => s.titles)).toEqual([['Covet']]);
+describe('formatYears', () => {
+  it('says years', () => {
+    expect(formatYears({ name: 'PHP', years: 9 })).toBe('9 years');
   });
 
-  it('joins back-to-back projects into one span', () => {
-    const casino = project('Casino', ['PHP'], '2014-10', '2015-09');
-    const [span, ...rest] = skillSpans('PHP', [casino, bingo], domain);
-    expect(rest).toEqual([]);
-    expect(span.titles).toEqual(['Bingo', 'Casino']);
-    // Oct 2013 through Sep 2015 is 24 months of a 120-month domain.
-    expect(span.width).toBeCloseTo(20);
+  it('says year for exactly one', () => {
+    expect(formatYears({ name: 'Ktor', years: 1 })).toBe('1 year');
   });
 
-  it('places each span by its months, counting the last month in full', () => {
-    const [span] = skillSpans('MySQL', projects, domain);
-    expect(span.left).toBeCloseTo(percentOf(monthIndex('2013-10'), domain));
-    // Oct 2013 through Sep 2014 is 12 months of a 120-month domain.
-    expect(span.width).toBeCloseTo(10);
-  });
-});
-
-describe('skillYears', () => {
-  it('names the first and last years the skill was used', () => {
-    expect(skillYears('PHP', projects)).toBe('2013 – 2022');
-    expect(skillYears('Laravel', projects)).toBe('2016 – 2018');
-  });
-
-  it('says Present when a project using the skill is ongoing', () => {
-    expect(skillYears('Go', [project('Now', ['Go'], '2025-01')])).toBe('2025 – Present');
+  it('adds a plus when the years are a floor', () => {
+    expect(formatYears({ name: 'PHP', years: 10, plus: true })).toBe('10+ years');
+    expect(formatYears({ name: 'Ktor', years: 1, plus: true })).toBe('1+ years');
   });
 });

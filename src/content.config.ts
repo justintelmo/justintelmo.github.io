@@ -7,6 +7,7 @@ const games = defineCollection({
   schema: ({ image }) => gameSchema({ image }),
 });
 
+// Not rendered anywhere yet. Kept as career-history data for a future page.
 const jobs = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/jobs' }),
   schema: jobSchema,

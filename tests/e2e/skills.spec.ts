@@ -1,45 +1,32 @@
 import { expect, test } from '@playwright/test';
 import { skillGroups } from '../../src/data/skills';
+import { byYears, formatYears } from '../../src/lib/skills';
 
-const SKILLS = skillGroups.flatMap((g) => g.items);
-
-test('the chart has one row per skill, in the listed order', async ({ page }) => {
+test('each group lists its skills with their years, most first', async ({ page }) => {
   await page.goto('/');
-  const names = await page.locator('#skills .skill .name').evaluateAll((els) => els.map((el) => el.firstChild!.textContent!.trim()));
-  expect(names).toEqual(SKILLS);
-});
-
-test('every skill has at least one bar, so each one is backed by a game', async ({ page }) => {
-  await page.goto('/');
-  for (const [i, row] of (await page.locator('#skills .skill').all()).entries()) {
-    expect(await row.locator('.bar').count(), SKILLS[i]).toBeGreaterThan(0);
+  const groups = page.locator('#skills .group');
+  await expect(groups).toHaveCount(skillGroups.length);
+  for (const [i, { name, items }] of skillGroups.entries()) {
+    const group = groups.nth(i);
+    await expect(group.locator('h3')).toHaveText(name);
+    const sorted = byYears(items);
+    await expect(group.locator('li .name')).toHaveText(sorted.map((s) => s.name));
+    await expect(group.locator('li .years')).toHaveText(sorted.map(formatYears));
   }
 });
 
-test('each row tells screen readers the years and games', async ({ page }) => {
-  await page.goto('/');
-  const php = page.locator('#skills .skill', { hasText: /^PHP,/ });
-  await expect(php.locator('.name')).toHaveText(/^PHP, 2013 – 2022, on .*Big Fish Bingo.*Covet Fashion/);
-  await expect(php.locator('.track')).toHaveAttribute('aria-hidden', 'true');
+test('every skill has at least a year', () => {
+  for (const skill of skillGroups.flatMap((g) => g.items)) expect(skill.years, skill.name).toBeGreaterThanOrEqual(1);
 });
 
-test('bars line up with the year axis', async ({ page }) => {
+test('the groups sit side by side on a wide screen', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
-  // Kotlin starts at Covet Fashion, Oct 2018: just left of the 2019 tick.
-  const kotlin = (await page.locator('#skills .skill', { hasText: /^Kotlin,/ }).locator('.bar').first().boundingBox())!;
-  const tick2019 = (await page.locator('#skills .tick', { hasText: '2019' }).boundingBox())!;
-  expect(kotlin.x).toBeLessThan(tick2019.x);
-  expect(kotlin.x).toBeGreaterThan(tick2019.x - 30);
+  const tops = await page.locator('#skills .group').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
+  expect(new Set(tops).size).toBe(1);
 });
 
-// The last year label sits near the edge at 320px. The system font's width differs by OS (Linux's is
-// wider than Windows'), so the labels use the site's own font to be the same width everywhere.
-test('the axis years are set in Archivo', async ({ page }) => {
-  await page.goto('/');
-  expect(await page.locator('#skills .tick').first().evaluate((el) => getComputedStyle(el).fontFamily)).toContain('Archivo');
-});
-
-test('the chart fits a phone screen without sideways scrolling', async ({ page }) => {
+test('the list fits a phone screen without sideways scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await page.goto('/');
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

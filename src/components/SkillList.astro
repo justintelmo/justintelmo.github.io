@@ -1,0 +1,73 @@
+---
+import type { skillGroups } from '../data/skills';
+import { byYears, formatYears } from '../lib/skills';
+
+interface Props {
+  groups: typeof skillGroups;
+}
+
+const { groups } = Astro.props;
+---
+
+<div class="groups">
+  {
+    groups.map((group) => (
+      <div class="group">
+        <h3>{group.name}</h3>
+        <ul>
+          {byYears(group.items).map((skill) => (
+            <li>
+              <span class="name">{skill.name}</span>
+              <span class="years">{formatYears(skill)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .groups {
+    display: grid;
+    gap: 2rem 3rem;
+  }
+
+  @media (min-width: 40rem) {
+    .groups {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .groups {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: var(--size-body);
+    color: var(--accent-lavender);
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.375rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .years {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+</style>

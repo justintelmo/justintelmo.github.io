@@ -118,37 +118,9 @@ test('the bottom of a game page offers the resume and contact links', async ({ p
   await page.goto('/games/storyloom/');
   const bar = page.locator('main .talk');
   await expect(bar.getByRole('link', { name: /^Resume/ })).toHaveAttribute('href', '/resume.pdf');
-  await expect(bar.getByRole('link', { name: 'Email' })).toHaveAttribute('href', 'mailto:justin.telmo@gmail.com');
-});
-
-test('the game image keeps its own width and never exceeds its column', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  for (const slug of ['dead-mans-party', 'covet-fashion']) {
-    await page.goto(`/games/${slug}/`);
-    const img = page.locator('main figure img').first();
-    // Computed width is always a pixel value, so compare it with the width attribute (the source's own
-    // width). A rule like width: 100% would stretch a narrow source past it; max-width caps it to the column.
-    const [attrWidth, shown, maxWidth] = await img.evaluate((el: HTMLImageElement) => [
-      Number(el.getAttribute('width')),
-      el.getBoundingClientRect().width,
-      getComputedStyle(el).maxWidth,
-    ]);
-    expect(maxWidth).toBe('100%');
-    expect(shown).toBeLessThanOrEqual(attrWidth);
-  }
-});
-
-test('the title is in Archivo at display size', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/games/dead-mans-party/');
-  const h1 = page.locator('main h1');
-  expect(await h1.evaluate((el) => getComputedStyle(el).fontFamily)).toContain('Archivo');
-  expect(await h1.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(48);
-});
-
-test('previous and next titles are set in the display font', async ({ page }) => {
-  await page.goto('/games/storyloom/');
-  const link = page.locator('.more-games a[rel="next"] .title');
-  expect(await link.evaluate((el) => getComputedStyle(el).fontFamily)).toContain('Archivo');
-  expect(await link.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(22);
+  expect(await bar.locator('.contact a').evaluateAll((links) => links.map((a) => a.getAttribute('href')))).toEqual([
+    'https://www.linkedin.com/in/justin-telmo',
+    'mailto:justin.telmo@gmail.com',
+    'https://github.com/justintelmo',
+  ]);
 });

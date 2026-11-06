@@ -11,7 +11,7 @@ order: 7
 stats: []
 tech: [PHP, MySQL, Redis, Memcached, Cocos2d-JS]
 images: 
-  - src: ../../assets/projects/big-fish-bingo/gameplay.jpg
+  - src: ../../assets/games/big-fish-bingo/gameplay.jpg
     alt: "A screenshot of the main gameplay loop (fun fact, featuring a lot of my coworkers at the time!)"
     attribution: https://www.gamezebo.com/reviews/big-fish-bingo-review/
 links:

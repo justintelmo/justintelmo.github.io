@@ -3,11 +3,11 @@ import type { CollectionEntry } from 'astro:content';
 import { formatDateRange } from '../lib/dates';
 
 interface Props {
-  project: CollectionEntry<'projects'>;
+  game: CollectionEntry<'games'>;
 }
 
-const { project } = Astro.props;
-const { data } = project;
+const { game } = Astro.props;
+const { data } = game;
 // The NDA page never links out, even if links slip into its frontmatter.
 const links = data.nda ? [] : data.links;
 ---

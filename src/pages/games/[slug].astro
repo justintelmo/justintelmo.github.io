@@ -9,26 +9,26 @@ import ResumeButton from '../../components/ResumeButton.astro';
 import SiteHeader from '../../components/SiteHeader.astro';
 import { site } from '../../data/site';
 import Base from '../../layouts/Base.astro';
-import { adjacentProjects, projectPath, sortProjects } from '../../lib/projects';
+import { adjacentGames, gamePath, sortGames } from '../../lib/games';
 
-// Same filter as the home page cards, so every card has a page and hidden projects have none.
+// Same filter as the home page cards, so every card has a page and hidden games have none.
 export async function getStaticPaths() {
-  const projects = sortProjects(await getCollection('projects'));
-  return projects.map((project) => ({
-    params: { slug: project.id },
-    props: { project, ...adjacentProjects(projects, project.id) },
+  const games = sortGames(await getCollection('games'));
+  return games.map((game) => ({
+    params: { slug: game.id },
+    props: { game, ...adjacentGames(games, game.id) },
   }));
 }
 
 interface Props {
-  project: CollectionEntry<'projects'>;
-  previous?: CollectionEntry<'projects'>;
-  next?: CollectionEntry<'projects'>;
+  game: CollectionEntry<'games'>;
+  previous?: CollectionEntry<'games'>;
+  next?: CollectionEntry<'games'>;
 }
 
-const { project, previous, next } = Astro.props;
-const { data } = project;
-const { Content } = await render(project);
+const { game, previous, next } = Astro.props;
+const { data } = game;
+const { Content } = await render(game);
 // The NDA page never shows an image, even if one slips into its frontmatter.
 const image = data.nda ? undefined : data.images[0];
 ---
@@ -62,13 +62,13 @@ const image = data.nda ? undefined : data.images[0];
           )
         }
       </div>
-      <div class="side"><GameGlance project={project} /></div>
+      <div class="side"><GameGlance game={game} /></div>
       <div class="case-study"><Content /></div>
     </div>
     <nav class="more-games" aria-label="More games">
       {
         previous && (
-          <a href={projectPath(previous)} rel="prev">
+          <a href={gamePath(previous)} rel="prev">
             <span class="direction">← Previous</span>
             <span class="title">{previous.data.title}</span>
           </a>
@@ -76,7 +76,7 @@ const image = data.nda ? undefined : data.images[0];
       }
       {
         next && (
-          <a href={projectPath(next)} rel="next">
+          <a href={gamePath(next)} rel="next">
             <span class="direction">Next →</span>
             <span class="title">{next.data.title}</span>
           </a>

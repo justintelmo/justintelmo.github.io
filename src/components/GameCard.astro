@@ -3,20 +3,20 @@ import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { formatYearRange } from '../lib/dates';
-import { projectAnchor, projectPath } from '../lib/projects';
+import { gameAnchor, gamePath } from '../lib/games';
 
 interface Props {
-  project: CollectionEntry<'projects'>;
+  game: CollectionEntry<'games'>;
 }
 
-const { project } = Astro.props;
-const { data } = project;
+const { game } = Astro.props;
+const { data } = game;
 // The NDA card never shows an image, even if one slips into its frontmatter.
 // Image credits live on the game page, since a second link would fight the card-wide link.
 const image = data.nda ? undefined : data.images[0];
 ---
 
-<article id={projectAnchor(project)} class="project">
+<article id={gameAnchor(game)} class="game">
   <div class="media">
     {
       image ? (
@@ -35,7 +35,7 @@ const image = data.nda ? undefined : data.images[0];
     }
   </div>
   <p class="years">{formatYearRange(data.workedFrom, data.workedTo)}</p>
-  <h3><a href={projectPath(project)}>{data.title}</a></h3>
+  <h3><a href={gamePath(game)}>{data.title}</a></h3>
   <p class="role">{data.role} · {data.studio}</p>
   <p class="summary">{data.summary}</p>
   <!-- Not a link: the title already links the whole card, and screen readers would hear "Read more" seven times. -->
@@ -43,7 +43,7 @@ const image = data.nda ? undefined : data.images[0];
 </article>
 
 <style>
-  .project {
+  .game {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -110,7 +110,7 @@ const image = data.nda ? undefined : data.images[0];
     outline-offset: 4px;
   }
 
-  .project:hover h3 a {
+  .game:hover h3 a {
     color: var(--accent-magenta);
   }
 
@@ -142,12 +142,12 @@ const image = data.nda ? undefined : data.images[0];
     font-weight: 600;
   }
 
-  .project:hover .more {
+  .game:hover .more {
     color: var(--accent-magenta);
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .project {
+    .game {
       transition-property: transform;
       transition-duration: 200ms;
       transition-timing-function: ease-out;
@@ -159,19 +159,19 @@ const image = data.nda ? undefined : data.images[0];
       transition-timing-function: ease-out;
     }
 
-    .project:hover {
+    .game:hover {
       transform: translateY(-0.25rem);
     }
 
-    .project:hover .media img {
+    .game:hover .media img {
       transform: scale(1.03);
     }
 
     /* Each card rises on its own view timeline. The keyframe moves the article, never the section.
        Longhands on purpose: the build minifier folds the `animation` shorthand into a form Chromium rejects. */
     @supports (animation-timeline: view()) {
-      .project {
-        animation-name: project-rise;
+      .game {
+        animation-name: game-rise;
         animation-timing-function: linear;
         animation-fill-mode: both;
         animation-timeline: view();
@@ -180,7 +180,7 @@ const image = data.nda ? undefined : data.images[0];
     }
   }
 
-  @keyframes project-rise {
+  @keyframes game-rise {
     from {
       opacity: 0;
       transform: translateY(1.5rem);

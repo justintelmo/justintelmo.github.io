@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 const GAMES = {
   'dead-mans-party': "Dead Man's Party: A Knives Out Game",
-  'game-band-unreleased': 'Unreleased Title',
+  'tgb-unreleased': 'Unreleased Title',
   storyloom: 'StoryLoom',
   'covet-fashion': 'Covet Fashion',
   'battle-pirates': 'Battle Pirates',
@@ -65,7 +65,7 @@ test('the summary sits under the title as a lede', async ({ page }) => {
 });
 
 test('every released game page shows its image with alt text and a credit link', async ({ page }) => {
-  for (const slug of Object.keys(GAMES).filter((s) => s !== 'game-band-unreleased')) {
+  for (const slug of Object.keys(GAMES).filter((s) => s !== 'tgb-unreleased')) {
     await page.goto(`/games/${slug}/`);
     const img = page.locator('main .hero img');
     await expect(img, slug).toHaveCount(1);
@@ -75,14 +75,14 @@ test('every released game page shows its image with alt text and a credit link',
 });
 
 test('the unreleased game page is text only with no outside links', async ({ page }) => {
-  await page.goto('/games/game-band-unreleased/');
+  await page.goto('/games/tgb-unreleased/');
   await expect(page.locator('main .image-placeholder')).toHaveText('Unreleased');
   await expect(page.locator('main img')).toHaveCount(0);
   // The contact links at the bottom are Justin's own, not the game's.
   await expect(page.locator('main a[href^="http"]:not(.talk a)')).toHaveCount(0);
 });
 
-for (const [slug, theme] of [['dead-mans-party', 'light'], ['dead-mans-party', 'dark'], ['game-band-unreleased', 'light'], ['game-band-unreleased', 'dark']]) {
+for (const [slug, theme] of [['dead-mans-party', 'light'], ['dead-mans-party', 'dark'], ['tgb-unreleased', 'light'], ['tgb-unreleased', 'dark']]) {
   test(`axe finds no WCAG A/AA violations on /games/${slug}/ in ${theme} mode`, async ({ page }) => {
     // Axe reads a button's blended color mid theme transition, which is a transient, not a real failure.
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -110,7 +110,7 @@ test('previous and next follow the home page order without wrapping', async ({ p
 test('previous and next links name their games', async ({ page }) => {
   await page.goto('/games/storyloom/');
   const nav = page.getByRole('navigation', { name: 'More games' });
-  await expect(nav.locator('a[rel="prev"]')).toContainText(GAMES['game-band-unreleased']);
+  await expect(nav.locator('a[rel="prev"]')).toContainText(GAMES['tgb-unreleased']);
   await expect(nav.locator('a[rel="next"]')).toContainText(GAMES['covet-fashion']);
 });
 

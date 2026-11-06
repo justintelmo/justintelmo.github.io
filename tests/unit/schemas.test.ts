@@ -1,10 +1,10 @@
 import { z } from 'astro/zod';
 import { describe, expect, it } from 'vitest';
-import { jobSchema, projectSchema } from '../../src/content/schemas';
+import { jobSchema, gameSchema } from '../../src/content/schemas';
 
-const schema = projectSchema({ image: () => z.string() });
+const schema = gameSchema({ image: () => z.string() });
 
-const validProject = {
+const validGame = {
   title: 'Battle Pirates',
   studio: 'KIXEYE',
   platforms: ['Facebook', 'Web'],
@@ -20,65 +20,65 @@ const validProject = {
   links: [{ label: 'Wikipedia', url: 'https://example.com/c' }],
 };
 
-const withStat = (stat: Record<string, unknown>) => ({ ...validProject, stats: [stat] });
-const withImage = (image: Record<string, unknown>) => ({ ...validProject, images: [image] });
+const withStat = (stat: Record<string, unknown>) => ({ ...validGame, stats: [stat] });
+const withImage = (image: Record<string, unknown>) => ({ ...validGame, images: [image] });
 
-describe('projectSchema', () => {
-  it('accepts a complete project', () => {
-    expect(schema.safeParse(validProject).success).toBe(true);
+describe('gameSchema', () => {
+  it('accepts a complete game', () => {
+    expect(schema.safeParse(validGame).success).toBe(true);
   });
 
   it('rejects a stat without a year', () => {
-    const { year, ...stat } = validProject.stats[0]!;
+    const { year, ...stat } = validGame.stats[0]!;
     expect(schema.safeParse(withStat(stat)).success).toBe(false);
   });
 
   it('rejects a stat without a source URL', () => {
-    const { sourceUrl, ...stat } = validProject.stats[0]!;
+    const { sourceUrl, ...stat } = validGame.stats[0]!;
     expect(schema.safeParse(withStat(stat)).success).toBe(false);
   });
 
   it('rejects an image without alt text', () => {
-    const { alt, ...image } = validProject.images[0]!;
+    const { alt, ...image } = validGame.images[0]!;
     expect(schema.safeParse(withImage(image)).success).toBe(false);
   });
 
   it('rejects an image without attribution', () => {
-    const { attribution, ...image } = validProject.images[0]!;
+    const { attribution, ...image } = validGame.images[0]!;
     expect(schema.safeParse(withImage(image)).success).toBe(false);
   });
 
-  it('rejects a project without a summary', () => {
-    const { summary, ...project } = validProject;
-    expect(schema.safeParse(project).success).toBe(false);
+  it('rejects a game without a summary', () => {
+    const { summary, ...game } = validGame;
+    expect(schema.safeParse(game).success).toBe(false);
   });
 
   it('rejects a summary longer than one line (120 characters)', () => {
-    expect(schema.safeParse({ ...validProject, summary: 'x'.repeat(121) }).success).toBe(false);
+    expect(schema.safeParse({ ...validGame, summary: 'x'.repeat(121) }).success).toBe(false);
   });
 
   it('rejects a month outside 01-12', () => {
-    expect(schema.safeParse({ ...validProject, workedFrom: '2016-13' }).success).toBe(false);
+    expect(schema.safeParse({ ...validGame, workedFrom: '2016-13' }).success).toBe(false);
   });
 
-  it('rejects a featured, non-NDA project with no images', () => {
-    expect(schema.safeParse({ ...validProject, images: [] }).success).toBe(false);
+  it('rejects a featured, non-NDA game with no images', () => {
+    expect(schema.safeParse({ ...validGame, images: [] }).success).toBe(false);
   });
 
-  it('accepts a featured NDA project with no images or links', () => {
-    const nda = { ...validProject, nda: true, images: [], links: [] };
+  it('accepts a featured NDA game with no images or links', () => {
+    const nda = { ...validGame, nda: true, images: [], links: [] };
     expect(schema.safeParse(nda).success).toBe(true);
   });
 });
 
 describe('jobSchema', () => {
-  const job = { studio: 'KIXEYE', role: 'Senior Software Engineer', from: '2016-03', projectSlugs: ['battle-pirates'] };
+  const job = { studio: 'KIXEYE', role: 'Senior Software Engineer', from: '2016-03', gameSlugs: ['battle-pirates'] };
 
   it('accepts a job with no end date', () => {
     expect(jobSchema.safeParse(job).success).toBe(true);
   });
 
-  it('rejects a job with no projects', () => {
-    expect(jobSchema.safeParse({ ...job, projectSlugs: [] }).success).toBe(false);
+  it('rejects a job with no games', () => {
+    expect(jobSchema.safeParse({ ...job, gameSlugs: [] }).success).toBe(false);
   });
 });

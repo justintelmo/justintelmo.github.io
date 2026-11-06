@@ -13,7 +13,7 @@ import { adjacentProjects, projectPath, sortProjects } from '../../lib/projects'
 
 // Same filter as the home page cards, so every card has a page and hidden projects have none.
 export async function getStaticPaths() {
-  const projects = sortProjects(await getCollection('projects'));
+  const projects = sortProjects(await getCollection('games'));
   return projects.map((project) => ({
     params: { slug: project.id },
     props: { project, ...adjacentProjects(projects, project.id) },
@@ -21,9 +21,9 @@ export async function getStaticPaths() {
 }
 
 interface Props {
-  project: CollectionEntry<'projects'>;
-  previous?: CollectionEntry<'projects'>;
-  next?: CollectionEntry<'projects'>;
+  project: CollectionEntry<'games'>;
+  previous?: CollectionEntry<'games'>;
+  next?: CollectionEntry<'games'>;
 }
 
 const { project, previous, next } = Astro.props;

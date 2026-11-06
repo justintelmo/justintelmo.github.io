@@ -12,7 +12,7 @@ order: 5
 stats: []
 tech: [PHP, Laravel, Symfony, MySQL, Redis, Memcached, C++, Python, ActionScript 3, SonarQube, Stage3D]
 images:
-  - src: ../../assets/projects/battle-pirates/base.jpg
+  - src: ../../assets/games/battle-pirates/base.jpg
     alt: "Isometric view of a fortified island base with walls, turrets, and docked ships"
     attribution: https://files.armorgames.com/blog/2014/08/screenshot_images3_252.jpg
 links:

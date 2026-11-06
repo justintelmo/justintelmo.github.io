@@ -11,7 +11,7 @@ import { skillGroups } from '../data/skills';
 import Base from '../layouts/Base.astro';
 import { sortProjects } from '../lib/projects';
 
-const featured = sortProjects(await getCollection('projects'));
+const featured = sortProjects(await getCollection('games'));
 ---
 
 <Base title={site.name} description={site.tagline}>

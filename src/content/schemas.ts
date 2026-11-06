@@ -11,7 +11,7 @@ export const statSchema = z.object({
 
 const linkSchema = z.object({ label: z.string(), url: z.url() });
 
-export function projectSchema({ image }: { image: () => z.ZodType }) {
+export function gameSchema({ image }: { image: () => z.ZodType }) {
   return z
     .object({
       title: z.string(),
@@ -34,7 +34,7 @@ export function projectSchema({ image }: { image: () => z.ZodType }) {
       nda: z.boolean().default(false),
     })
     .refine((p) => !p.featured || p.nda || (p.images.length > 0 && p.links.length > 0), {
-      message: 'A featured project needs at least one image and one link, unless it is under NDA',
+      message: 'A featured game needs at least one image and one link, unless it is under NDA',
       path: ['images'],
     });
 }
@@ -44,5 +44,5 @@ export const jobSchema = z.object({
   role: z.string(),
   from: yearMonth,
   to: yearMonth.optional(),
-  projectSlugs: z.array(z.string()).min(1),
+  gameSlugs: z.array(z.string()).min(1),
 });

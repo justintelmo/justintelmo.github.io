@@ -12,7 +12,7 @@ order: 1
 stats: []
 tech: [Unity, C#, Netflix SDK, Netflix Haptics API, FMOD]
 images:
-  - src: ../../assets/projects/dead-mans-party/teaser.png
+  - src: ../../assets/games/dead-mans-party/teaser.png
     alt: "Animated title art from Dead Man's Party: a silhouetted guest in a doorway behind the body of the victim"
     attribution: https://www.whats-on-netflix.com/news/netflix-games/netflix-releases-its-knives-out-tie-in-game-just-in-time-for-christmas/
 links:

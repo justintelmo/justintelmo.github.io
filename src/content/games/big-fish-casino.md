@@ -12,7 +12,7 @@ order: 6
 stats: []
 tech: [PHP, MySQL, Redis, Memcached, JavaScript, Cocos2d-JS]
 images:
-  - src: ../../assets/projects/big-fish-casino/app-store.png
+  - src: ../../assets/games/big-fish-casino/app-store.png
     alt: "Big Fish Casino app icon: a buffalo above the game's logo"
     attribution: https://apps.apple.com/us/app/big-fish-casino-slots-games/id538212549
 links:

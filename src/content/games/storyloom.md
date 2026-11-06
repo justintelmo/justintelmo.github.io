@@ -12,7 +12,7 @@ order: 3
 stats: []
 tech: [TypeScript, React, Vite, Node.js, AWS, Docker, Unity]
 images:
-  - src: ../../assets/projects/storyloom/logo.png
+  - src: ../../assets/games/storyloom/logo.png
     alt: "StoryLoom logo in white block letters on a red background"
     attribution: https://bio.site/GetStoryLoom
 links:

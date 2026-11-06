@@ -6,7 +6,7 @@ import { formatYearRange } from '../lib/dates';
 import { projectPath, spotlightProjects } from '../lib/projects';
 
 interface Props {
-  projects: CollectionEntry<'projects'>[];
+  projects: CollectionEntry<'games'>[];
 }
 
 const slides = spotlightProjects(Astro.props.projects);

@@ -14,7 +14,3 @@ test('each group lists its skills with their years, most first', async ({ page }
     await expect(group.locator('li .years')).toHaveText(sorted.map(formatYears));
   }
 });
-
-test('every skill has at least a year', () => {
-  for (const skill of skillGroups.flatMap((g) => g.items)) expect(skill.years, skill.name).toBeGreaterThanOrEqual(1);
-});

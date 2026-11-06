@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { skillGroups } from '../../src/data/skills';
 import { byYears, formatYears } from '../../src/lib/skills';
 
 describe('byYears', () => {
@@ -31,5 +32,11 @@ describe('formatYears', () => {
   it('adds a plus when the years are a floor', () => {
     expect(formatYears({ name: 'PHP', years: 10, plus: true })).toBe('10+ years');
     expect(formatYears({ name: 'Ktor', years: 1, plus: true })).toBe('1+ years');
+  });
+});
+
+describe('skillGroups', () => {
+  it('gives every skill at least a year', () => {
+    for (const skill of skillGroups.flatMap((g) => g.items)) expect(skill.years, skill.name).toBeGreaterThanOrEqual(1);
   });
 });

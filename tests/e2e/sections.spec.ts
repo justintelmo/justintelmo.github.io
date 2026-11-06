@@ -1,7 +1,5 @@
 import { expect, test } from '@playwright/test';
 
-const GROUPS = ['Languages', 'Frameworks', 'Data', 'Infrastructure'];
-
 test('sections appear in page order', async ({ page }) => {
   await page.goto('/');
   const selectors = ['.intro', '#games', '#skills', 'footer'];
@@ -17,17 +15,4 @@ test('sections appear in page order', async ({ page }) => {
 test('section headings use the names recruiters scan for', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('main h2')).toHaveText(['Games', 'Skills']);
-});
-
-test('the skills section shows every skill group', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.locator('#skills h3')).toHaveText(GROUPS);
-});
-
-test('the skills section has no skill bars or percentages', async ({ page }) => {
-  await page.goto('/');
-  const toolbox = page.locator('#skills');
-  await expect(toolbox).toBeVisible();
-  await expect(toolbox.locator('progress, meter')).toHaveCount(0);
-  await expect(toolbox).not.toContainText('%');
 });

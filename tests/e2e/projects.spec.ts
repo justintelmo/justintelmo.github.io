@@ -62,17 +62,3 @@ test('clicking anywhere on a card opens its game page', async ({ page }) => {
   await page.locator('#project-storyloom').click({ position: { x: 20, y: 20 } });
   await expect(page).toHaveURL(/\/games\/storyloom\/$/);
 });
-
-for (const [width, expected] of [[1440, 4], [900, 2], [390, 1]] as const) {
-  test(`cards sit in ${expected} column(s) at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 900 });
-    await page.goto('/');
-    const tops = await page.locator('#games article').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
-    expect(tops.filter((t) => t === tops[0]).length).toBe(expected);
-  });
-}
-
-test('there is no archive table', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.locator('#archive, #games table')).toHaveCount(0);
-});

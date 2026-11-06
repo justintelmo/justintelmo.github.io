@@ -72,13 +72,9 @@ describe('gameSchema', () => {
 });
 
 describe('jobSchema', () => {
-  const job = { studio: 'KIXEYE', role: 'Senior Software Engineer', from: '2016-03', gameSlugs: ['battle-pirates'] };
+  const job = { studio: 'KIXEYE', role: 'Senior Software Engineer', from: '2016-03' };
 
   it('accepts a job with no end date', () => {
     expect(jobSchema.safeParse(job).success).toBe(true);
-  });
-
-  it('rejects a job with no games', () => {
-    expect(jobSchema.safeParse({ ...job, gameSlugs: [] }).success).toBe(false);
   });
 });

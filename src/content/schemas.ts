@@ -44,5 +44,4 @@ export const jobSchema = z.object({
   role: z.string(),
   from: yearMonth,
   to: yearMonth.optional(),
-  gameSlugs: z.array(z.string()).min(1),
 });

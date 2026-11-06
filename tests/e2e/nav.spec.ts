@@ -64,6 +64,28 @@ for (const viewport of [
       }
     });
 
+    // The sections at the end are short, so the page runs out before their tops get far up the screen.
+    // Each link should still be current for a real stretch of scrolling, not just the last pixel.
+    test('scrolling down by hand gives every link a turn, in order', async ({ page }) => {
+      await page.goto('/');
+      const turns = await page.evaluate(async () => {
+        const frame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        const max = document.documentElement.scrollHeight - innerHeight;
+        const turns: { label: string; px: number }[] = [];
+        for (let y = 0; y <= max; y += 20) {
+          window.scrollTo({ top: y, behavior: 'instant' });
+          await frame();
+          const label = document.querySelector('.site-header nav a[aria-current]')?.textContent;
+          if (!label) continue;
+          if (turns.at(-1)?.label === label) turns.at(-1)!.px += 20;
+          else turns.push({ label, px: 20 });
+        }
+        return turns;
+      });
+      expect(turns.map((t) => t.label)).toEqual(SECTIONS.map((s) => s.label));
+      for (const { label, px } of turns) expect(px, label).toBeGreaterThanOrEqual(100);
+    });
+
     test('nav controls are at least 44px tall', async ({ page }) => {
       await page.goto('/');
       const controls = page.locator('.site-header a, .site-header button');

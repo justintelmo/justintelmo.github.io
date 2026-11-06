@@ -5,12 +5,12 @@ const NDA_ANCHOR = '#project-game-band-unreleased';
 
 test('there is one card per featured project', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('#projects article')).toHaveCount(FEATURED_COUNT);
+  await expect(page.locator('#games article')).toHaveCount(FEATURED_COUNT);
 });
 
 test('every non-NDA card has an image with alt text', async ({ page }) => {
   await page.goto('/');
-  const cards = page.locator(`#projects article:not(${NDA_ANCHOR})`);
+  const cards = page.locator(`#games article:not(${NDA_ANCHOR})`);
   await expect(cards).toHaveCount(FEATURED_COUNT - 1);
   for (const card of await cards.all()) {
     const img = card.locator('img');
@@ -32,7 +32,7 @@ test('the unreleased card is text only', async ({ page }) => {
 
 test('every card has one link, named for its game, to its game page', async ({ page }) => {
   await page.goto('/');
-  for (const card of await page.locator('#projects article').all()) {
+  for (const card of await page.locator('#games article').all()) {
     const slug = (await card.getAttribute('id'))!.replace(/^project-/, '');
     const link = card.locator('a');
     await expect(link).toHaveCount(1);
@@ -44,16 +44,16 @@ test('every card has one link, named for its game, to its game page', async ({ p
 test('every card shows its role, studio, and summary', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#project-covet-fashion .role')).toHaveText('Server Software Engineer II · EA / Glu Mobile');
-  for (const summary of await page.locator('#projects article .summary').all()) {
+  for (const summary of await page.locator('#games article .summary').all()) {
     await expect(summary).not.toBeEmpty();
   }
-  await expect(page.locator('#projects article .summary')).toHaveCount(FEATURED_COUNT);
+  await expect(page.locator('#games article .summary')).toHaveCount(FEATURED_COUNT);
 });
 
 test('every card shows the years worked', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#project-covet-fashion .years')).toHaveText('2018 – 2022');
-  await expect(page.locator('#projects article .years')).toHaveCount(FEATURED_COUNT);
+  await expect(page.locator('#games article .years')).toHaveCount(FEATURED_COUNT);
 });
 
 test('clicking anywhere on a card opens its game page', async ({ page }) => {
@@ -67,12 +67,12 @@ for (const [width, expected] of [[1440, 4], [900, 2], [390, 1]] as const) {
   test(`cards sit in ${expected} column(s) at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
-    const tops = await page.locator('#projects article').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
+    const tops = await page.locator('#games article').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
     expect(tops.filter((t) => t === tops[0]).length).toBe(expected);
   });
 }
 
 test('there is no archive table', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('#archive, #projects table')).toHaveCount(0);
+  await expect(page.locator('#archive, #games table')).toHaveCount(0);
 });

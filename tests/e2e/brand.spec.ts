@@ -14,7 +14,7 @@ test.describe('with no motion preference', () => {
   });
 
   test('the header brand appears once the hero scrolls away', async ({ page }) => {
-    await page.goto('/#projects');
+    await page.goto('/#games');
     await expect(page.locator(brand)).toBeVisible();
     await expect.poll(() => page.locator(brand).evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
   });
@@ -31,7 +31,7 @@ test.describe('with reduced motion', () => {
 
 test('the header brand pairs the avatar with the name and links home', async ({ page }) => {
   // Past the hero, where the brand is showing; hidden elements have no accessible name.
-  await page.goto('/#projects');
+  await page.goto('/#games');
   const link = page.locator(brand);
   await expect(link).toHaveAttribute('href', '/');
   await expect(link).toHaveAccessibleName('Justin Telmo');

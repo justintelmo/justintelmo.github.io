@@ -29,7 +29,7 @@ test('it shows one slide per released game, first one first', async ({ page }) =
   await page.goto('/');
   await expect(page.locator('.spotlight .slide')).toHaveCount(6);
   expect(await label(page)).toBe('1 of 6');
-  await expect(page.locator('#projects article')).toHaveCount(7);
+  await expect(page.locator('#games article')).toHaveCount(7);
 });
 
 test('it advances after 5 seconds', async ({ page }) => {

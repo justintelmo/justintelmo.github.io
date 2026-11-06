@@ -18,8 +18,8 @@ const featured = sortProjects(await getCollection('projects'));
   <SiteHeader name={site.name} />
   <main class="container">
     <IntroHeader site={site} projects={featured} />
-    <section id="projects" aria-labelledby="projects-heading">
-      <h2 id="projects-heading">Projects</h2>
+    <section id="games" aria-labelledby="games-heading">
+      <h2 id="games-heading">Games</h2>
       <Spotlight projects={featured} />
       <div class="featured">
         {featured.map((project) => <FeaturedProject project={project} />)}

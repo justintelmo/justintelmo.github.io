@@ -4,7 +4,7 @@ test('headings use Archivo and body text stays system-ui', async ({ page }) => {
   await page.goto('/');
   const family = (sel: string) => page.locator(sel).first().evaluate((el) => getComputedStyle(el).fontFamily);
   expect(await family('.intro h1')).toContain('Archivo');
-  expect(await family('#projects-heading')).toContain('Archivo');
+  expect(await family('#games-heading')).toContain('Archivo');
   expect(await family('body')).toContain('system-ui');
 });
 
@@ -28,7 +28,7 @@ test('cards, panels, header, and footer have no outlines', async ({ page }) => {
       return [s.borderTopWidth, s.borderRightWidth, s.borderBottomWidth, s.borderLeftWidth].join(' ');
     }));
   await page.goto('/');
-  for (const sel of ['#projects .media img', '#projects .image-placeholder', '.site-header', 'footer#contact']) {
+  for (const sel of ['#games .media img', '#games .image-placeholder', '.site-header', 'footer#contact']) {
     for (const b of await borders(sel)) expect(b, sel).toBe('0px 0px 0px 0px');
   }
   await page.goto('/games/dead-mans-party/');
@@ -58,7 +58,7 @@ test('Contact is a closing statement: a large heading, the email, then smaller l
   for (const width of [375, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
-    expect(await size(page, 'footer#contact h2'), `h2 at ${width}px`).toBe(await size(page, '#projects h2'));
+    expect(await size(page, 'footer#contact h2'), `h2 at ${width}px`).toBe(await size(page, '#games h2'));
   }
   expect(await size(page, 'footer#contact .email')).toBeGreaterThan(await size(page, 'footer#contact .contact a'));
 });

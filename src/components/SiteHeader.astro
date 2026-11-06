@@ -49,18 +49,24 @@ const sections = [
     return section ? [{ link, section }] : [];
   });
 
-  // The current section is the last one whose top has passed a third of the way down the screen.
-  // The bottom of the page is special: the last few sections may never get that high. There, a section
-  // the visitor just jumped to (it's in the URL hash) wins if it's on screen, otherwise the last one does.
+  // The section the visitor last jumped to with a link, until they scroll by hand.
+  let jumpedHash = location.hash;
+
+  // The current section is the last one whose top has passed a line a third of the way down the screen.
+  // The last few sections are short, so the page runs out before their tops get that high. Over the last
+  // screenful of scrolling the line slides down to the bottom of the screen, so each of them gets a turn.
+  // In that stretch a section the visitor jumped to wins while it's on screen, or the link they clicked
+  // could light up its neighbor.
   const update = () => {
-    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
-    const jumpedTo = tracked.find(({ section }) => `#${section.id}` === location.hash);
+    const remaining = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
+    const slide = Math.max(0, 1 - remaining / window.innerHeight);
+    const line = (window.innerHeight / 3) * (1 + 2 * slide);
+    const jumpedTo = tracked.find(({ section }) => `#${section.id}` === jumpedHash);
     const onScreen = (section: HTMLElement) => section.getBoundingClientRect().top < window.innerHeight;
-    const current = atBottom
-      ? jumpedTo && onScreen(jumpedTo.section)
+    const current =
+      slide > 0 && jumpedTo && onScreen(jumpedTo.section)
         ? jumpedTo
-        : tracked.at(-1)
-      : tracked.findLast(({ section }) => section.getBoundingClientRect().top <= window.innerHeight / 3);
+        : tracked.findLast(({ section }) => section.getBoundingClientRect().top <= line);
     for (const { link } of tracked) {
       if (link === current?.link) link.setAttribute('aria-current', 'location');
       else link.removeAttribute('aria-current');
@@ -70,7 +76,20 @@ const sections = [
   if (tracked.length > 0) {
     window.addEventListener('scroll', update, { passive: true });
     // A jump that doesn't scroll (already at the bottom) still changes which section was asked for.
-    window.addEventListener('hashchange', update);
+    // Click as well as hashchange: clicking the link already in the URL changes no hash.
+    window.addEventListener('hashchange', () => {
+      jumpedHash = location.hash;
+      update();
+    });
+    for (const { link } of tracked) {
+      link.addEventListener('click', () => {
+        jumpedHash = link.hash;
+        update();
+      });
+    }
+    for (const type of ['wheel', 'touchmove', 'keydown']) {
+      window.addEventListener(type, () => (jumpedHash = ''), { passive: true });
+    }
     update();
   }
 </script>

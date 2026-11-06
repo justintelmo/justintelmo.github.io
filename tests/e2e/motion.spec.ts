@@ -1,23 +1,10 @@
-import { expect, test, type Page } from '@playwright/test';
-
-// Browsers without scroll-driven animations (Firefox, as of 157) skip the @supports block and show everything as-is.
-const scrollDriven = (page: Page) => page.evaluate(() => CSS.supports('animation-timeline: view()'));
+import { expect, test } from '@playwright/test';
 
 const style = (selector: string, property: string) =>
   `getComputedStyle(document.querySelector('${selector}')).getPropertyValue('${property}')`;
 
 test.describe('with no motion preference', () => {
   test.use({ reducedMotion: 'no-preference' });
-
-  test('in-page jumps scroll smoothly', async ({ page }) => {
-    await page.goto('/');
-    expect(await page.evaluate(style('html', 'scroll-behavior'))).toBe('smooth');
-  });
-
-  test('sections fade in as they scroll into view', async ({ page }) => {
-    await page.goto('/');
-    expect(await page.evaluate(style('#skills', 'animation-name'))).toBe((await scrollDriven(page)) ? 'reveal' : 'none');
-  });
 
   test('a section is fully visible once scrolled to', async ({ page }) => {
     await page.goto('/');

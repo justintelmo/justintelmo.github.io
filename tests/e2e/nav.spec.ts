@@ -39,18 +39,6 @@ test('the header has a resume button', async ({ page }) => {
   await expect(page.locator('.site-header').getByRole('link', { name: 'Resume' })).toHaveAttribute('href', '/resume.pdf');
 });
 
-test('the hero offers a resume button, then the contact links', async ({ page }) => {
-  await page.goto('/');
-  const actions = page.locator('.intro .actions a');
-  await expect(actions.first()).toHaveAccessibleName('Resume (PDF, opens in a new tab)');
-  expect(await actions.evaluateAll((links) => links.map((a) => a.getAttribute('href')))).toEqual([
-    '/resume.pdf',
-    'https://www.linkedin.com/in/justin-telmo',
-    'mailto:justin.telmo@gmail.com',
-    'https://github.com/justintelmo',
-  ]);
-});
-
 test('the header stays on screen after scrolling', async ({ page }) => {
   await page.goto('/');
   await page.locator('#contact').scrollIntoViewIfNeeded();

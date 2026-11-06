@@ -14,10 +14,11 @@ test('the hero names Justin', async ({ page }) => {
   await expect(page.locator('.intro h1')).toHaveText('Justin Telmo');
 });
 
-test('the hero links to every contact channel', async ({ page }) => {
+test('the hero offers a resume button, then the contact links', async ({ page }) => {
   await page.goto('/');
-  const hrefs = await page.locator('.intro .contact a').evaluateAll((links) => links.map((a) => a.getAttribute('href')));
-  expect(hrefs).toEqual(HERO_HREFS);
+  const actions = page.locator('.intro .actions a');
+  await expect(actions.first()).toHaveAccessibleName('Resume (PDF, opens in a new tab)');
+  expect(await actions.evaluateAll((links) => links.map((a) => a.getAttribute('href')))).toEqual(['/resume.pdf', ...HERO_HREFS]);
 });
 
 test.describe('with motion settled', () => {
@@ -50,21 +51,13 @@ test.describe('at 320px wide', () => {
   });
 });
 
-test('the footer is the contact section', async ({ page }) => {
+// The footer leaves Resume out because the header already shows it.
+test('the footer is the contact section, with the email as text and the contact links', async ({ page }) => {
   await page.goto('/');
   const footer = page.locator('footer#contact');
   await expect(footer.getByRole('heading', { level: 2 })).toHaveText('Contact');
   await expect(footer.locator('p')).not.toBeEmpty();
-});
-
-test('the footer shows the email address as text', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.locator('footer#contact .email')).toHaveText('justin.telmo@gmail.com');
-});
-
-test('the footer repeats the contact links, minus Resume which the header already shows', async ({ page }) => {
-  await page.goto('/');
+  await expect(footer.locator('.email')).toHaveText('justin.telmo@gmail.com');
   const hrefs = await page.locator('footer a').evaluateAll((links) => links.map((a) => a.getAttribute('href')));
   expect(hrefs).toEqual(HERO_HREFS);
-  await expect(page.locator('footer#contact .email')).toBeVisible();
 });

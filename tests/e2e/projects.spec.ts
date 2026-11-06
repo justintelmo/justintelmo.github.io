@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 const FEATURED_COUNT = 7;
-const NDA_ANCHOR = '#project-game-band-unreleased';
+const NDA_ANCHOR = '#project-tgb-unreleased';
 
 test('there is one card per featured project', async ({ page }) => {
   await page.goto('/');

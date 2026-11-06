@@ -17,7 +17,7 @@ const pirates = project('battle-pirates', { title: 'Battle Pirates', featured: t
 const projects = [casino, bingo, pirates];
 
 const dmp = project('dead-mans-party', { title: "Dead Man's Party", featured: true, order: 1, workedFrom: '2025-03' });
-const unreleased = project('game-band-unreleased', { title: 'Unreleased', featured: true, order: 0, workedFrom: '2025-03', nda: true });
+const unreleased = project('tgb-unreleased', { title: 'Unreleased', featured: true, order: 0, workedFrom: '2025-03', nda: true });
 const storyloom = project('storyloom', { title: 'StoryLoom', featured: true, order: 2, workedFrom: '2024-01' });
 const covet = project('covet-fashion', { title: 'Covet Fashion', featured: true, order: 3, workedFrom: '2019-01' });
 const noImage = project('no-image', { title: 'No Image', featured: true, order: 4, workedFrom: '2018-01', images: [] });

@@ -10,14 +10,14 @@ import ResumeButton from './ResumeButton.astro';
 
 interface Props {
   site: typeof siteData;
-  projects: CollectionEntry<'games'>[];
+  games: CollectionEntry<'games'>[];
 }
 
-const { site, projects } = Astro.props;
+const { site, games } = Astro.props;
 const words = site.name.split(' ');
 // The Resume button already links the PDF, so the contact links beside it leave it out.
 const links = site.links.filter((link) => link.icon !== 'resume');
-const art = heroArt(projects);
+const art = heroArt(games);
 ---
 
 <div class="intro">
@@ -39,12 +39,12 @@ const art = heroArt(projects);
   </div>
   <ul class="art">
     {
-      art.map((project) => (
+      art.map((game) => (
         <li>
-          <a href={gamePath(project)} aria-label={project.data.title}>
+          <a href={gamePath(game)} aria-label={game.data.title}>
             <Image
-              src={project.data.images[0].src as ImageMetadata}
-              alt={project.data.images[0].alt}
+              src={game.data.images[0].src as ImageMetadata}
+              alt={game.data.images[0].alt}
               widths={[260, 520]}
               sizes="(min-width: 48rem) clamp(9rem, 20vw, 16.25rem), 32vw"
               loading="eager"
@@ -167,7 +167,7 @@ const art = heroArt(projects);
     pointer-events: none;
   }
 
-  /* First project in front. The order never changes, even on hover: a raised card would cover
+  /* First game in front. The order never changes, even on hover: a raised card would cover
      its neighbors and hold the pointer, so moving across the fan would feel different each way. */
   .art li:nth-child(1) {
     --x: -1.5;

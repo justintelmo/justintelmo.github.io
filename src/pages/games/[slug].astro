@@ -11,24 +11,24 @@ import { site } from '../../data/site';
 import Base from '../../layouts/Base.astro';
 import { adjacentGames, gamePath, sortGames } from '../../lib/games';
 
-// Same filter as the home page cards, so every card has a page and hidden projects have none.
+// Same filter as the home page cards, so every card has a page and hidden games have none.
 export async function getStaticPaths() {
-  const projects = sortGames(await getCollection('games'));
-  return projects.map((project) => ({
-    params: { slug: project.id },
-    props: { project, ...adjacentGames(projects, project.id) },
+  const games = sortGames(await getCollection('games'));
+  return games.map((game) => ({
+    params: { slug: game.id },
+    props: { game, ...adjacentGames(games, game.id) },
   }));
 }
 
 interface Props {
-  project: CollectionEntry<'games'>;
+  game: CollectionEntry<'games'>;
   previous?: CollectionEntry<'games'>;
   next?: CollectionEntry<'games'>;
 }
 
-const { project, previous, next } = Astro.props;
-const { data } = project;
-const { Content } = await render(project);
+const { game, previous, next } = Astro.props;
+const { data } = game;
+const { Content } = await render(game);
 // The NDA page never shows an image, even if one slips into its frontmatter.
 const image = data.nda ? undefined : data.images[0];
 ---
@@ -62,7 +62,7 @@ const image = data.nda ? undefined : data.images[0];
           )
         }
       </div>
-      <div class="side"><GameGlance project={project} /></div>
+      <div class="side"><GameGlance game={game} /></div>
       <div class="case-study"><Content /></div>
     </div>
     <nav class="more-games" aria-label="More games">

@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import FeaturedProject from '../components/FeaturedProject.astro';
+import GameCard from '../components/GameCard.astro';
 import Footer from '../components/Footer.astro';
 import IntroHeader from '../components/IntroHeader.astro';
 import SiteHeader from '../components/SiteHeader.astro';
@@ -17,12 +17,12 @@ const featured = sortGames(await getCollection('games'));
 <Base title={site.name} description={site.tagline}>
   <SiteHeader name={site.name} />
   <main class="container">
-    <IntroHeader site={site} projects={featured} />
+    <IntroHeader site={site} games={featured} />
     <section id="games" aria-labelledby="games-heading">
       <h2 id="games-heading">Games</h2>
-      <Spotlight projects={featured} />
+      <Spotlight games={featured} />
       <div class="featured">
-        {featured.map((project) => <FeaturedProject project={project} />)}
+        {featured.map((game) => <GameCard game={game} />)}
       </div>
     </section>
     <section id="skills" aria-labelledby="skills-heading">

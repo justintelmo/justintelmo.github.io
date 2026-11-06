@@ -6,17 +6,17 @@ import { formatYearRange } from '../lib/dates';
 import { gamePath, spotlightGames } from '../lib/games';
 
 interface Props {
-  projects: CollectionEntry<'games'>[];
+  games: CollectionEntry<'games'>[];
 }
 
-const slides = spotlightGames(Astro.props.projects);
+const slides = spotlightGames(Astro.props.games);
 ---
 
 <section class="spotlight" aria-roledescription="carousel" aria-label="Spotlight">
   <div class="slides" aria-live="off">
     {
-      slides.map((project, i) => {
-        const { data } = project;
+      slides.map((game, i) => {
+        const { data } = game;
         const image = data.images[0];
         return (
           <div class="slide" role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}`} hidden={i !== 0}>
@@ -32,7 +32,7 @@ const slides = spotlightGames(Astro.props.projects);
             <div class="text">
               <p class="years">{formatYearRange(data.workedFrom, data.workedTo)}</p>
               <h3>
-                <a href={gamePath(project)}>{data.title}</a>
+                <a href={gamePath(game)}>{data.title}</a>
               </h3>
               <p class="role">
                 {data.role} · {data.studio}
@@ -53,8 +53,8 @@ const slides = spotlightGames(Astro.props.projects);
     <button type="button" class="prev" aria-label="Previous game"><span aria-hidden="true">←</span></button>
     <div class="dots">
       {
-        slides.map((project, i) => (
-          <button type="button" class="dot" aria-label={`Show ${project.data.title}`} aria-current={i === 0 ? 'true' : undefined} />
+        slides.map((game, i) => (
+          <button type="button" class="dot" aria-label={`Show ${game.data.title}`} aria-current={i === 0 ? 'true' : undefined} />
         ))
       }
     </div>

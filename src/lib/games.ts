@@ -9,7 +9,7 @@ export function sortGames<P extends GameLike>(games: P[]): P[] {
 }
 
 export function gameAnchor(game: GameLike): string {
-  return `project-${game.id}`;
+  return `game-${game.id}`;
 }
 
 export function gamePath(game: GameLike): string {

@@ -30,8 +30,8 @@ describe('sortGames', () => {
 
 describe('gameAnchor', () => {
   it('points every game at its card', () => {
-    expect(gameAnchor(pirates)).toBe('project-battle-pirates');
-    expect(gameAnchor(bingo)).toBe('project-big-fish-bingo');
+    expect(gameAnchor(pirates)).toBe('game-battle-pirates');
+    expect(gameAnchor(bingo)).toBe('game-big-fish-bingo');
   });
 });
 

@@ -9,14 +9,14 @@ import ResumeButton from '../../components/ResumeButton.astro';
 import SiteHeader from '../../components/SiteHeader.astro';
 import { site } from '../../data/site';
 import Base from '../../layouts/Base.astro';
-import { adjacentProjects, projectPath, sortProjects } from '../../lib/projects';
+import { adjacentGames, gamePath, sortGames } from '../../lib/games';
 
 // Same filter as the home page cards, so every card has a page and hidden projects have none.
 export async function getStaticPaths() {
-  const projects = sortProjects(await getCollection('games'));
+  const projects = sortGames(await getCollection('games'));
   return projects.map((project) => ({
     params: { slug: project.id },
-    props: { project, ...adjacentProjects(projects, project.id) },
+    props: { project, ...adjacentGames(projects, project.id) },
   }));
 }
 
@@ -68,7 +68,7 @@ const image = data.nda ? undefined : data.images[0];
     <nav class="more-games" aria-label="More games">
       {
         previous && (
-          <a href={projectPath(previous)} rel="prev">
+          <a href={gamePath(previous)} rel="prev">
             <span class="direction">← Previous</span>
             <span class="title">{previous.data.title}</span>
           </a>
@@ -76,7 +76,7 @@ const image = data.nda ? undefined : data.images[0];
       }
       {
         next && (
-          <a href={projectPath(next)} rel="next">
+          <a href={gamePath(next)} rel="next">
             <span class="direction">Next →</span>
             <span class="title">{next.data.title}</span>
           </a>

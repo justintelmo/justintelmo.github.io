@@ -3,7 +3,7 @@ import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { formatYearRange } from '../lib/dates';
-import { projectAnchor, projectPath } from '../lib/projects';
+import { gameAnchor, gamePath } from '../lib/games';
 
 interface Props {
   project: CollectionEntry<'games'>;
@@ -16,7 +16,7 @@ const { data } = project;
 const image = data.nda ? undefined : data.images[0];
 ---
 
-<article id={projectAnchor(project)} class="project">
+<article id={gameAnchor(project)} class="project">
   <div class="media">
     {
       image ? (
@@ -35,7 +35,7 @@ const image = data.nda ? undefined : data.images[0];
     }
   </div>
   <p class="years">{formatYearRange(data.workedFrom, data.workedTo)}</p>
-  <h3><a href={projectPath(project)}>{data.title}</a></h3>
+  <h3><a href={gamePath(project)}>{data.title}</a></h3>
   <p class="role">{data.role} · {data.studio}</p>
   <p class="summary">{data.summary}</p>
   <!-- Not a link: the title already links the whole card, and screen readers would hear "Read more" seven times. -->

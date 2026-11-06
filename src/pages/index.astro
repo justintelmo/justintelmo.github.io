@@ -9,9 +9,9 @@ import Spotlight from '../components/Spotlight.astro';
 import { site } from '../data/site';
 import { skillGroups } from '../data/skills';
 import Base from '../layouts/Base.astro';
-import { sortProjects } from '../lib/projects';
+import { sortGames } from '../lib/games';
 
-const featured = sortProjects(await getCollection('games'));
+const featured = sortGames(await getCollection('games'));
 ---
 
 <Base title={site.name} description={site.tagline}>

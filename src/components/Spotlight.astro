@@ -3,13 +3,13 @@ import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { formatYearRange } from '../lib/dates';
-import { projectPath, spotlightProjects } from '../lib/projects';
+import { gamePath, spotlightGames } from '../lib/games';
 
 interface Props {
   projects: CollectionEntry<'games'>[];
 }
 
-const slides = spotlightProjects(Astro.props.projects);
+const slides = spotlightGames(Astro.props.projects);
 ---
 
 <section class="spotlight" aria-roledescription="carousel" aria-label="Spotlight">
@@ -32,7 +32,7 @@ const slides = spotlightProjects(Astro.props.projects);
             <div class="text">
               <p class="years">{formatYearRange(data.workedFrom, data.workedTo)}</p>
               <h3>
-                <a href={projectPath(project)}>{data.title}</a>
+                <a href={gamePath(project)}>{data.title}</a>
               </h3>
               <p class="role">
                 {data.role} · {data.studio}

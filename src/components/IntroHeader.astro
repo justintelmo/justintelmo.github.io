@@ -4,7 +4,7 @@ import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import logo from '../assets/Avi2.png';
 import type { site as siteData } from '../data/site';
-import { heroArt, projectPath } from '../lib/projects';
+import { gamePath, heroArt } from '../lib/games';
 import ContactLinks from './ContactLinks.astro';
 import ResumeButton from './ResumeButton.astro';
 
@@ -41,7 +41,7 @@ const art = heroArt(projects);
     {
       art.map((project) => (
         <li>
-          <a href={projectPath(project)} aria-label={project.data.title}>
+          <a href={gamePath(project)} aria-label={project.data.title}>
             <Image
               src={project.data.images[0].src as ImageMetadata}
               alt={project.data.images[0].alt}

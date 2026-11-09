@@ -33,4 +33,4 @@ I was responsible for assisting our content team by maintaining and creating int
 
 ### Code quality and QoL upgrades
 
-I helped integrate **SonarQube** static analysis tools into our codebase to assist in helping standardize our coding best practices. This allowed for code reviews to be focused more on following logic than style. 
+I helped integrate **SonarQube** static analysis tools into our codebase to assist in helping standardize our coding best practices. This allowed for code reviews to be focused more on following logic than style. I also helped upgrade our **PHP** stack from PHP 5 to PHP 7.2.4.

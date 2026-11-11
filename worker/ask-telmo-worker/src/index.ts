@@ -1,18 +1,44 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Bind resources to your worker in `wrangler.jsonc`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { isAllowedOrigin, MAX_BODY_CHARS, parseMessages } from "./guard";
+
+function cors(origin: string): Record<string, string> {
+	return { "Access-Control-Allow-Origin": origin, Vary: "Origin" };
+}
+
+function error(status: number, message: string, headers: Record<string, string> = {}): Response {
+	return Response.json({ error: message }, { status, headers });
+}
 
 export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		return new Response("Hello World!");
+	async fetch(request): Promise<Response> {
+		const origin = request.headers.get("Origin");
+		if (!isAllowedOrigin(origin)) return error(403, "Origin not allowed.");
+		const headers = cors(origin);
+
+		if (new URL(request.url).pathname !== "/chat") return error(404, "Not found.", headers);
+		if (request.method === "OPTIONS") {
+			return new Response(null, {
+				status: 204,
+				headers: {
+					...headers,
+					"Access-Control-Allow-Methods": "POST",
+					"Access-Control-Allow-Headers": "Content-Type",
+					"Access-Control-Max-Age": "86400",
+				},
+			});
+		}
+		if (request.method !== "POST") return error(405, "Use POST.", { ...headers, Allow: "POST, OPTIONS" });
+
+		const text = await request.text();
+		if (text.length > MAX_BODY_CHARS) return error(413, "Request too large.", headers);
+		let body: unknown;
+		try {
+			body = JSON.parse(text);
+		} catch {
+			return error(400, "Body must be JSON.", headers);
+		}
+		const messages = parseMessages(body);
+		if (typeof messages === "string") return error(400, messages, headers);
+
+		return error(501, "Not built yet.", headers);
 	},
 } satisfies ExportedHandler<Env>;

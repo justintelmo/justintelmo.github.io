@@ -5,6 +5,9 @@
 	"observability": {
 		"enabled": true,
 	},
+	"vars": {
+		"CONTEXT_URL": "https://justintelmo.github.io/ask-context.txt",
+	},
 	// Per IP. The binding only counts over 10 or 60 seconds; the Console spend cap is the real backstop.
 	"ratelimits": [
 		{

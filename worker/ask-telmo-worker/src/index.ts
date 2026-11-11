@@ -1,3 +1,4 @@
+import { loadContext } from "./context";
 import { isAllowedOrigin, MAX_BODY_CHARS, parseMessages } from "./guard";
 
 function cors(origin: string): Record<string, string> {
@@ -42,6 +43,9 @@ export default {
 		}
 		const messages = parseMessages(body);
 		if (typeof messages === "string") return error(400, messages, headers);
+
+		const context = await loadContext(env.CONTEXT_URL);
+		if (!context) return error(503, "The chat is unavailable right now.", headers);
 
 		return error(501, "Not built yet.", headers);
 	},

@@ -1,5 +1,6 @@
-import { SELF } from "cloudflare:test";
-import { describe, expect, it } from "vitest";
+import { env, SELF } from "cloudflare:test";
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { resetContextCache } from "../src/context";
 
 const SITE = "https://justintelmo.github.io";
 const URL = "https://ask.example/chat";
@@ -11,6 +12,16 @@ function post(body: string, origin: string | null = SITE, ip = `203.0.113.${next
 	if (origin) headers.Origin = origin;
 	return SELF.fetch(URL, { method: "POST", headers, body });
 }
+
+// No network in tests: the site's context comes from this stub unless a test overrides it.
+let fetchSpy: MockInstance<typeof fetch>;
+beforeEach(() => {
+	fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response("context"));
+});
+afterEach(() => {
+	vi.restoreAllMocks();
+	resetContextCache();
+});
 
 const question = JSON.stringify({ messages: [{ role: "user", content: "Has Justin used Kotlin?" }] });
 
@@ -64,9 +75,20 @@ describe("request guard", () => {
 		expect((await post(question, SITE, "198.51.100.8")).status).not.toBe(429);
 	});
 
+});
+
+describe("site context", () => {
+	it("503s when the context has never loaded", async () => {
+		fetchSpy.mockResolvedValue(new Response("missing", { status: 404 }));
+		const res = await post(question);
+		expect(res.status).toBe(503);
+		expect(res.headers.get("Access-Control-Allow-Origin")).toBe(SITE);
+	});
+
 	// Task 5 replaces the 501 with the Claude call.
-	it("lets a valid question through the guard", async () => {
+	it("lets a valid question through once the context loads", async () => {
 		const res = await post(question);
 		expect(res.status).toBe(501);
+		expect(fetchSpy).toHaveBeenCalledWith(env.CONTEXT_URL);
 	});
 });

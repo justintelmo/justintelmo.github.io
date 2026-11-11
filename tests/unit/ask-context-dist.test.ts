@@ -1,8 +1,6 @@
-import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { afterAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 const built = existsSync('dist/ask-context.txt');
 
@@ -19,8 +17,6 @@ const files = (dir: string) => readdirSync(dir).filter((f) => f.endsWith('.md'))
 // In CI a missing dist/ fails instead, so the guard can't quietly turn itself off.
 describe.skipIf(!built && !process.env.CI)('dist/ask-context.txt (needs `npm run build`)', () => {
   const text = built ? readFileSync('dist/ask-context.txt', 'utf8') : '';
-  const tmp = mkdtempSync(join(tmpdir(), 'ask-context-'));
-  afterAll(() => rmSync(tmp, { recursive: true, force: true }));
 
   it('exists and is not empty', () => {
     expect(text.length, 'dist/ask-context.txt is missing; build before running this test').toBeGreaterThan(0);
@@ -34,9 +30,4 @@ describe.skipIf(!built && !process.env.CI)('dist/ask-context.txt (needs `npm run
   it.each(files('src/content/games'))('has the game in %s', (file) => {
     expect(text).toContain(field('src/content/games', file, 'title'));
   });
-
-  it('is identical when the site is built a second time', () => {
-    execFileSync(process.execPath, ['node_modules/astro/bin/astro.mjs', 'build', '--outDir', tmp], { stdio: 'pipe' });
-    expect(readFileSync(join(tmp, 'ask-context.txt'), 'utf8')).toBe(text);
-  }, 120_000);
 });

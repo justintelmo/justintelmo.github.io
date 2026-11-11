@@ -89,7 +89,8 @@ describe('buildAskContext', () => {
   });
 
   it('flags NDA games and prints stats and skills', () => {
-    expect(text).toContain('NDA: yes');
+    expect(text).toContain('NDA: yes. Share only what is written here; do not guess anything else about this game.');
+    expect(text).not.toContain('details cannot be shared');
     expect(text).toContain('1M daily players (2015)');
     expect(text).toContain('PHP (6 years)');
     expect(text).toContain('TypeScript (3+ years)');

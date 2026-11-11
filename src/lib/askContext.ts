@@ -44,7 +44,7 @@ function gameSection({ data, body }: Game): string {
     `[GAME] ${data.title} | ${data.studio} | ${data.platforms.join(', ')} | Role: ${data.role}`,
     `Worked: ${formatDateRange(data.workedFrom, data.workedTo)}${data.launched ? ` | Launched: ${data.launched}` : ''}`,
   ];
-  if (data.nda) lines.push('NDA: yes (details cannot be shared)');
+  if (data.nda) lines.push('NDA: yes. Share only what is written here; do not guess anything else about this game.');
   lines.push(`Summary: ${data.summary}`, `Tech: ${data.tech.join(', ')}`);
   for (const s of data.stats) lines.push(`Stat: ${s.value} ${s.label} (${s.year})`);
   lines.push(clean(body));

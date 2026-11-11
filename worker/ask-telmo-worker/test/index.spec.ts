@@ -1,6 +1,8 @@
 import { env, SELF } from "cloudflare:test";
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { FALLBACK, MAX_TOKENS, MODEL, RULES } from "../src/answer";
 import { resetContextCache } from "../src/context";
+import { claudeError, claudeStream } from "./claude-fake";
 
 const SITE = "https://justintelmo.github.io";
 const URL = "https://ask.example/chat";
@@ -13,10 +15,20 @@ function post(body: string, origin: string | null = SITE, ip = `203.0.113.${next
 	return SELF.fetch(URL, { method: "POST", headers, body });
 }
 
-// No network in tests: the site's context comes from this stub unless a test overrides it.
+// No network in tests. The SDK calls the global fetch too, so one stub serves both the
+// site's context and the Claude API. Tests swap `claude` to change the API's answer.
 let fetchSpy: MockInstance<typeof fetch>;
+let claude: () => Response;
+const claudeRequests: { headers: Headers; body: Record<string, unknown> }[] = [];
 beforeEach(() => {
-	fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response("context"));
+	claude = () => claudeStream(["Justin ", "used Kotlin at Glu."]);
+	claudeRequests.length = 0;
+	fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async (input, init) => {
+		const request = new Request(input, init);
+		if (!request.url.startsWith("https://api.anthropic.com/")) return new Response("SITE CONTEXT\n");
+		claudeRequests.push({ headers: request.headers, body: await request.json() });
+		return claude();
+	});
 });
 afterEach(() => {
 	vi.restoreAllMocks();
@@ -85,10 +97,61 @@ describe("site context", () => {
 		expect(res.headers.get("Access-Control-Allow-Origin")).toBe(SITE);
 	});
 
-	// Task 5 replaces the 501 with the Claude call.
-	it("lets a valid question through once the context loads", async () => {
-		const res = await post(question);
-		expect(res.status).toBe(501);
+	it("fetches the context from CONTEXT_URL", async () => {
+		await (await post(question)).text();
 		expect(fetchSpy).toHaveBeenCalledWith(env.CONTEXT_URL);
+	});
+});
+
+describe("answering", () => {
+	it("streams Claude's text back as plain text, with CORS headers", async () => {
+		const res = await post(question);
+		expect(res.status).toBe(200);
+		expect(res.headers.get("Content-Type")).toBe("text/plain; charset=utf-8");
+		expect(res.headers.get("Access-Control-Allow-Origin")).toBe(SITE);
+		expect(await res.text()).toBe("Justin used Kotlin at Glu.");
+	});
+
+	it("sends the cheap, grounded request the plan calls for", async () => {
+		await (await post(question)).text();
+		const [{ headers, body }] = claudeRequests;
+		expect(headers.get("authorization")).toBe("Bearer test-key");
+		expect(body).toMatchObject({
+			model: MODEL,
+			max_tokens: MAX_TOKENS,
+			stream: true,
+			thinking: { type: "disabled" },
+			output_config: { effort: "low" },
+			messages: [{ role: "user", content: "Has Justin used Kotlin?" }],
+		});
+		expect(body.system).toEqual([
+			{ type: "text", text: RULES },
+			{ type: "text", text: "<context>\nSITE CONTEXT\n</context>", cache_control: { type: "ephemeral" } },
+		]);
+	});
+
+	it("sends the same system prompt bytes for different questions, so the cache hits", async () => {
+		await (await post(question)).text();
+		await (await post(JSON.stringify({ messages: [{ role: "user", content: "Where did Justin use PHP?" }] }))).text();
+		expect(JSON.stringify(claudeRequests[1].body.system)).toBe(JSON.stringify(claudeRequests[0].body.system));
+	});
+
+	it("logs usage, including cache reads", async () => {
+		const log = vi.spyOn(console, "log");
+		await (await post(question)).text();
+		expect(log).toHaveBeenCalledWith(expect.stringContaining('"cache_read_input_tokens":3000'));
+	});
+
+	it("adds the fallback line when Claude refuses", async () => {
+		claude = () => claudeStream(["Partial"], "refusal");
+		expect(await (await post(question)).text()).toBe(`Partial\n\n${FALLBACK}`);
+	});
+
+	it("answers with the fallback line when the API call fails", async () => {
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		claude = () => claudeError(400);
+		const res = await post(question);
+		expect(res.status).toBe(200);
+		expect(await res.text()).toBe(FALLBACK);
 	});
 });

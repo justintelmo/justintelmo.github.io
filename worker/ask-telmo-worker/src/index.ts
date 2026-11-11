@@ -1,3 +1,5 @@
+import Anthropic from "@anthropic-ai/sdk";
+import { streamAnswer } from "./answer";
 import { loadContext } from "./context";
 import { isAllowedOrigin, MAX_BODY_CHARS, parseMessages } from "./guard";
 
@@ -47,6 +49,10 @@ export default {
 		const context = await loadContext(env.CONTEXT_URL);
 		if (!context) return error(503, "The chat is unavailable right now.", headers);
 
-		return error(501, "Not built yet.", headers);
+		// One retry for a 429/5xx; more would leave the visitor staring at nothing.
+		const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1 });
+		return new Response(streamAnswer(client, context, messages), {
+			headers: { ...headers, "Content-Type": "text/plain; charset=utf-8" },
+		});
 	},
 } satisfies ExportedHandler<Env>;

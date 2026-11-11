@@ -5,6 +5,10 @@
 	"observability": {
 		"enabled": true,
 	},
+	// Set with `wrangler secret put` in a real terminal, never in this file.
+	"secrets": {
+		"required": ["ANTHROPIC_API_KEY"],
+	},
 	"vars": {
 		"CONTEXT_URL": "https://justintelmo.github.io/ask-context.txt",
 	},

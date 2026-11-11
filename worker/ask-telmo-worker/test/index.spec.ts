@@ -4,8 +4,10 @@ import { describe, expect, it } from "vitest";
 const SITE = "https://justintelmo.github.io";
 const URL = "https://ask.example/chat";
 
-function post(body: string, origin: string | null = SITE) {
-	const headers: Record<string, string> = { "Content-Type": "application/json" };
+// Each call gets its own IP unless one is given, so tests don't share a rate limit count.
+let nextIp = 1;
+function post(body: string, origin: string | null = SITE, ip = `203.0.113.${nextIp++}`) {
+	const headers: Record<string, string> = { "Content-Type": "application/json", "CF-Connecting-IP": ip };
 	if (origin) headers.Origin = origin;
 	return SELF.fetch(URL, { method: "POST", headers, body });
 }
@@ -51,6 +53,15 @@ describe("request guard", () => {
 	it("413s an oversized body before parsing it", async () => {
 		const res = await post(JSON.stringify({ messages: [{ role: "user", content: "x".repeat(30_000) }] }));
 		expect(res.status).toBe(413);
+	});
+
+	it("429s the 11th request in a minute from one IP, with CORS headers", async () => {
+		const ip = "198.51.100.7";
+		for (let i = 0; i < 10; i++) expect((await post(question, SITE, ip)).status).not.toBe(429);
+		const limited = await post(question, SITE, ip);
+		expect(limited.status).toBe(429);
+		expect(limited.headers.get("Access-Control-Allow-Origin")).toBe(SITE);
+		expect((await post(question, SITE, "198.51.100.8")).status).not.toBe(429);
 	});
 
 	// Task 5 replaces the 501 with the Claude call.

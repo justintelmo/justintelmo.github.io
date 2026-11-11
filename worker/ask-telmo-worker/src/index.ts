@@ -9,7 +9,7 @@ function error(status: number, message: string, headers: Record<string, string> 
 }
 
 export default {
-	async fetch(request): Promise<Response> {
+	async fetch(request, env): Promise<Response> {
 		const origin = request.headers.get("Origin");
 		if (!isAllowedOrigin(origin)) return error(403, "Origin not allowed.");
 		const headers = cors(origin);
@@ -27,6 +27,10 @@ export default {
 			});
 		}
 		if (request.method !== "POST") return error(405, "Use POST.", { ...headers, Allow: "POST, OPTIONS" });
+
+		const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+		const { success } = await env.CHAT_LIMITER.limit({ key: ip });
+		if (!success) return error(429, "Too many questions. Try again in a minute.", headers);
 
 		const text = await request.text();
 		if (text.length > MAX_BODY_CHARS) return error(413, "Request too large.", headers);

@@ -1,0 +1,177 @@
+---
+// Renders only when the build knows the Worker's address, and stays hidden until its script runs,
+// so a build without the Worker, or a visitor without JavaScript, never sees a dead form.
+const url = import.meta.env.PUBLIC_ASK_URL;
+---
+
+{
+  url && (
+    <section id="ask" aria-labelledby="ask-heading" data-ask-url={url} hidden>
+      <h2 id="ask-heading">Ask about my work</h2>
+      <p class="note">
+        Answers come from this site's content, written by Claude. They can be wrong, so check anything important with
+        me.
+      </p>
+      <div class="log" role="log" aria-label="Conversation"></div>
+      <form>
+        <label for="ask-question">Your question</label>
+        <div class="row">
+          <input id="ask-question" name="question" type="text" maxlength="500" required autocomplete="off" />
+          <button class="button primary" type="submit">Ask</button>
+        </div>
+      </form>
+    </section>
+  )
+}
+
+<script>
+  type Message = { role: 'user' | 'assistant'; content: string };
+
+  // The Worker keeps the last seven messages; sending more only risks its request size limit.
+  const MAX_MESSAGES = 7;
+  const UNREACHABLE = "The chat isn't reachable right now. You can email me instead.";
+
+  const section = document.getElementById('ask');
+  if (section) {
+    const url = section.dataset.askUrl!;
+    const form = section.querySelector('form')!;
+    const input = form.querySelector('input')!;
+    const button = form.querySelector('button')!;
+    const log = section.querySelector<HTMLElement>('.log')!;
+    const history: Message[] = [];
+
+    const addMessage = (role: Message['role'], text: string) => {
+      const p = document.createElement('p');
+      p.className = `message ${role}`;
+      p.textContent = text;
+      log.append(p);
+      return p;
+    };
+
+    // The Worker sends {error} JSON for 4xx and 5xx, with text meant for visitors.
+    const errorText = async (response: Response) => {
+      try {
+        const body = await response.json();
+        if (typeof body?.error === 'string') return body.error;
+      } catch {
+        // Not JSON, so not from the Worker.
+      }
+      return UNREACHABLE;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const question = input.value.trim();
+      if (!question) return;
+
+      const asked: Message = { role: 'user', content: question };
+      addMessage('user', question);
+      const reply = addMessage('assistant', 'Thinking…');
+      input.value = '';
+      button.disabled = true;
+      // Screen readers wait for the whole answer instead of reading every streamed chunk.
+      log.setAttribute('aria-busy', 'true');
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: [...history, asked].slice(-MAX_MESSAGES) }),
+        });
+        if (!response.ok || !response.body) {
+          reply.textContent = await errorText(response);
+          reply.classList.add('error');
+          return;
+        }
+
+        const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+        let answer = '';
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          answer += value;
+          reply.textContent = answer;
+        }
+        // Only a finished exchange joins the history, so roles keep alternating as the Worker requires.
+        if (answer) history.push(asked, { role: 'assistant', content: answer });
+      } catch {
+        reply.textContent = UNREACHABLE;
+        reply.classList.add('error');
+      } finally {
+        log.setAttribute('aria-busy', 'false');
+        button.disabled = false;
+        input.focus();
+      }
+    });
+
+    section.hidden = false;
+  }
+</script>
+
+<style>
+  /* Matches the other section headings, which index.astro styles. */
+  h2 {
+    margin: 4rem 0 1.5rem;
+    font-size: var(--size-section-heading);
+  }
+
+  section {
+    max-width: 48rem;
+  }
+
+  .note {
+    margin: 0 0 1.5rem;
+    color: var(--text-muted);
+  }
+
+  .log:not(:empty) {
+    margin-bottom: 1.5rem;
+  }
+
+  .message {
+    margin: 0 0 1rem;
+    white-space: pre-wrap;
+  }
+
+  .message.user {
+    width: fit-content;
+    max-width: 100%;
+    margin-left: auto;
+    padding: 0.5rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--surface);
+  }
+
+  .message.error {
+    color: var(--text-muted);
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+  }
+
+  button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+</style>

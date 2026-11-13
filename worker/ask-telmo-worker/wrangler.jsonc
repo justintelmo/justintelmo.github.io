@@ -11,8 +11,15 @@
 	},
 	"vars": {
 		"CONTEXT_URL": "https://justintelmo.github.io/ask-context.txt",
+		// Questions per UTC day. At about $0.001 a question, 150 a day stays under the $5 monthly spend cap.
+		"DAILY_LIMIT_PER_IP": 20,
+		"DAILY_LIMIT_TOTAL": 150,
 	},
-	// Per IP. The binding only counts over 10 or 60 seconds; the Console spend cap is the real backstop.
+	"durable_objects": {
+		"bindings": [{ "name": "DAILY_QUOTA", "class_name": "DailyQuota" }],
+	},
+	"migrations": [{ "tag": "v1", "new_sqlite_classes": ["DailyQuota"] }],
+	// Per IP. The binding only counts over 10 or 60 seconds; DAILY_QUOTA handles the daily caps.
 	"ratelimits": [
 		{
 			"name": "CHAT_LIMITER",

@@ -2,6 +2,9 @@ import Anthropic from "@anthropic-ai/sdk";
 import { streamAnswer } from "./answer";
 import { loadContext } from "./context";
 import { isAllowedOrigin, MAX_BODY_CHARS, parseMessages } from "./guard";
+import { quotaKey, today } from "./quota";
+
+export { DailyQuota } from "./quota";
 
 function cors(origin: string): Record<string, string> {
 	return { "Access-Control-Allow-Origin": origin, Vary: "Origin" };
@@ -45,6 +48,12 @@ export default {
 		}
 		const messages = parseMessages(body);
 		if (typeof messages === "string") return error(400, messages, headers);
+
+		// Only questions that will reach Claude count toward the daily caps.
+		const quota = env.DAILY_QUOTA.getByName("chat");
+		if (!(await quota.take(today(), await quotaKey(ip), env.DAILY_LIMIT_PER_IP, env.DAILY_LIMIT_TOTAL))) {
+			return error(429, "The chat has hit its limit for today. Try again tomorrow, or email Justin.", headers);
+		}
 
 		const context = await loadContext(env.CONTEXT_URL);
 		if (!context) return error(503, "The chat is unavailable right now.", headers);

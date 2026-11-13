@@ -1,0 +1,21 @@
+{
+	"name": "ask-telmo-worker",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"test": "vitest",
+		"cf-typegen": "wrangler types"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-plugin": "^1.4.3",
+		"typescript": "^5.5.2",
+		"vitest": "~5.1.0",
+		"wrangler": "^4"
+	},
+	"dependencies": {
+		"@anthropic-ai/sdk": "^1.8.0"
+	}
+}

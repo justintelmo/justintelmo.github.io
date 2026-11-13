@@ -15,3 +15,6 @@ docs/superpowers/
 PRODUCT.md
 DESIGN.md
 .impeccable/
+
+# Wrangler local secrets, anywhere in the repo
+.dev.vars*

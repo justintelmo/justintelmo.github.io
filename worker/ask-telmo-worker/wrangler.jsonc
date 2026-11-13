@@ -1,0 +1,23 @@
+{
+	"name": "ask-telmo-worker",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-11-10",
+	"observability": {
+		"enabled": true,
+	},
+	// Set with `wrangler secret put` in a real terminal, never in this file.
+	"secrets": {
+		"required": ["ANTHROPIC_API_KEY"],
+	},
+	"vars": {
+		"CONTEXT_URL": "https://justintelmo.github.io/ask-context.txt",
+	},
+	// Per IP. The binding only counts over 10 or 60 seconds; the Console spend cap is the real backstop.
+	"ratelimits": [
+		{
+			"name": "CHAT_LIMITER",
+			"namespace_id": "1001",
+			"simple": { "limit": 10, "period": 60 },
+		},
+	],
+}
